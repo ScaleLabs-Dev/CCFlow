@@ -1,8 +1,10 @@
-# Command: /cf:sync
-
-Read and summarize current memory bank state, providing project status snapshot.
-
 ---
+description: "Read and summarize current memory bank state, providing project status snapshot"
+allowed-tools: ['Read', 'Glob']
+argument-hint: "[--verbose]"
+---
+
+# Command: /cf:sync
 
 ## Usage
 

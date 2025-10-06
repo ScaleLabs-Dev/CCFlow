@@ -1,8 +1,10 @@
-# Command: /cf:init
-
-Initialize CCFlow workflow system with guided project brief creation.
-
 ---
+description: "Initialize CCFlow workflow system with guided project brief creation"
+allowed-tools: ['Read', 'Write', 'Glob', 'Bash(ls:*)', 'Task']
+argument-hint: "[project-name] [--quick] [--force-fresh]"
+---
+
+# Command: /cf:init
 
 ## Usage
 

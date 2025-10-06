@@ -414,7 +414,7 @@ your-project/
 
 ### Implementation Files
 All commands and agents fully documented in `.claude/`:
-- Commands: `.claude/commands/` (12 commands)
+- Commands: `.claude/commands/cf/` (12 commands)
 - Agents: `.claude/agents/` (9 agents)
 - Templates: `.claude/templates/` (6 memory bank templates)
 
@@ -462,7 +462,7 @@ This system is designed for use with Claude Code by Anthropic.
 ## Support & Feedback
 
 For issues, questions, or feedback:
-- Review documentation in `.claude/commands/` for command usage
+- Review documentation in `.claude/commands/cf/` for command usage
 - Check `memory-bank/` files for project context
 - Refer to agent files in `.claude/agents/` for agent behavior
 

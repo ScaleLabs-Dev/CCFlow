@@ -173,7 +173,7 @@ Explanation and fix
 **Last Updated**: YYYY-MM-DD
 ```
 
-**Save to:** `.claude/commands/cf-your-command.md`
+**Save to:** `.claude/commands/cf:your-command.md`
 
 ---
 
@@ -283,7 +283,7 @@ cp .claude/templates/apiDocumentation.template.md memory-bank/apiDocumentation.m
 
 **Use in `/cf:facilitate`:**
 ```markdown
-# In .claude/commands/cf-facilitate.md
+# In .claude/commands/cf:facilitate.md
 
 ## Domain-Specific Templates
 

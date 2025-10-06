@@ -1,8 +1,10 @@
-# Command: /cf:context
-
-Load active project context to resume work efficiently.
-
 ---
+description: "Load active project context to resume work efficiently"
+allowed-tools: ['Read', 'Glob']
+argument-hint: "[--full]"
+---
+
+# Command: /cf:context
 
 ## Usage
 

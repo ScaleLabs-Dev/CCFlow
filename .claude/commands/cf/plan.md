@@ -1,8 +1,10 @@
-# Command: /cf:plan
-
-Create implementation plan with Architect + Product agents, breaking down complex tasks.
-
 ---
+description: "Create implementation plan with Architect + Product agents, breaking down complex tasks"
+allowed-tools: ['Read', 'Edit', 'Task']
+argument-hint: "[task-id] [--interactive] [--skip-facilitation]"
+---
+
+# Command: /cf:plan
 
 ## Usage
 

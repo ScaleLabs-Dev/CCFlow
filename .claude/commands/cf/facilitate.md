@@ -1,8 +1,10 @@
-# Command: /cf:facilitate
-
-Interactive refinement and collaborative exploration with Facilitator agent.
-
 ---
+description: "Interactive refinement and collaborative exploration with Facilitator agent"
+allowed-tools: ['Read', 'Edit', 'Task']
+argument-hint: "[topic|task-id] [--mode explore|refine|validate]"
+---
+
+# Command: /cf:facilitate
 
 ## Usage
 

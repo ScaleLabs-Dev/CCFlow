@@ -1,8 +1,10 @@
-# Command: /cf:code
-
-Execute task using Test-Driven Development with appropriate implementation agents.
-
 ---
+description: "Execute task using Test-Driven Development with appropriate implementation agents"
+allowed-tools: ['Read', 'Edit', 'Write', 'Bash(npm:*|pytest:*|go:*)', 'Task']
+argument-hint: "[task-id]"
+---
+
+# Command: /cf:code
 
 ## Usage
 

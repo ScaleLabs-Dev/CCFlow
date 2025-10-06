@@ -69,7 +69,7 @@ Located in `memory-bank/` directory (created per-project, NOT in this repo):
 
 ### 5. Command Namespace: `/cf:*`
 
-All commands use `/cf:` prefix to avoid conflicts. Commands are self-documenting (see `.claude/commands/`).
+All commands use `/cf:` prefix to avoid conflicts. Commands are self-documenting (see `.claude/commands/cf/`).
 
 **Core workflow**: `/cf:feature` → `/cf:plan` → `/cf:creative` (if complex) → `/cf:code` → `/cf:checkpoint`
 
@@ -103,7 +103,7 @@ Uses Sequential MCP for structured reasoning, always interactive, 20-35 minutes 
 ### Understanding File Organization
 
 **Implementation Files**:
-- `.claude/commands/`: 12 command implementations (cf-*.md)
+- `.claude/commands/cf/`: 12 command implementations (cf-*.md)
 - `.claude/agents/`: 9 agent definitions with YAML frontmatter
 - `.claude/templates/`: 6 templates for new project initialization
 

@@ -1,8 +1,10 @@
-# Command: /cf:review
-
-Assess code quality, evaluate progress, and identify technical debt using Reviewer agent.
-
 ---
+description: "Assess code quality, evaluate progress, and identify technical debt using Reviewer agent"
+allowed-tools: ['Read', 'Glob', 'Grep', 'Bash(git:*)', 'Task']
+argument-hint: "[task-id|all] [--focus area]"
+---
+
+# Command: /cf:review
 
 ## Usage
 

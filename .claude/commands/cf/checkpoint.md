@@ -1,8 +1,10 @@
-# Command: /cf:checkpoint
-
-Create comprehensive memory bank checkpoint with Documentarian agent.
-
 ---
+description: "Create comprehensive memory bank checkpoint with Documentarian agent"
+allowed-tools: ['Read', 'Edit', 'Task']
+argument-hint: "[--message \"description\"] [--interactive]"
+---
+
+# Command: /cf:checkpoint
 
 ## Usage
 

@@ -1,8 +1,10 @@
-# Command: /cf:create-specialist
-
-Create specialized implementation agent for delegated tasks.
-
 ---
+description: "Create specialized implementation agent for delegated tasks"
+allowed-tools: ['Read', 'Write', 'Edit', 'Task']
+argument-hint: "[domain] --type [testing|development|ui] --name [agent-name]"
+---
+
+# Command: /cf:create-specialist
 
 ## Usage
 

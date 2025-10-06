@@ -1,8 +1,10 @@
-# Command: /cf:ask
-
-Semantic query interface for memory bank knowledge retrieval.
-
 ---
+description: "Semantic query interface for memory bank knowledge retrieval"
+allowed-tools: ['Read', 'Glob', 'Grep']
+argument-hint: "[question]"
+---
+
+# Command: /cf:ask
 
 ## Usage
 

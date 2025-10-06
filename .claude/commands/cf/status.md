@@ -1,8 +1,10 @@
-# Command: /cf:status
-
-Quick task status overview without detailed context loading.
-
 ---
+description: "Quick task status overview without detailed context loading"
+allowed-tools: ['Read']
+argument-hint: "[--filter status|priority|complexity]"
+---
+
+# Command: /cf:status
 
 ## Usage
 

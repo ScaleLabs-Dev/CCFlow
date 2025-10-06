@@ -1,8 +1,10 @@
-# Command: /cf:creative
-
-Deep exploration and creative problem-solving for high-complexity challenges.
-
 ---
+description: "Deep exploration and creative problem-solving for high-complexity challenges"
+allowed-tools: ['Read', 'Task', 'mcp__sequential-thinking__sequentialthinking']
+argument-hint: "[task-id|topic]"
+---
+
+# Command: /cf:creative
 
 ## Usage
 

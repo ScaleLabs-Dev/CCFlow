@@ -1,8 +1,10 @@
-# Command: /cf:feature
-
-Analyze task complexity and route to appropriate workflow (entry point for new work).
-
 ---
+description: "Analyze task complexity and route to appropriate workflow (entry point for new work)"
+allowed-tools: ['Read', 'Edit', 'Task']
+argument-hint: "[description]"
+---
+
+# Command: /cf:feature
 
 ## Usage
 

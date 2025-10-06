@@ -2,7 +2,7 @@
 
 ## Document Purpose
 
-This specification provides comprehensive implementation details for the `/cf:creative` command, complementing the command file (`.claude/commands/cf-creative.md`) with extended examples, dialogue flows, and integration patterns.
+This specification provides comprehensive implementation details for the `/cf:creative` command, complementing the command file (`.claude/commands/cf:creative.md`) with extended examples, dialogue flows, and integration patterns.
 
 **Relationship to Other Documents**:
 - **cf-creative.md**: Command definition and usage (operational reference)
