@@ -1,6 +1,6 @@
 # Command: /cf:init
 
-Initialize CCFlow memory bank and agent system for a new project.
+Initialize CCFlow workflow system with guided project brief creation.
 
 ---
 
@@ -8,7 +8,7 @@ Initialize CCFlow memory bank and agent system for a new project.
 
 ```
 /cf:init [project-name]
-/cf:init [project-name] --interactive
+/cf:init [project-name] --quick
 ```
 
 ## Parameters
@@ -17,416 +17,383 @@ Initialize CCFlow memory bank and agent system for a new project.
 
 ## Flags
 
-- `--interactive`: Engage Facilitator agent for guided project brief creation
+- `--quick`: Skip guided brief creation, create stub files with TODOs
+
+**Default**: Interactive guided brief creation (10-20 minutes)
 
 ---
 
 ## Purpose
 
-Initialize the CCFlow workflow system by:
+Bootstrap CCFlow system through:
 1. Creating memory bank directory structure
-2. Copying templates to create initial memory bank files
-3. Creating .claude agent directory structure (if not exists)
-4. Optionally guiding interactive project brief creation
+2. Creating .claude agent directory structure
+3. **Guided project brief creation** (default) - Collaborative discovery with Facilitator + Product + Architect agents
 
----
-
-## Prerequisites
-
-**None** - This is the bootstrap command, first command to run.
+**Philosophy**: Initialization is a **collaborative discovery process**, not form-filling. Agents guide you through creating a comprehensive project brief that serves as the foundation for all future work.
 
 ---
 
 ## Process
 
-### Step 1: Check if Already Initialized
+### Phase 1: Structure Creation (Automated)
 
-Check if `memory-bank/` directory exists:
+**Step 1: Check if Already Initialized**
 
-**If EXISTS**:
+If `memory-bank/` exists:
 ```
 ⚠️ CCFlow Already Initialized
 
 Memory bank exists at: memory-bank/
 
-To view current state, run: /cf:sync
-To reinitialize, manually delete memory-bank/ first (⚠️ destroys existing data)
+To view: /cf:sync
+To reinitialize: Manually delete memory-bank/ first (⚠️ destroys data)
 ```
 
-**Stop execution if already initialized.**
+**Stop execution.**
 
 ---
 
-### Step 2: Create Memory Bank Structure
-
-If NOT initialized, create directory and copy templates:
+**Step 2: Create Structure**
 
 ```bash
-# Create memory-bank directory
+# Create directories
 mkdir -p memory-bank
-
-# Copy all template files, removing .template extension
-cp memory-bank/templates/projectbrief.template.md memory-bank/projectbrief.md
-cp memory-bank/templates/productContext.template.md memory-bank/productContext.md
-cp memory-bank/templates/systemPatterns.template.md memory-bank/systemPatterns.md
-cp memory-bank/templates/activeContext.template.md memory-bank/activeContext.md
-cp memory-bank/templates/progress.template.md memory-bank/progress.md
-cp memory-bank/templates/tasks.template.md memory-bank/tasks.md
-```
-
-### Step 3: Populate Initial Values
-
-**Update each file** with project name and current date:
-
-**In ALL memory bank files**, replace:
-- `[Project Name]` → `{project-name from user input}`
-- `[YYYY-MM-DD]` → `{current date}`
-- `[YYYY-MM-DD HH:MM]` → `{current timestamp}`
-
-**In projectbrief.md specifically**:
-- Add initial revision history entry
-- Set version to 1.0
-- Mark status as "Planning"
-
-**In tasks.md specifically**:
-- Initialize summary tables with zeros
-- Set up structure ready for first task
-
-**In progress.md specifically**:
-- Set "Current Phase" to "Planning"
-- Set "Completion" to "0%"
-- Set "Overall Status" to "Not Started"
-
-**In activeContext.md specifically**:
-- Set "Current Focus" to "Project initialization"
-- Add initial change log entry for initialization
-
----
-
-### Step 4: Create .claude Structure (if needed)
-
-Check if `.claude/` exists:
-
-**If NOT EXISTS**:
-```bash
-mkdir -p .claude/agents/workflow
-mkdir -p .claude/agents/development/specialists
-mkdir -p .claude/agents/testing/specialists
-mkdir -p .claude/agents/ui/specialists
+mkdir -p .claude/agents/{workflow,development/specialists,testing/specialists,ui/specialists}
 mkdir -p .claude/commands
+
+# Copy template files from .claude/templates/ (remove .template extension)
+for template in .claude/templates/*.template.md; do
+  cp "$template" "memory-bank/$(basename "$template" .template.md).md"
+done
+
+# Hub agents already exist in .claude/agents/ (from CCFlow installation)
 ```
 
-**Copy hub agent templates** to `.claude/agents/`:
-```bash
-# Copy the 3 hub agent templates with TODO sections
-cp [CCFlow location]/.claude/agents/testing/testEngineer.md .claude/agents/testing/
-cp [CCFlow location]/.claude/agents/development/codeImplementer.md .claude/agents/development/
-cp [CCFlow location]/.claude/agents/ui/uiDeveloper.md .claude/agents/ui/
+**Output**:
+```
+🚀 Initializing CCFlow for: [project-name]
+
+Creating structure...
+✓ memory-bank/ (6 files)
+✓ .claude/agents/ (3 hub agents)
+
+Structure created successfully!
 ```
 
-**Note**: Workflow agents are NOT copied - they are invoked from CCFlow location directly.
-
 ---
 
-### Step 5: Interactive Mode (if --interactive flag)
+### Phase 2: Guided Brief Creation (Default Interactive)
 
-If `--interactive` flag is present:
+**Duration**: 10-20 minutes
 
-**Engage Facilitator agent** for guided project brief creation:
+**Agents**: 🔄 Facilitator (lead), 🎨 Product (expert), 🏗️ Architect (technical)
 
-```markdown
-🔄 INTERACTIVE PROJECT SETUP
+**Introduction**:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-I'll help you create a comprehensive project brief through guided questions.
+📋 PROJECT BRIEF CREATION
 
-## Project Overview
+Guided conversation to create comprehensive project brief.
+Typically takes 10-20 minutes.
 
-**Q1: What is this project?**
-[User answers]
+Agents:
+🔄 Facilitator - Guides conversation, identifies gaps
+🎨 Product - Domain expertise, requirements structure
+🏗️ Architect - Technical feasibility, constraints
 
-**Q2: What problem does it solve?**
-[User answers]
-
-**Q3: Who is it for?**
-[User answers]
-
----
-
-## Scope & Objectives
-
-**Q4: What are the must-have features (P0)?**
-[User lists features]
-
-**Q5: What are your primary objectives?**
-[User lists objectives with success metrics]
-
-**Q6: What are your constraints (technical, timeline, resources)?**
-[User describes constraints]
-
----
-
-## Success Criteria
-
-**Q7: How will you know this project is successful?**
-[User defines success criteria]
-
----
-
-[Facilitator refines and validates responses]
-
-✅ Project brief created and saved to memory-bank/projectbrief.md
-
-Would you like to continue refining, or proceed with this brief?
+Ready to begin?
 ```
 
-**Facilitator updates projectbrief.md** with responses.
+---
+
+**Brief Creation Process** (7 sections):
+
+Each section follows **iteration pattern**:
+1. Agent asks questions
+2. User responds
+3. Facilitator captures and identifies gaps
+4. Agent provides structure/validation
+5. User refines
+6. Iterate until user approves
+7. Mark section complete (✓)
+
+**Sections**:
+
+#### 1. Executive Summary
+- **🎨 Product asks**: "In 1-2 sentences, what are you building and why?"
+- **🔄 Facilitator**: Captures, refines through iteration
+- **Goal**: Clear, compelling summary (what + why)
+
+#### 2. Problem Statement
+- **🎨 Product asks**: "What problem? Who has it? Current solutions?"
+- **🎨 Product structures**: Who / Current Pain / Impact / Existing Solutions → Limitations
+- **🔄 Facilitator**: Ensures clarity and specificity
+
+#### 3. Objectives
+- **🎨 Product asks**: "What does success look like? Measurable goals?"
+- **🎨 Product validates**: Specific, measurable, prioritized
+- **🔄 Facilitator**: Refines until actionable
+
+#### 4. Scope Definition
+- **🎨 Product asks**: "Must have? Should have? Out of scope?"
+- **🏗️ Architect checks**: Technical feasibility, complexity estimates
+- **🔄 Facilitator**: Structures into table (Must/Should/Out) with complexity
+- **🎨 Product validates**: "Anything critical forgotten?"
+
+#### 5. Constraints
+- **��️ Architect asks**: "Technical? Resource? Business constraints?"
+- **🔄 Facilitator**: Organizes by type with impact notes
+- **🏗️ Architect validates**: Constraints are workable together
+
+#### 6. Success Criteria
+- **🎨 Product asks**: "How will we know project succeeded?"
+- **🔄 Facilitator**: Creates measurable checklist
+- **🎨 Product validates**: Aligns with objectives
+
+#### 7. Complete Review
+- **🔄 Facilitator**: Presents complete brief draft
+- **All agents**: Quality gate validation (see below)
+- **User**: Final approval
 
 ---
 
-### Step 6: Output Success Confirmation
+**Quality Gates** (before writing files):
 
-```markdown
-✅ CCFlow Initialized Successfully
+**🔄 Facilitator**:
+- [ ] All sections complete
+- [ ] Information structured
+- [ ] User approved
 
-## Structure Created
+**🎨 Product**:
+- [ ] Problem clear
+- [ ] Objectives measurable
+- [ ] Scope well-defined
+- [ ] Success criteria align
 
-📁 **Memory Bank** (`memory-bank/`):
-   ✓ projectbrief.md     - Foundation document (scope, goals, requirements)
-   ✓ productContext.md   - User needs and features
-   ✓ systemPatterns.md   - Architecture and coding patterns
-   ✓ activeContext.md    - Current work tracking
-   ✓ progress.md         - Status and milestones
-   ✓ tasks.md            - Task management
+**🏗️ Architect**:
+- [ ] Constraints documented
+- [ ] Technically feasible
+- [ ] No show-stoppers
 
-📁 **Agent System** (`.claude/agents/`):
-   ✓ testing/testEngineer.md       - TDD coordination (⚠️ Needs customization)
-   ✓ development/codeImplementer.md - General implementation (⚠️ Needs customization)
-   ✓ ui/uiDeveloper.md              - UI development (⚠️ Needs customization)
-
-   Workflow agents available from CCFlow:
-   - Assessor, Architect, Product, Documentarian, Reviewer, Facilitator
-
-## Next Steps
-
-### 1. Customize Hub Agents for Your Tech Stack
-
-**Action Required**: Edit the hub agent files and fill in TODO sections
-
-**Files to customize**:
-- `.claude/agents/testing/testEngineer.md`
-- `.claude/agents/development/codeImplementer.md`
-- `.claude/agents/ui/uiDeveloper.md`
-
-**What to customize**:
-- Testing framework and commands
-- Tech stack details
-- Coding conventions
-- Specialist routing rules
-
-**Example**:
-```markdown
-<!-- In testEngineer.md, find TODO sections like: -->
-
-### Testing Framework
-framework: "jest"  # ← Fill in your framework
-test_directory: "__tests__/"  # ← Your test directory
-```
-
-### 2. Review Memory Bank
-
-Run: `/cf:sync`
-
-This will load and summarize your memory bank state.
-
-### 3. Start Your First Feature
-
-Run: `/cf:feature [description]`
-
-Example: `/cf:feature add user authentication`
-
-This will:
-- Assess task complexity
-- Route to appropriate workflow
-- Update tasks.md with new task
+**Only when all pass**: Write projectbrief.md
 
 ---
 
-## Project: {project-name}
-
-**Status**: Initialized and ready for development
-**Memory Bank**: 6 core files created
-**Agent System**: Hub agents ready for customization
-
-Happy coding! 🚀
+**Finalization**:
 ```
+✓ Project Brief Complete!
+
+Writing files...
+✓ projectbrief.md - Comprehensive brief
+✓ productContext.md - Initialized
+✓ systemPatterns.md - Initialized
+✓ activeContext.md - "Project initialization"
+✓ progress.md - 0% complete, Planning phase
+✓ tasks.md - Ready for first task
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 NEXT STEPS:
+
+1. **Customize agents** (.claude/agents/*.md - fill TODOs)
+2. **Review**: /cf:sync
+3. **Start building**: /cf:feature [description]
+
+Ready to customize or jump to development?
+```
+
+---
+
+### Phase 3: Quick Mode (--quick flag)
+
+Skip Phase 2, create stubs:
+
+```
+🚀 Initializing CCFlow for: [project-name] (Quick Mode)
+
+✓ Structure created
+✓ Stub files with TODOs created
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️ QUICK MODE: Manual completion required
+
+Complete: memory-bank/projectbrief.md
+
+OR run /cf:init WITHOUT --quick for guided creation
+```
+
+---
+
+## Agent Collaboration Patterns
+
+### 🔄 Facilitator (Primary)
+**Responsibilities**:
+- Guides conversation flow
+- Identifies gaps after each response
+- Synthesizes input into structured content
+- Manages iteration (no limits, user controls)
+- Uses Action Recommendation Pattern:
+  1. Present state
+  2. Identify gaps
+  3. Ask questions
+  4. Refine
+  5. Recommend next
+
+### 🎨 Product (Expert)
+**Responsibilities**:
+- Asks insightful domain questions
+- Provides structure for requirements
+- Validates measurability and alignment
+- Ensures critical items not forgotten
+- Shares best practices
+
+### 🏗️ Architect (Technical)
+**Responsibilities**:
+- Flags complex features early
+- Identifies dependencies
+- Validates feasibility
+- Documents technical constraints
+- Raises trade-offs
+
+**Collaboration**: Agents work in sequence per section, with Facilitator synthesizing.
 
 ---
 
 ## Examples
 
-### Basic Initialization
+### Example: Interactive Session (Abbreviated)
 
 ```
-User: /cf:init TaskManager
+User: /cf:init task-manager
 
-Claude:
-✅ CCFlow Initialized Successfully
+[Structure creation...]
 
-## Structure Created
-[... full output as shown above ...]
+📋 PROJECT BRIEF CREATION
+Ready to begin?
 
-## Next Steps
-1. Customize hub agents for your tech stack
-2. Run /cf:sync to review memory bank
-3. Run /cf:feature [description] to start first task
+User: Yes
+
+🎨 Product: In 1-2 sentences, what are you building and why?
+
+User: A task manager for developers that integrates with IDEs
+
+🔄 Facilitator: Let me capture that...
+
+Draft: "A task manager for developers that integrates with IDEs"
+
+Questions:
+- What makes this different from existing task managers?
+- What problem does IDE integration solve?
+- Solo or team focused?
+
+User: For solo developers who context-switch. Tasks show in IDE to reduce app-switching.
+
+🔄 Facilitator: Updated:
+"A task manager for solo developers who context-switch between projects,
+surfacing tasks directly in their IDE to reduce app-switching and maintain focus."
+
+Better?
+
+User: Perfect!
+
+✓ Executive Summary captured
+
+[Continues through all sections with same pattern...]
+
+🔄 Facilitator: Here's the complete brief:
+
+[Shows full brief]
+
+Review questions:
+1. Accurate vision?
+2. Anything missing?
+3. Would guide others?
+4. Right scope?
+
+User: Add keyboard shortcuts requirement
+
+🔄 Facilitator: Added to constraints. Ready to finalize?
+
+User: Yes
+
+✓ Writing projectbrief.md...
+✓ Complete!
+
+🎯 NEXT STEPS: [as shown above]
 ```
 
-### Interactive Initialization
+---
 
-```
-User: /cf:init TaskManager --interactive
+## Edge Cases
 
-Claude:
-🔄 INTERACTIVE PROJECT SETUP
+### Minimal Information
+**🔄 Facilitator**: "Description is brief. Let me ask specific questions..." [targeted extraction]
 
-I'll help you create a comprehensive project brief through guided questions.
+### Wants to Skip Section
+**🔄 Facilitator**: "Skipping [X] means missing [Y], causes [Z]. Just 2-3 minutes? Or use --quick mode instead?"
 
-## Project Overview
+### Changes Mind
+**🔄 Facilitator**: "No problem! Let's go back to [section]..." [re-iterate]
 
-**Q1: What is this project?**
-```
-
-[... Facilitator guides through questions ...]
-
-```
-✅ Project brief created and saved to memory-bank/projectbrief.md
-
-[... rest of initialization output ...]
-```
+### Technical Issues
+**🏗️ Architect**: "[Feature] requires [dependencies] - adds complexity. Options: 1) Keep 2) Simplify 3) Defer. Your call?"
 
 ---
 
 ## Error Handling
 
-### If Already Initialized
-
+### Already Initialized
 ```
 ⚠️ CCFlow Already Initialized
-
-Memory bank exists at: memory-bank/
-
-Current status: [Read from progress.md]
-Last updated: [Read from activeContext.md]
-
-To view current state, run: /cf:sync
-
-To reinitialize:
-1. ⚠️ WARNING: This will destroy existing project data
-2. Manually delete memory-bank/ directory
-3. Run /cf:init [project-name] again
+Memory bank exists. To view: /cf:sync
+To reinitialize: Delete memory-bank/ first
 ```
 
-### If Project Name Missing
-
+### Missing Project Name
 ```
 ❌ Error: Project name required
-
 Usage: /cf:init [project-name]
-
-Example: /cf:init MyAwesomeProject
 ```
 
-### If Template Files Missing
-
+### Templates Missing
 ```
 ❌ Error: CCFlow templates not found
-
-Expected location: memory-bank/templates/
-
-This command requires the CCFlow system to be set up with template files.
-
-Please ensure you're running from the CCFlow directory or that templates are available.
+Expected: memory-bank/templates/
+Ensure running from CCFlow directory
 ```
 
 ---
 
-## What Gets Created
+## Success Criteria
 
-### Memory Bank Files (6)
-
-1. **projectbrief.md**: Foundation document
-   - Project overview
-   - Scope and features
-   - Objectives with success metrics
-   - Constraints and risks
-   - Decision log
-
-2. **productContext.md**: Product and UX focus
-   - Problem → Solution mapping
-   - Features (implemented, planned, deferred)
-   - User flows
-   - UX requirements
-   - Non-functional requirements
-
-3. **systemPatterns.md**: Technical architecture
-   - Architecture overview
-   - Active patterns
-   - Coding conventions
-   - Testing patterns
-   - ADR index
-
-4. **activeContext.md**: Current work state
-   - Current focus
-   - Recent changes log
-   - Immediate next steps
-   - Active decisions
-   - Key learnings
-   - Session context
-
-5. **progress.md**: Status tracking
-   - Project status and completion
-   - Completed work log
-   - Remaining work by priority
-   - Known issues
-   - Technical debt
-   - Decision history
-   - Checkpoints
-
-6. **tasks.md**: Task management
-   - Active tasks
-   - Pending tasks
-   - Blocked tasks
-   - Completed tasks
-   - Task summaries and metrics
-
-### Agent Files (3 hub agents)
-
-1. **testEngineer.md**: TDD coordination
-   - With TODO sections for customization
-
-2. **codeImplementer.md**: General implementation
-   - With TODO sections for customization
-
-3. **uiDeveloper.md**: UI development
-   - With TODO sections for customization
+**Artifacts**: 6 memory bank files + 3 agent templates
+**Brief Quality**: Clear summary, specific problem, measurable objectives, defined scope, documented constraints, measurable criteria
+**User Confidence**: Understands what to build, clear scope, knows success metrics
 
 ---
 
-## Related Commands
+## Integration
 
-- `/cf:sync` - Review memory bank state after initialization
-- `/cf:feature` - Start first feature after initialization
+**After /cf:init**: `/cf:sync` (review) → `/cf:feature [desc]` (start building)
+
+**Brief Usage**: All commands reference projectbrief.md for scope, objectives, constraints, success criteria
 
 ---
 
 ## Notes
 
-- This command is idempotent - running it twice won't break anything (it will just warn and stop)
-- Template files remain in `memory-bank/templates/` for reference
-- Hub agents must be customized for your tech stack before use
-- Workflow agents (Assessor, Architect, etc.) are used directly from CCFlow, no copying needed
+- **Default is interactive** (10-20 min investment worth it)
+- **No iteration limits** (Facilitator refines until satisfied)
+- **Multi-agent collaboration** (leverages specialized expertise)
+- **Quality gates** (validated before writing)
+- **--quick available** (for manual completion preference)
+- **Idempotent** (warns if already initialized)
+- **Hub agents need customization** (fill TODOs before use)
 
 ---
 
-**Command Version**: 1.0
+**Command Version**: 2.0 (Enhanced with guided brief creation)
 **Last Updated**: 2025-10-05

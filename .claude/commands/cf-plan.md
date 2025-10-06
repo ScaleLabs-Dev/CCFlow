@@ -17,7 +17,8 @@ Create implementation plan with Architect + Product agents, breaking down comple
 
 ## Flags
 
-- `--interactive`: Engage Facilitator agent for collaborative planning refinement
+- `--interactive`: Engage Facilitator agent for collaborative planning refinement (auto-enabled for Level 3-4)
+- `--skip-facilitation`: Skip Facilitator for Level 3-4 tasks (not recommended)
 
 ---
 
@@ -72,6 +73,38 @@ Level 1 tasks don't require planning.
 
 Proceed directly with: /cf:code [task-id]
 ```
+
+---
+
+### Step 1.5: Enforce Facilitator for Level 3-4
+
+**Auto-enable interactive mode for complex tasks**:
+
+```
+If complexity is Level 3 OR Level 4:
+  If --skip-facilitation flag NOT present:
+    ℹ️ Task [task-id] is Level [3/4] - Facilitator required for complex planning
+
+    Setting --interactive mode automatically.
+
+    Why: Complex tasks benefit from collaborative refinement to:
+    - Clarify scope and identify hidden requirements
+    - Validate technical approach and trade-offs
+    - Break down work into manageable sub-tasks
+    - Identify high-complexity sub-tasks needing /cf:creative
+
+    To skip Facilitator (not recommended): add --skip-facilitation flag
+
+  Else (--skip-facilitation present):
+    ⚠️ Skipping Facilitator for Level [3/4] task (user override)
+
+    Proceeding with standard planning mode.
+```
+
+**High-complexity sub-task detection**:
+- If any sub-task appears to be Level 3+ during breakdown, flag it
+- Recommend `/cf:creative [sub-task-id]` for deep exploration
+- Document recommendation in task notes
 
 ---
 
@@ -217,7 +250,20 @@ Combine Architect and Product perspectives into comprehensive plan:
 
 **Phase 2: [Phase Name]**
 3. **[Step Name]** (Sub-task 3, Level [1-2])
-   ...
+   - Actions: [What to do]
+   - Files: [Files to modify/create]
+   - Tests: [What to test]
+   - Effort: [Time estimate]
+
+**If any sub-task is high complexity** (appears to be Level 3+):
+```
+⚠️ Sub-task [N] appears to be high complexity
+
+**Recommendation**: Use /cf:creative TASK-[ID]-[N] before implementation
+
+Why: This sub-task involves [novel problem/multiple unknowns/high risk].
+Deep exploration will identify best approach and prevent rework.
+```
 
 ---
 
@@ -717,8 +763,10 @@ Planning is only needed for Level 2-4 tasks.
 
 - Planning is **required** for Level 2-4 tasks before implementation
 - Sub-tasks are always Level 1 or 2 (never Level 3-4)
-- If sub-task seems Level 3+, it should be broken down further
-- Interactive mode (`--interactive`) highly recommended for Level 3-4
+- If sub-task seems Level 3+, flag it and recommend `/cf:creative` for deep exploration
+- **Facilitator automatically enabled** for Level 3-4 tasks (use `--skip-facilitation` to override)
+- Interactive mode (`--interactive`) available for Level 2 tasks as well
+- High-complexity sub-tasks should use `/cf:creative` before `/cf:code`
 - Architect and Product work together, providing complementary perspectives
 - Plan can be refined later with `/cf:facilitate` if needed
 

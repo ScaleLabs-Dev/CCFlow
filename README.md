@@ -373,31 +373,35 @@ your-project/
 
 ## Documentation
 
-### Core Documents
-- [Workflow_spec.md](Workflow_spec.md) - Complete workflow specification
-- [Implementation_Plan.md](Implementation_Plan.md) - 8-phase implementation plan
-- [Implementation_Status.md](Implementation_Status.md) - Current status (100% complete)
-- [Phase8_Validation_Report.md](Phase8_Validation_Report.md) - Validation results
+### User Guides
+- [Getting Started](docs/user-guide/getting-started.md) - 5-minute quick start
+- [Command Reference](docs/user-guide/commands.md) - All 12 commands with examples
+- [Agent Reference](docs/user-guide/agents.md) - Understanding the 9 agents
+- [Workflow Patterns](docs/user-guide/workflows.md) - Common development patterns
 
-### Command Documentation
-All 12 commands fully documented in [.claude/commands/](.claude/commands/):
-- Complete usage examples
-- Error handling
-- Integration patterns
-- Best practices
+### System Documentation
+- [Architecture](docs/system/architecture.md) - Core architectural concepts
+- [Validation](docs/system/validation.md) - Quality standards and methodology
+- [Extending CCFlow](docs/system/extending.md) - Customization and extension guide
 
-### Agent Documentation
-All 9 agents fully documented with:
-- YAML frontmatter
-- Responsibilities and processes
-- Output formats
-- Example workflows
+### Technical Specifications
+- [Workflow System](docs/specifications/workflow-system.md) - Complete workflow specification
+- [TDD System](docs/specifications/tdd-system.md) - TDD workflow and agent system
+- [Initialization](docs/specifications/initialization.md) - Project init process
+- [Facilitator Patterns](docs/specifications/facilitator-patterns.md) - Question templates
+- [Creative Sessions](docs/specifications/creative-sessions.md) - Deep exploration process
+
+### Implementation Files
+All commands and agents fully documented in `.claude/`:
+- Commands: `.claude/commands/` (12 commands)
+- Agents: `.claude/agents/` (9 agents)
+- Templates: `.claude/templates/` (6 memory bank templates)
 
 ---
 
 ## Validation & Quality
 
-**Phase 8 Validation**: ✅ **ALL CHECKS PASSED** (12/12)
+**Status**: ✅ **Production Ready**
 
 - ✅ Command consistency: 100%
 - ✅ Agent frontmatter: 9/9 valid
@@ -408,11 +412,11 @@ All 9 agents fully documented with:
 - ✅ Error handling: 30+ cases documented
 
 **Quality Metrics**:
-- Total lines: 19,996 across 33 files
+- Total lines: ~20,000 across implementation files
 - Documentation coverage: 100%
 - Consistency score: 100%
 
-See [Phase8_Validation_Report.md](Phase8_Validation_Report.md) for full validation details.
+See [Validation Guide](docs/system/validation.md) for methodology and standards.
 
 ---
 

@@ -178,6 +178,39 @@ Effort: 4-6 hours
 - Refines plan iteratively based on input
 - Validates against existing patterns
 
+**Facilitation Enforcement**: Level 3-4 tasks auto-enable `--interactive` mode
+- Use `--skip-facilitation` flag to override (not recommended)
+- Identifies high-complexity sub-tasks for `/cf:creative` exploration
+
+---
+
+#### `/cf:creative [task-id|topic]`
+**Purpose**: Deep exploration for high-complexity technical challenges
+**Behavior**:
+- Load task context and project memory bank
+- Engage multi-agent creative session (Facilitator + Architect + Product + Sequential)
+- Execute 4-phase systematic exploration:
+  - Phase 1: Problem Deep-Dive (understand thoroughly with "think")
+  - Phase 2: Solution Exploration (generate 3-5 approaches with "think hard/harder/ultrathink")
+  - Phase 3: Design Refinement (detail selected solution with "think hard")
+  - Phase 4: Validation & Documentation (verify completeness with "think")
+- Extended thinking mode for deep trade-off analysis
+- Document patterns and decisions in systemPatterns.md
+- Update tasks.md with refined implementation approach
+
+**Output**: Comprehensive solution design + pattern documentation + decision rationale
+
+**When to Use**:
+- Novel technical challenges without established patterns
+- High-risk architectural decisions
+- Complex algorithm or data structure design
+- Multiple viable solution approaches requiring systematic comparison
+- Sub-tasks identified as Level 3+ complexity during planning
+
+**Always Interactive**: Facilitator required, cannot be skipped
+
+**Estimated Time**: 20-35 minutes (worth investment to prevent rework)
+
 ---
 
 #### `/cf:code [task]`
@@ -308,10 +341,10 @@ Claude evaluates tasks across four dimensions to determine complexity:
 #### Level 3: Intermediate Feature
 - **Characteristics**: Multi-component feature, moderate complexity
 - **Keywords**: feature, integrate, refactor section
-- **Scope**: 5-10 files  
+- **Scope**: 5-10 files
 - **Risk**: Medium (cross-module changes)
 - **Effort**: 2-8 hours
-- **Action**: Requires `/plan` mode, may need `/creative` for complex sub-steps
+- **Action**: Requires `/cf:plan` (auto-enables Facilitator), may need `/cf:creative` for complex sub-steps
 
 #### Level 4: Complex System
 - **Characteristics**: Major system change, architectural impact
@@ -319,7 +352,7 @@ Claude evaluates tasks across four dimensions to determine complexity:
 - **Scope**: 10+ files or entire system
 - **Risk**: High (breaking changes possible)
 - **Effort**: 8+ hours or multi-day
-- **Action**: Requires `/plan` → `/creative` → careful implementation
+- **Action**: Requires `/cf:plan` (auto-enables Facilitator) → `/cf:creative` (for high-complexity sub-tasks) → `/cf:code`
 
 ### Complexity Assessment Agent
 
@@ -363,7 +396,12 @@ Scope: [estimated files/components]
 Risk: [Low/Medium/High]
 Effort: [time estimate]
 
-→ RECOMMENDATION: [proceed/plan/creative]
+→ RECOMMENDATION: [proceed with /cf:code | use /cf:plan | use /cf:plan then /cf:creative for sub-tasks]
+
+[If Level 3-4]
+Note: Facilitator will be automatically engaged during planning (--interactive mode).
+[If complexity suggests creative need]
+Note: Some sub-tasks may require /cf:creative for deep exploration before implementation.
 ```
 
 ---
@@ -514,14 +552,21 @@ After each refinement cycle, Facilitator provides:
 ```
 1. User: /cf:feature migrate authentication to OAuth
 2. Claude: (Assessor) Level 4 - Complex, requires planning
-3. User: /cf:plan oauth-migration --interactive
-4. Claude: (Architect + Product + Facilitator) Creates plan, identifies complex sub-steps
-5. Facilitator: Refines plan through iteration based on user feedback
-6. System: Updates tasks.md, activeContext.md
-7. User: /cf:code [each step]
-8. Claude: (testEngineer + specialist agents) Implements with TDD
-9. User: /cf:checkpoint "OAuth migration complete"
-10. Claude: (Documentarian) Updates all memory bank files with learnings
+3. User: /cf:plan oauth-migration
+4. Claude: Auto-enables --interactive (Level 4)
+5. Claude: (Architect + Product + Facilitator) Creates plan, identifies complex sub-steps
+6. Facilitator: Flags sub-task 3 (token refresh mechanism) as high complexity
+7. Facilitator: "Sub-task 3 appears Level 3+. Recommend /cf:creative before implementation."
+8. System: Updates tasks.md with sub-tasks, activeContext.md
+9. User: /cf:creative TASK-042-3  [for high-complexity sub-task]
+10. Claude: (Facilitator + Architect + Product + Sequential) 4-phase exploration with extended thinking
+11. Claude: Documents solution in systemPatterns.md, updates tasks.md with refined approach
+12. User: /cf:code TASK-042-1  [implements simpler sub-tasks]
+13. Claude: (testEngineer + implementation agent) Implements with TDD
+14. User: /cf:code TASK-042-3  [implements creative-explored sub-task]
+15. Claude: (testEngineer + implementation agent) Follows detailed design from creative session
+16. User: /cf:checkpoint "OAuth migration complete"
+17. Claude: (Documentarian) Updates all memory bank files with learnings
 ```
 
 ---
@@ -595,10 +640,12 @@ After each refinement cycle, Facilitator provides:
 
 **Command Routing**:
 - `/cf:feature` → Assessor (workflow)
-- `/cf:plan` → Architect + Product (workflow, + Facilitator if --interactive)
+- `/cf:plan` → Architect + Product + Facilitator (workflow, Facilitator auto-enabled for Level 3-4)
+- `/cf:creative` → Facilitator + Architect + Product + Sequential MCP (workflow, always interactive)
 - `/cf:code` → testEngineer + implementation hub (implementation)
 - `/cf:review` → Reviewer (workflow)
 - `/cf:checkpoint` → Documentarian (workflow)
+- `/cf:facilitate` → Facilitator (workflow)
 
 **Transparency**: Claude indicates which agent(s) are active:
 ```
