@@ -1,5 +1,7 @@
 # Progress: [Project Name]
 
+<!-- NOTE: This file tracks progress and is rarely pre-populated during import -->
+
 **Last Updated**: [YYYY-MM-DD HH:MM]
 
 ---

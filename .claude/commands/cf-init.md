@@ -18,8 +18,9 @@ Initialize CCFlow workflow system with guided project brief creation.
 ## Flags
 
 - `--quick`: Skip guided brief creation, create stub files with TODOs
+- `--force-fresh`: Skip project discovery, use empty templates (ignore existing docs)
 
-**Default**: Interactive guided brief creation (10-20 minutes)
+**Default**: Auto-detect (import if docs exist, fresh if not) + Interactive guided brief creation
 
 ---
 
@@ -35,6 +36,140 @@ Bootstrap CCFlow system through:
 ---
 
 ## Process
+
+### Phase 0: Project Discovery (Automated)
+
+**Purpose**: Detect existing project documentation and offer to import context.
+
+**Step 1: Scan for Existing Documentation**
+
+Check for common project files:
+```bash
+# Check for documentation
+- README.md (project description, features, tech stack)
+- CLAUDE.md (tech stack, constraints, patterns)
+- package.json (dependencies, framework detection)
+
+# Check for code structure
+- src/ or app/ directory
+- components/ or pages/ directory
+- api/ or routes/ or server/ directory
+- tests/ or __tests__/ directory
+```
+
+---
+
+**Step 2: Parse Discovered Content**
+
+**If README.md exists**:
+- Extract first heading and paragraph as Executive Summary candidate
+- Look for sections: "Features", "Tech Stack", "Built With", "Problem", "Why"
+- Identify project description and purpose
+
+**If CLAUDE.md exists**:
+- Extract "Tech Stack" or "Project Overview" sections
+- Extract "Status" or project maturity information
+- Extract architectural patterns or constraints
+
+**If package.json exists**:
+- **Frontend frameworks**: React, Vue, Angular, Svelte, Next.js, Nuxt
+- **Backend frameworks**: Express, Fastify, NestJS, Koa, Hapi
+- **Databases**: pg (PostgreSQL), mysql, mongodb, mongoose
+- **Testing**: Jest, Vitest, Playwright, Cypress
+- **Build tools**: Vite, Webpack, esbuild, Turbopack
+- Extract project name and description fields
+
+**If code structure exists**:
+- `src/components/` or `components/` → Component-based architecture
+- `src/pages/` or `pages/` → Page-based routing (Next.js, Nuxt, etc.)
+- `api/` or `routes/` or `server/` → Backend API structure
+- `tests/` or `__tests__/` → Testing infrastructure exists
+
+---
+
+**Step 3: Determine Initialization Mode**
+
+**If NO files found** (brand new project):
+```
+🚀 Initializing CCFlow for: [project-name]
+
+No existing documentation found.
+Proceeding with fresh project initialization...
+
+[Continue to Phase 1 with empty templates]
+```
+
+**If --force-fresh flag used**:
+```
+🚀 Initializing CCFlow for: [project-name]
+
+Skipping discovery (--force-fresh flag).
+Proceeding with fresh project initialization...
+
+[Continue to Phase 1 with empty templates]
+```
+
+**If files found** (existing project):
+```
+📋 EXISTING PROJECT DETECTED
+
+Found:
+✓ README.md - Project description available
+✓ CLAUDE.md - Tech stack and constraints documented
+✓ package.json - React 18, TypeScript, Express dependencies
+✓ Code structure - src/components/, api/, tests/
+
+Discovered Information:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Executive Summary (from README.md):
+"[Extracted first paragraph]"
+
+Tech Stack (from CLAUDE.md + package.json):
+- Frontend: React 18, TypeScript
+- Backend: Express, Node.js
+- Database: PostgreSQL
+- Testing: Jest, Playwright
+
+Existing Features (from code structure):
+- Component library (src/components/)
+- API routes (api/)
+- Test suite (tests/)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Would you like to:
+1. Import and refine this documentation (Recommended - saves time)
+2. Start fresh and create from scratch
+
+Enter 1 or 2:
+```
+
+**[User selects option]**
+
+**If Import (Option 1)**:
+```
+✓ Importing discovered documentation...
+
+Pre-populating memory bank with:
+✓ Executive Summary (from README.md)
+✓ Tech Stack (from CLAUDE.md + package.json)
+✓ Project Structure (from code analysis)
+
+Gaps to fill during guided creation:
+- Problem Statement (not found in docs)
+- Success Criteria (needs definition)
+- Detailed Constraints (partial info only)
+
+Proceeding to guided refinement...
+[Continue to Phase 2 with PRE-POPULATED templates]
+```
+
+**If Fresh (Option 2)**:
+```
+✓ Starting fresh initialization...
+[Continue to Phase 1 with empty templates]
+```
+
+---
 
 ### Phase 1: Structure Creation (Automated)
 
@@ -85,11 +220,11 @@ Structure created successfully!
 
 ### Phase 2: Guided Brief Creation (Default Interactive)
 
-**Duration**: 10-20 minutes
+**Duration**: 10-20 minutes (Fresh) | 5-10 minutes (Import mode - fewer gaps)
 
 **Agents**: 🔄 Facilitator (lead), 🎨 Product (expert), 🏗️ Architect (technical)
 
-**Introduction**:
+**Introduction (Fresh Mode)**:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -104,6 +239,34 @@ Agents:
 🏗️ Architect - Technical feasibility, constraints
 
 Ready to begin?
+```
+
+**Introduction (Import Mode)**:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 PROJECT BRIEF VALIDATION & REFINEMENT
+
+Reviewing imported documentation and filling gaps.
+Typically takes 5-10 minutes.
+
+Agents:
+🔄 Facilitator - Validates imported content, identifies gaps
+🎨 Product - Ensures completeness, refines requirements
+🏗️ Architect - Validates tech stack, adds missing constraints
+
+Pre-populated sections:
+✓ Executive Summary (from README.md)
+✓ Tech Stack (from CLAUDE.md + package.json)
+✓ Project Structure (from code analysis)
+
+Sections to define:
+- Problem Statement
+- Objectives
+- Success Criteria
+- Detailed Constraints
+
+Ready to validate and complete?
 ```
 
 ---

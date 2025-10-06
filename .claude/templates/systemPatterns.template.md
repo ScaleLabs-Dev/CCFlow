@@ -1,5 +1,9 @@
 # System Patterns: [Project Name]
 
+<!-- IMPORT NOTE: This file may be pre-populated from existing project documentation -->
+<!-- Tech stack information is often imported from CLAUDE.md and package.json -->
+<!-- Code patterns may be detected from code structure analysis -->
+
 **Version**: 1.0
 **Created**: [YYYY-MM-DD]
 **Last Updated**: [YYYY-MM-DD]
@@ -7,6 +11,7 @@
 ---
 
 ## Architecture Overview
+<!-- IMPORT SOURCE: CLAUDE.md, code structure analysis, or manual entry -->
 
 ### System Architecture
 
@@ -23,6 +28,7 @@ Frontend (React) → API Gateway → Backend Services → Database
 ```
 
 **Key Technologies**:
+<!-- IMPORT SOURCE: CLAUDE.md, package.json -->
 - **Frontend**: [Framework/library and version]
 - **Backend**: [Framework/language and version]
 - **Database**: [Database and version]

@@ -1,5 +1,7 @@
 # Tasks: [Project Name]
 
+<!-- NOTE: This file tracks tasks and is created fresh during initialization -->
+
 **Last Updated**: [YYYY-MM-DD HH:MM]
 
 ---

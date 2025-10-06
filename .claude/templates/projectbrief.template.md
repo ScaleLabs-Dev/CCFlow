@@ -1,5 +1,9 @@
 # Project Brief: [Project Name]
 
+<!-- IMPORT NOTE: This file may be pre-populated from existing project documentation -->
+<!-- Sections marked with [IMPORTED FROM: source] were auto-detected from your project -->
+<!-- Sections marked with [TO BE DEFINED] need manual input during guided creation -->
+
 **Version**: 1.0
 **Created**: [YYYY-MM-DD]
 **Last Updated**: [YYYY-MM-DD]
@@ -7,12 +11,14 @@
 ---
 
 ## Overview
+<!-- IMPORT SOURCE: README.md or manual entry -->
 
 [1-2 paragraph project summary. What is this project? What problem does it solve? Who is it for?]
 
 ---
 
 ## Scope
+<!-- IMPORT SOURCE: README.md (Features section), code structure analysis, or manual entry -->
 
 ### Features & Priorities
 
@@ -36,6 +42,7 @@
 ---
 
 ## Objectives
+<!-- IMPORT SOURCE: Manual entry (rarely in existing docs) -->
 
 ### Primary Objectives
 
@@ -56,6 +63,7 @@
 ---
 
 ## Constraints
+<!-- IMPORT SOURCE: CLAUDE.md, package.json, or manual entry -->
 
 ### Technical Constraints
 - [Constraint 1]: [Description and impact]

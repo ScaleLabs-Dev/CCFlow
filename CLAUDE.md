@@ -236,6 +236,32 @@ Before considering changes complete:
 
 ## Common Patterns
 
+### Pattern: Project Initialization (Fresh vs Existing)
+
+`/cf:init` auto-detects project type and imports existing documentation:
+```
+Phase 0: Scan for docs (README.md, CLAUDE.md, package.json, code structure)
+         ↓
+    If found → Present findings → User confirms import
+         ↓
+    Import mode: Pre-populate templates → Validate with user → Fill gaps
+         ↓
+    If not found → Fresh mode: Empty templates → Standard guided creation
+```
+
+**Import Sources**:
+- README.md → Executive Summary, Features, Problem Statement
+- CLAUDE.md → Tech Stack, Constraints, Patterns
+- package.json → Dependencies, Framework detection
+- Code structure → Architecture style, Component patterns
+
+**Flags**:
+- Default: Auto-detect (import if docs exist, fresh if not)
+- `--force-fresh`: Skip discovery, use empty templates
+- `--quick`: Skip guided creation (works with both modes)
+
+**Token Efficiency**: Discovery logic inline in command (not in agents) to avoid loading on frequent operations.
+
 ### Pattern: Complexity Assessment
 
 Every new feature request goes through Assessor:

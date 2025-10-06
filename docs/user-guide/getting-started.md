@@ -27,6 +27,7 @@ This copies:
 
 ### Step 2: Initialize Your Project
 
+#### New Project (Fresh Start)
 ```bash
 /cf:init MyProject
 ```
@@ -36,9 +37,34 @@ This copies:
 - Runs guided project brief creation (10-20 minutes)
 - Facilitator agent helps you define scope, goals, and requirements
 
+#### Existing Project (Auto-Import)
+```bash
+/cf:init MyProject
+# CCFlow detects existing docs and offers to import
+```
+
+**If documentation found:**
+- Scans: README.md, CLAUDE.md, package.json, code structure
+- Presents discovered information
+- Asks: Import & refine OR start fresh?
+- If import: Pre-populates memory bank → validates → fills gaps (5-10 min)
+
+**Import sources:**
+- README.md → Executive Summary, Features
+- CLAUDE.md → Tech Stack, Constraints
+- package.json → Dependencies, Frameworks
+- Code structure → Architecture patterns
+
+#### Flags
+
 **Quick mode** (skip guided creation):
 ```bash
 /cf:init MyProject --quick
+```
+
+**Force fresh** (ignore existing docs):
+```bash
+/cf:init MyProject --force-fresh
 ```
 
 ## Your First Feature

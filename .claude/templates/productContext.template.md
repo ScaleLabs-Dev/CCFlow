@@ -1,5 +1,8 @@
 # Product Context: [Project Name]
 
+<!-- IMPORT NOTE: This file may be pre-populated from existing project documentation -->
+<!-- Product information may be imported from README.md or other docs -->
+
 **Version**: 1.0
 **Created**: [YYYY-MM-DD]
 **Last Updated**: [YYYY-MM-DD]
@@ -7,6 +10,7 @@
 ---
 
 ## Problem → Solution Mapping
+<!-- IMPORT SOURCE: README.md or manual entry -->
 
 ### Problems We're Solving
 

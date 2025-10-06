@@ -23,16 +23,36 @@ CCFlow is a comprehensive workflow system for Claude Code that provides structur
 
 ## Quick Start
 
-### 1. Initialize a New Project
+### 1. Initialize Your Project
 
+#### New Project
 ```bash
 /cf:init MyProject
 ```
 
-This creates:
+#### Existing Project (Auto-Import)
+```bash
+/cf:init MyProject
+# Detects README.md, CLAUDE.md, package.json
+# Offers to import existing documentation
+# Pre-populates memory bank → validate → fill gaps
+```
+
+#### Force Fresh (Ignore Existing Docs)
+```bash
+/cf:init MyProject --force-fresh
+```
+
+**What gets created:**
 - `memory-bank/` directory with 6 core files
-- `.claude/` directory with agents and commands (if needed)
-- Project-specific context populated
+- Project context (imported from docs OR guided creation)
+- Foundation for structured development
+
+**Import Sources** (if detected):
+- README.md → Executive Summary, Features, Problem Statement
+- CLAUDE.md → Tech Stack, Constraints, Patterns
+- package.json → Dependencies, Framework detection
+- Code structure → Architecture style, Component patterns
 
 ### 2. Customize Hub Agents (Important!)
 
@@ -82,7 +102,8 @@ Component Conventions: [Naming, structure]
 ### Initialization (2)
 | Command | Purpose |
 |---------|---------|
-| `/cf:init [project-name]` | Bootstrap new project with memory bank |
+| `/cf:init [project-name]` | Bootstrap project with memory bank (auto-imports existing docs) |
+| `/cf:init [project-name] --force-fresh` | Bootstrap with empty templates (ignore existing docs) |
 | `/cf:sync` | Read-only memory bank status summary |
 
 ### Core Workflow (3)

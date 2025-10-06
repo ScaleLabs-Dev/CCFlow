@@ -6,18 +6,39 @@ Complete reference for all 12 `/cf:*` commands.
 
 ### /cf:init [project-name]
 
-**Purpose:** Bootstrap CCFlow memory bank and guided project brief creation
+**Purpose:** Bootstrap CCFlow memory bank with auto-import from existing project docs
 
 **Syntax:**
 ```bash
-/cf:init MyProject
-/cf:init MyProject --quick  # Skip guided brief, create stubs
+/cf:init MyProject                    # Auto-detect (import or fresh)
+/cf:init MyProject --quick            # Skip guided brief, create stubs
+/cf:init MyProject --force-fresh      # Ignore existing docs, start fresh
 ```
 
 **What it does:**
+
+**Phase 0: Discovery** (Auto-detection)
+- Scans for README.md, CLAUDE.md, package.json, code structure
+- Parses content for project information
+- If found: Offers to import existing documentation
+- If not found: Proceeds with fresh initialization
+
+**Import Mode** (if docs detected and user accepts):
+1. Pre-populates memory bank from discovered content
+2. Validates imported information with user (5-10 minutes)
+3. Fills gaps through guided questions
+4. Creates complete project foundation
+
+**Fresh Mode** (new projects or --force-fresh):
 1. Creates `memory-bank/` directory with 6 core files
-2. Runs guided project brief creation (Facilitator + Product + Architect)
-3. Creates project foundation (10-20 minutes investment)
+2. Runs guided project brief creation (10-20 minutes)
+3. Facilitator + Product + Architect guide you through requirements
+
+**Import Sources:**
+- README.md → Executive Summary, Features, Problem Statement
+- CLAUDE.md → Tech Stack, Constraints, Patterns
+- package.json → Dependencies, Framework detection
+- Code structure (src/, components/, api/) → Architecture style
 
 **When to use:** Once per project, at the very beginning
 
