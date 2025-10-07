@@ -34,6 +34,11 @@ This copies:
 
 **What happens:**
 - Creates `memory-bank/` directory with 6 core files
+- **Phase 1.5: Configures agents for your tech stack** (2-5 minutes, mostly automated)
+  - Reads CLAUDE.md for your tech stack, conventions, patterns
+  - Auto-detects from package.json and code structure
+  - Prompts only for critical gaps
+  - Populates agent templates with your configuration
 - Runs guided project brief creation (10-20 minutes)
 - Facilitator agent helps you define scope, goals, and requirements
 
@@ -51,9 +56,11 @@ This copies:
 
 **Import sources:**
 - README.md → Executive Summary, Features
-- CLAUDE.md → Tech Stack, Constraints
+- **CLAUDE.md → Tech Stack, Conventions, Patterns** (populates agent configuration!)
 - package.json → Dependencies, Frameworks
 - Code structure → Architecture patterns
+
+💡 **TIP**: If your project has a CLAUDE.md with Tech Stack, Conventions, and Architecture sections, agent configuration will be almost entirely automated!
 
 #### Flags
 

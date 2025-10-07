@@ -28,6 +28,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Key Distinction**: Workflow agents orchestrate and plan; implementation agents execute code changes.
 
+**Template-Based Configuration**:
+- Generic agent templates live in `.claude/templates/agents/`
+- During `/cf:init`, templates are configured for project's tech stack
+- Configuration sources (priority): CLAUDE.md > Auto-detection > Defaults
+- Phase 1.5 of init: Extract config → Populate templates → Write configured agents
+- CCFlow's own agents (`.claude/agents/`) are customized for self-development
+- See [Agent Template README](.claude/templates/agents/README.md) for details
+
 ### 2. Memory Bank as Single Source of Truth
 
 Located in `memory-bank/` directory (created per-project, NOT in this repo):
