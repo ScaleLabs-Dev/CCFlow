@@ -178,7 +178,7 @@ Effort: 4-6 hours
 If memory bank files don't exist:
 ```
 ⚠️ Memory bank not initialized.
-Please run: /cf:init [project-name]
+Please run: /cf:init
 ```
 
 If codebase scan fails:

@@ -1,4 +1,4 @@
-# System Patterns: [Project Name]
+# System Patterns
 
 <!-- IMPORT NOTE: This file may be pre-populated from existing project documentation -->
 <!-- Tech stack information is often imported from CLAUDE.md and package.json -->

@@ -1,4 +1,4 @@
-# Active Context: [Project Name]
+# Active Context
 
 <!-- NOTE: This file tracks current work and is rarely pre-populated during import -->
 

@@ -1,7 +1,7 @@
 ---
 description: "Initialize CCFlow workflow system with guided project brief creation"
 allowed-tools: ['Read', 'Write', 'Glob', 'Bash(ls:*)', 'Task']
-argument-hint: "[project-name] [--quick] [--force-fresh]"
+argument-hint: "[--quick] [--force-fresh]"
 ---
 
 # Command: /cf:init
@@ -9,13 +9,10 @@ argument-hint: "[project-name] [--quick] [--force-fresh]"
 ## Usage
 
 ```
-/cf:init [project-name]
-/cf:init [project-name] --quick
+/cf:init
+/cf:init --quick
+/cf:init --force-fresh
 ```
-
-## Parameters
-
-- `[project-name]`: **Required** - Name of the project to initialize
 
 ## Flags
 
@@ -93,7 +90,7 @@ Check for common project files:
 
 **If NO files found** (brand new project):
 ```
-🚀 Initializing CCFlow for: [project-name]
+🚀 Initializing CCFlow...
 
 No existing documentation found.
 Proceeding with fresh project initialization...
@@ -103,7 +100,7 @@ Proceeding with fresh project initialization...
 
 **If --force-fresh flag used**:
 ```
-🚀 Initializing CCFlow for: [project-name]
+🚀 Initializing CCFlow...
 
 Skipping discovery (--force-fresh flag).
 Proceeding with fresh project initialization...
@@ -209,7 +206,7 @@ done
 
 **Output**:
 ```
-🚀 Initializing CCFlow for: [project-name]
+🚀 Initializing CCFlow...
 
 Creating structure...
 ✓ memory-bank/ (6 files)
@@ -624,7 +621,7 @@ Ready to customize or jump to development?
 Skip Phase 2, create stubs:
 
 ```
-🚀 Initializing CCFlow for: [project-name] (Quick Mode)
+🚀 Initializing CCFlow... (Quick Mode)
 
 ✓ Structure created
 ✓ Stub files with TODOs created
@@ -680,7 +677,7 @@ OR run /cf:init WITHOUT --quick for guided creation
 ### Example: Interactive Session (Abbreviated)
 
 ```
-User: /cf:init task-manager
+User: /cf:init
 
 [Structure creation...]
 
@@ -763,12 +760,6 @@ User: Yes
 ⚠️ CCFlow Already Initialized
 Memory bank exists. To view: /cf:sync
 To reinitialize: Delete memory-bank/ first
-```
-
-### Missing Project Name
-```
-❌ Error: Project name required
-Usage: /cf:init [project-name]
 ```
 
 ### Templates Missing

@@ -1,4 +1,4 @@
-# Tasks: [Project Name]
+# Tasks
 
 <!-- NOTE: This file tracks tasks and is created fresh during initialization -->
 

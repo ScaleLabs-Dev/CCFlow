@@ -1,4 +1,4 @@
-# Project Brief: [Project Name]
+# Project Brief
 
 <!-- IMPORT NOTE: This file may be pre-populated from existing project documentation -->
 <!-- Sections marked with [IMPORTED FROM: source] were auto-detected from your project -->
