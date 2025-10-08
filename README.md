@@ -14,7 +14,7 @@ CCFlow is a comprehensive workflow system for Claude Code that provides structur
 - 🎯 **Two-layer agent architecture** (workflow coordination + implementation)
 - ✅ **TDD workflow with 100% GREEN gate** (tests must pass)
 - 📚 **Memory bank system** for persistent project context
-- 🤖 **12 commands** under `/cf:` namespace
+- 🤖 **13 commands** under `/cf:` namespace
 - 👥 **9 agents** (6 workflow + 3 hub) + specialist extensibility
 - 📊 **4-level complexity assessment** for intelligent routing
 - 🔄 **Interactive modes** for ambiguous requirements
@@ -113,11 +113,12 @@ Component Conventions: [Naming, structure]
 | `/cf:plan TASK-[ID] [--interactive]` | Plan Level 2-4 tasks | Architect, Product, Facilitator |
 | `/cf:code TASK-[ID]` | TDD implementation with GREEN gate | testEngineer, Hub agents |
 
-### Support (6)
+### Support (7)
 | Command | Purpose | Agent(s) |
 |---------|---------|----------|
+| `/cf:git [-m "..."] [--all\|--staged]` | Create git commits with smart messages | None (git operations) |
 | `/cf:review [task-id\|all]` | Quality assessment | Reviewer |
-| `/cf:checkpoint [--message "..."]` | Save progress | Documentarian |
+| `/cf:checkpoint [--message "..."]` | Save project state | Documentarian |
 | `/cf:ask [question]` | Query memory bank | None (semantic search) |
 | `/cf:context [--full]` | Load work context | None (file reads) |
 | `/cf:status [--filter ...]` | Quick task overview | None (file reads) |

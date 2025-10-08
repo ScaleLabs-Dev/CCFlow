@@ -1,6 +1,6 @@
 # CCFlow Command Reference
 
-Complete reference for all 12 `/cf:*` commands.
+Complete reference for all 13 `/cf:*` commands.
 
 ## Initialization Commands
 
@@ -61,6 +61,65 @@ Complete reference for all 12 `/cf:*` commands.
 - Gaps or inconsistencies
 
 **When to use:** To understand current project state without making changes
+
+---
+
+### /cf:git
+
+**Purpose:** Create focused git commits with intelligent message generation
+
+**Syntax:**
+```bash
+/cf:git                          # Interactive: analyze and suggest message
+/cf:git -m "commit message"      # Quick commit with custom message
+/cf:git --all                    # Stage all changes before committing
+/cf:git --staged                 # Commit only staged files
+/cf:git --no-update              # Skip memory bank update
+```
+
+**What it does:**
+1. Analyzes git changes (staged/unstaged/untracked files)
+2. Detects sensitive files (.env, credentials, keys) and blocks if found
+3. Warns if on main/master branch (suggests feature branch)
+4. Generates intelligent commit message based on changes (or uses custom message)
+5. Follows project's commit message convention (auto-detected)
+6. Creates git commit
+7. Updates `activeContext.md` Recent Changes (unless --no-update)
+
+**Key Features:**
+- **Safety checks**: Blocks sensitive files, warns about main/master branch
+- **Smart messages**: Analyzes changes, follows project conventions
+- **Memory integration**: Updates activeContext.md with commit info
+- **Flexible staging**: Interactive, --all, or --staged modes
+- **Standalone mode**: Works without memory bank (git-only)
+
+**vs /cf:checkpoint:**
+- `/cf:git` = VERSION CONTROL (git commits, code history)
+- `/cf:checkpoint` = PROJECT MEMORY (documentation state, milestones)
+- Different purposes, complementary use
+
+**When to use:**
+- After implementing features (`/cf:code` completion)
+- Incremental commits during development
+- End of session (commit work in progress)
+- Quick fixes and updates
+
+**Examples:**
+```bash
+# After feature implementation
+/cf:code TASK-005
+/cf:git -m "feat(auth): implement JWT token authentication"
+
+# Interactive mode (AI suggests message)
+/cf:git
+# Shows changes, suggests message, asks for approval
+
+# Bulk commit at end of session
+/cf:git --all -m "refactor: simplify error handling logic"
+
+# Quick fix without memory update
+/cf:git -m "fix: typo in login button" --no-update
+```
 
 ---
 
