@@ -193,15 +193,27 @@ To reinitialize: Manually delete memory-bank/ first (⚠️ destroys data)
 ```bash
 # Create directories
 mkdir -p memory-bank
-mkdir -p .claude/agents/{workflow,development/specialists,testing/specialists,ui/specialists}
+mkdir -p .claude/agents/{workflow,specialists}
 mkdir -p .claude/commands
 
-# Copy template files from .claude/templates/ (remove .template extension)
+# Copy memory bank template files from .claude/templates/ (remove .template extension)
 for template in .claude/templates/*.template.md; do
   cp "$template" "memory-bank/$(basename "$template" .template.md).md"
 done
 
-# Agent templates will be populated in Phase 1.5 (see below)
+# Copy workflow agents
+cp .claude/templates/agents/workflow/*.template.md .claude/agents/workflow/
+# Remove .template extension from workflow agents
+for file in .claude/agents/workflow/*.template.md; do
+  mv "$file" "${file%.template.md}.md"
+done
+
+# Copy generic implementation agents (universal fallbacks)
+cp .claude/templates/generic/codeImplementer.template.md .claude/agents/codeImplementer.md
+cp .claude/templates/generic/testEngineer.template.md .claude/agents/testEngineer.md
+cp .claude/templates/generic/uiDeveloper.template.md .claude/agents/uiDeveloper.md
+
+# Note: Stack-specific agents added later with /cf:configure-team
 ```
 
 **Output**:
@@ -210,218 +222,41 @@ done
 
 Creating structure...
 ✓ memory-bank/ (6 files)
-✓ .claude/agents/ (3 hub agents)
+✓ .claude/agents/workflow/ (6 agents)
+✓ .claude/agents/ (3 generic implementation agents)
+✓ .claude/agents/specialists/ (empty, for future specialists)
 
 Structure created successfully!
 ```
 
 ---
 
-### Phase 1.5: Agent Configuration (Hybrid Approach)
+### Phase 1.5: Agent Installation Complete
 
-**Purpose**: Configure implementation agents for this project's tech stack and conventions.
+**Purpose**: Generic agents are now installed and ready to use.
 
-**Duration**: 2-5 minutes (mostly automated)
+**What Was Installed**:
+- **Workflow agents**: Assessor, Architect, Product, Facilitator, Documentarian, Reviewer (no configuration needed)
+- **Generic implementation agents**: codeImplementer, testEngineer, uiDeveloper (framework-agnostic, work with any stack)
 
-**Method**: Extract simple patterns from CLAUDE.md + package.json, apply defaults for gaps
+**No Configuration Needed**: Generic agents use universal patterns that work across all tech stacks. They adapt to your project by reading CLAUDE.md and systemPatterns.md during execution.
 
-**References**:
-- Extraction logic: `.claude/init-helpers/config-extractor.md`
-- Population logic: `.claude/init-helpers/template-populator.md`
-- Configuration schema: `.claude/templates/agents/CONFIGURATION_SCHEMA.md`
+**Next Step (Optional)**: For stack-specific optimization, run `/cf:configure-team` after initialization completes.
 
-**Agents**: None (direct command logic with simple extraction)
-
----
-
-**Step 1: Extract Configuration from CLAUDE.md**
-
-If `CLAUDE.md` exists in project root:
+**Agents Installation Summary**:
 ```
-📖 Reading CLAUDE.md for project configuration...
+✅ AGENTS INSTALLED
 
-Extracted:
-✓ Tech Stack: JavaScript, Express, PostgreSQL
-✓ Testing: Jest with 85% coverage
-✓ Quality: 85% lines, 80% branches
-```
+Workflow Agents (6):
+✓ Assessor, Architect, Product, Facilitator, Documentarian, Reviewer
 
-Simple regex extraction for obvious key-value pairs:
-- **Tech Stack section**: `Language:`, `Framework:`, `Database:`, `Testing:`, `Frontend:`
-- **Quality Standards section**: Coverage percentages for lines/branches/functions
+Generic Implementation Agents (3):
+✓ codeImplementer (universal backend/logic)
+✓ testEngineer (universal testing)
+✓ uiDeveloper (universal UI/frontend)
 
-See [config-extractor.md](../.claude/init-helpers/config-extractor.md) for extraction patterns.
-
----
-
-**Step 2: Auto-Detect from Project Structure**
-
-If `package.json` exists, detect frameworks and libraries:
-
-```
-🔍 Auto-detecting from package.json...
-
-Found:
-✓ Dependencies → Express (backend framework)
-✓ Dependencies → React (UI framework)
-✓ Dependencies → pg (PostgreSQL database)
-✓ DevDependencies → Jest (testing framework)
-✓ DevDependencies → TypeScript (language)
-```
-
-Simple dependency name matching:
-- **Frameworks**: express, fastify, react, vue, next, etc.
-- **Databases**: pg, mysql, mongodb, mongoose
-- **Testing**: jest, vitest, mocha, playwright
-- **Language**: TypeScript presence in dependencies
-
-See [config-extractor.md](../.claude/init-helpers/config-extractor.md) for detection logic.
-
----
-
-**Step 3: Merge Configuration (Priority: CLAUDE.md > package.json > Defaults)**
-
-Combine extracted, detected, and default configuration:
-```
-🔧 Merging configuration...
-
-Final configuration (47 placeholders):
-- Language: JavaScript (CLAUDE.md)
-- Framework: Express (CLAUDE.md)
-- Database: PostgreSQL (package.json)
-- Testing: Jest (package.json)
-- Naming: camelCase (default)
-- Indentation: 2 spaces (default)
-- Coverage: 85% lines (CLAUDE.md), 80% branches (default)
-- UI Framework: React (package.json)
-- ... (40 more placeholders filled from defaults)
-```
-
-Gaps filled with sensible defaults from CONFIGURATION_SCHEMA.md:
-```
-📝 Using defaults for:
-- VAR_NAMING: camelCase (no explicit config)
-- INDENTATION: 2 spaces (no explicit config)
-- ERROR_PATTERN: Standard try/catch (no explicit config)
-- ... (other conventions and patterns)
-```
-
----
-
-**Step 4: Interactive Prompts (Rarely Needed)**
-
-With comprehensive defaults, prompting is rare. Only prompt for truly ambiguous cases:
-
-**Typical case (no prompts - 95% of projects)**:
-```
-✅ Configuration complete!
-   - CLAUDE.md: 4 values extracted
-   - package.json: 5 values detected
-   - Defaults: 38 values applied
-
-Proceeding to template population...
-```
-
-**Rare case (ambiguous framework)**:
-```
-⚠️ Multiple backend frameworks detected:
-   - express (v4.18)
-   - fastify (v4.0)
-
-Which is primary?
-[1] Express  [2] Fastify
-
-Choice: _
-```
-
-**Hybrid philosophy**: Extract what's obvious, default the rest, only ask when truly unclear.
-
----
-
-**Step 5: Load and Populate Agent Templates**
-
-```
-🎨 Configuring implementation agents...
-
-Loading templates from .claude/templates/agents/...
-✓ codeImplementer.template.md
-✓ testEngineer.template.md
-✓ uiDeveloper.template.md
-✓ Workflow agents (6 files - no placeholders, copied as-is)
-
-Populating with project configuration (47 placeholders)...
-- Replacing {{LANGUAGE}} with JavaScript
-- Replacing {{FRAMEWORK}} with Express
-- Replacing {{TEST_FRAMEWORK}} with Jest
-- Replacing {{VAR_NAMING}} with camelCase
-- Replacing {{MIN_LINES}} with 80
-- ... (42 more placeholder replacements)
-
-Writing configured agents to .claude/agents/...
-✓ .claude/agents/development/codeImplementer.md (fully configured)
-✓ .claude/agents/testing/testEngineer.md (fully configured)
-✓ .claude/agents/ui/uiDeveloper.md (fully configured)
-✓ .claude/agents/workflow/ (6 agents copied)
-✓ .claude/agents/*/specialists/ (empty, ready for specialists)
-```
-
-**Technical Details**:
-- Simple string replacement: `{{PLACEHOLDER}}` → value
-- Workflow agents have no placeholders (generic by design)
-- Implementation agents have 47 placeholders total
-- All placeholders replaced (none left as {{MISSING}})
-
-See [template-populator.md](../.claude/init-helpers/template-populator.md) for replacement algorithm.
-
----
-
-**Step 6: Validation and Summary**
-
-```
-✅ AGENTS CONFIGURED SUCCESSFULLY
-
-Configuration sources:
-- CLAUDE.md: 4 values extracted
-- package.json: 5 values detected
-- Defaults: 38 values applied
-
-Implementation agents customized for your project:
-
-📦 codeImplementer (19 placeholders configured)
-   - Language: JavaScript (CLAUDE.md)
-   - Framework: Express (CLAUDE.md)
-   - Database: PostgreSQL (package.json)
-   - Conventions: camelCase, 2 spaces (defaults)
-   - Patterns: Service layer pattern (default)
-
-🧪 testEngineer (12 placeholders configured)
-   - Framework: Jest (package.json)
-   - Coverage: 85% lines (CLAUDE.md), 80% branches/functions (defaults)
-   - Directory: tests/ (default)
-   - File pattern: *.test.js (default)
-
-🎨 uiDeveloper (16 placeholders configured)
-   - Framework: React (package.json)
-   - Language: TypeScript (package.json)
-   - State: Context API (default)
-   - Styling: CSS Modules (default)
-   - Accessibility: WCAG 2.1 AA (default)
-
-🔄 Workflow agents: 6 generic agents (no customization needed)
-
-📁 Specialist directories: .claude/agents/{development,testing,ui}/specialists/
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-💡 HYBRID APPROACH:
-   ✓ Extracted obvious values from CLAUDE.md + package.json
-   ✓ Applied sensible defaults for conventions and patterns
-   ✓ All 47 placeholders filled - agents ready to use
-
-   To refine: Edit .claude/agents/ files OR update CLAUDE.md and re-init
-   To add specialists: /cf:create-specialist [domain] [type]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ℹ️ Generic agents work with ALL tech stacks
+ℹ️ Configure stack-specific team: /cf:configure-team
 ```
 
 ---
@@ -432,25 +267,15 @@ Implementation agents customized for your project:
 ```
 ⚠️ Agent Templates Not Found
 
-Expected location: .claude/templates/agents/
+Expected location: .claude/templates/generic/
 This suggests CCFlow installation issue.
 
 Please ensure CCFlow is properly installed with template files.
 ```
 
-**If configuration extraction fails**:
+**If file copy fails**:
 ```
-⚠️ Configuration Extraction Failed
-
-Could not parse CLAUDE.md or detect project structure.
-Falling back to interactive configuration...
-
-[Prompt for all configuration values]
-```
-
-**If template population fails**:
-```
-⚠️ Agent Configuration Failed
+⚠️ Agent Installation Failed
 
 Template: codeImplementer.template.md
 Error: [Error message]

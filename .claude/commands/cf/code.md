@@ -119,24 +119,65 @@ Extract task information:
 
 ### Step 3: Identify Implementation Agent
 
-Based on task type, identify appropriate hub agent:
+**Multi-Step Selection Process**:
 
-**Decision Logic**:
+#### 3.1: Check for Team Configuration
 
-**If task involves backend/server/API/business logic**:
-→ Use `codeImplementer` hub agent
+**Read routing.md** (if exists):
+```bash
+if [ -f .claude/agents/routing.md ]; then
+  # Team configured - use routing logic
+else
+  # No team - use generic agents
+fi
+```
 
-**If task involves UI/components/frontend**:
-→ Use `uiDeveloper` hub agent
+#### 3.2: Extract Keywords from Task
 
-**If task involves ONLY testing (no implementation)**:
-→ Use `testEngineer` hub agent
+Analyze task description for domain indicators:
+- **Backend keywords**: api, endpoint, route, server, backend, database, auth
+- **Frontend keywords**: component, ui, page, form, frontend, react, vue, hooks
+- **Performance keywords**: optimization, memoization, performance, slow
+- **Database keywords**: query, schema, migration, model, sequelize, database
+- **Testing keywords**: test, spec, testing, coverage
+
+#### 3.3: Select Agent Using Routing Logic
+
+**If routing.md exists** (team configured):
+
+1. Match task keywords to routing.md agent scopes
+2. Select stack-specific agent:
+   - Backend work → expressBackend (or stack-specific backend agent)
+   - Frontend work → reactFrontend (or stack-specific frontend agent)
+   - Testing → jestTest (or stack-specific test agent)
+
+3. Check if agent file exists:
+   ```
+   .claude/agents/[agentName].md
+   ```
+
+4. If exists → Use stack-specific agent
+5. If missing → Fall back to generic agent (from routing.md fallback path)
+
+**If routing.md does NOT exist** (generic fallback):
+
+Select based on task type:
+- **Backend/server/API/business logic** → `codeImplementer` (generic)
+- **UI/components/frontend** → `uiDeveloper` (generic)
+- **Testing only** → `testEngineer` (generic)
 
 **If user specified --agent flag**:
-→ Use specified agent
+→ Override routing, use specified agent
 
-**Example Invocation**:
-"Use the codeImplementer agent to implement: [task description]"
+**Agent Invocation Pattern**:
+
+*For stack-specific agents*:
+"Use the [stackAgent] agent to implement: [task description]"
+→ Stack agent will delegate to specialists as needed per routing.md
+
+*For generic agents*:
+"Use the [genericAgent] agent to implement: [task description]"
+→ Generic agent handles all work directly (no specialist delegation)
 
 ---
 
@@ -860,10 +901,14 @@ Proceeding with codeImplementer...
 
 - **GREEN GATE is absolute** - no task complete without all tests passing
 - TDD is enforced by default, use `--impl-only` sparingly
-- Hub agents coordinate and may delegate to specialists
+- **Agent routing**: Reads `routing.md` (if exists) for stack-specific agent selection
+- **Fallback chain**: Stack-specific → Generic → Error
+- **Generic agents** handle all work directly (no specialist delegation)
+- **Stack-specific agents** can delegate to specialists per routing.md
 - Interactive mode (`--interactive`) useful for complex or unclear tasks
 - Maximum 3 iteration attempts before escalation
 - Memory bank only updated when tests GREEN
+- Configure team with `/cf:configure-team` for stack-specific agents
 
 ---
 
@@ -871,6 +916,7 @@ Proceeding with codeImplementer...
 
 - `/cf:feature` - Create task before coding
 - `/cf:plan` - Plan Level 2+ tasks before coding
+- `/cf:configure-team` - Configure stack-specific implementation team
 - `/cf:review` - Review code quality after implementation
 - `/cf:checkpoint` - Save state with all changes
 - `/cf:create-specialist` - Create specialist agents as needed
