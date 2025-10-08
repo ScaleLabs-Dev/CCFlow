@@ -110,7 +110,13 @@ Warn user and ask if they want to overwrite
 
 ### Step 4: Create Specialist Agent File
 
-**Generate specialist agent** using template structure:
+**Engage AgentBuilder agent** to generate specialist:
+- Provides domain, type, and name
+- AgentBuilder generates token-efficient specialist (400-800 tokens)
+- Applies universal agent standards and structure
+- Validates quality against rubric
+
+**Alternative (if AgentBuilder unavailable)**: Use template structure below:
 
 ```markdown
 ---
@@ -819,6 +825,7 @@ These should exist from /cf:init. If missing, re-run initialization.
 - `/cf:init` - Initialize project (creates hub agents)
 - `/cf:code` - Implementation command (hub agents delegate to specialists)
 - `/cf:sync` - Review project status (includes agent structure)
+- `/cf:refine-agent` - Optimize specialist agents for token efficiency
 
 ---
 

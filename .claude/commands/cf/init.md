@@ -796,6 +796,7 @@ Ensure running from CCFlow directory
 - **--quick available** (for manual completion preference)
 - **Idempotent** (warns if already initialized)
 - **Hub agents need customization** (fill TODOs before use)
+- **AgentBuilder available** (use `/cf:refine-agent` to optimize verbose agents post-init)
 
 ---
 
