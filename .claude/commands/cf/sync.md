@@ -47,7 +47,7 @@ Check if `memory-bank/` directory exists:
 
 CCFlow memory bank not found.
 
-To initialize, run: /cf:init [project-name]
+To initialize, run: /cf:init
 
 Example: /cf:init MyProject
 ```
@@ -614,7 +614,7 @@ OR start next priority:
 
 CCFlow memory bank not found at: memory-bank/
 
-To initialize, run: /cf:init [project-name]
+To initialize, run: /cf:init
 
 Example: /cf:init TaskManager
 

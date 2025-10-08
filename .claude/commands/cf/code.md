@@ -44,7 +44,7 @@ Execute task implementation with:
 
 ## Prerequisites
 
-- **Memory bank initialized**: Run `/cf:init [project-name]` first
+- **Memory bank initialized**: Run `/cf:init` first
 - **Task exists**: Use `/cf:feature` or `/cf:plan` to create tasks
 - **Hub agents customized**: Complete TODO sections in `.claude/agents/`
 
@@ -779,7 +779,7 @@ Memory bank NOT updated (tests must be GREEN first).
 ```
 ⚠️ Memory Bank Not Initialized
 
-Run: /cf:init [project-name]
+Run: /cf:init
 ```
 
 ### Task Not Found

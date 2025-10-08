@@ -33,7 +33,7 @@ Create custom specialist agents for specific technical domains:
 
 ## Prerequisites
 
-**Memory bank must be initialized**. Run `/cf:init [project-name]` first if needed.
+**Memory bank must be initialized**. Run `/cf:init` first if needed.
 
 **.claude/agents directory structure exists**. Should exist from initialization.
 
@@ -68,7 +68,7 @@ Check if `memory-bank/` and `.claude/agents/` directories exist:
 ```
 ⚠️ Memory Bank Not Initialized
 
-Run: /cf:init [project-name]
+Run: /cf:init
 ```
 
 **Stop execution.**
@@ -680,9 +680,8 @@ Claude:
 
 Memory bank not found at: memory-bank/
 
-To initialize, run: /cf:init [project-name]
+To initialize, run: /cf:init
 
-Example: /cf:init MyProject
 ```
 
 ### Missing Required Parameter
@@ -765,7 +764,7 @@ These should exist from /cf:init. If missing, re-run initialization.
 
 ```
 # During project setup - create core specialists
-/cf:init MyProject → Initialize
+/cf:init → Initialize
 /cf:create-specialist database --type development --name databaseSpecialist
 /cf:create-specialist api-integration --type testing --name apiIntegrationSpecialist
 [Customize specialists before first use]

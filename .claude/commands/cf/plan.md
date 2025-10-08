@@ -38,7 +38,7 @@ Create comprehensive implementation plan by:
 
 ## Prerequisites
 
-- **Memory bank initialized**: Run `/cf:init [project-name]` first
+- **Memory bank initialized**: Run `/cf:init` first
 - **Task exists**: Use `/cf:feature [description]` to create task first
 - **Task requires planning**: Level 2-4 complexity (Level 1 can skip directly to `/cf:code`)
 
@@ -51,7 +51,7 @@ Create comprehensive implementation plan by:
 **Check memory bank exists**:
 ```
 If NOT EXISTS:
-⚠️ Memory bank not initialized. Run: /cf:init [project-name]
+⚠️ Memory bank not initialized. Run: /cf:init
 ```
 
 **Check task exists in tasks.md**:

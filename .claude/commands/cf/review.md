@@ -32,7 +32,7 @@ Engage the Reviewer agent to:
 
 ## Prerequisites
 
-**Memory bank must be initialized**. Run `/cf:init [project-name]` first if needed.
+**Memory bank must be initialized**. Run `/cf:init` first if needed.
 
 **Active code to review**. Use after implementation work, not before starting.
 
@@ -48,7 +48,7 @@ Check if `memory-bank/` directory exists:
 ```
 ⚠️ Memory Bank Not Initialized
 
-Run: /cf:init [project-name]
+Run: /cf:init
 ```
 
 **Stop execution.**
@@ -519,7 +519,7 @@ Full pattern analysis in systemPatterns.md.
 
 Memory bank not found at: memory-bank/
 
-To initialize, run: /cf:init [project-name]
+To initialize, run: /cf:init
 
 Example: /cf:init MyProject
 ```
