@@ -190,7 +190,7 @@ project/
 
 → This task requires specialized expertise in [domain].
 
-  Recommend creating specialist: /cf:create-specialist [name] development
+  Recommend creating specialist: /cf:create-specialist [domain] --type development --name [specialistName]
 
 OR
 

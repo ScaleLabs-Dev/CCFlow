@@ -21,20 +21,45 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Documentarian**: Memory bank maintenance, cross-file consistency
 - **Reviewer**: Code quality assessment, technical debt tracking
 
-**Implementation Layer** (`.claude/agents/{testing,development,ui}/`):
-- **Implementation agents**: Stack-agnostic coordinators (testEngineer, codeImplementer, uiDeveloper)
-- **Specialists**: Created on-demand for specific tech stacks/domains (in `specialists/` subdirs)
-- Implementation agents delegate to specialists, never implement directly
+**Product Teams Architecture** (`.claude/agents/`):
 
-**Key Distinction**: Workflow agents orchestrate and plan; implementation agents execute code changes.
+CCFlow uses a two-tier implementation model:
 
-**Template-Based Configuration**:
-- Generic agent templates live in `.claude/templates/agents/`
-- During `/cf:init`, templates are configured for project's tech stack
-- Configuration sources (priority): CLAUDE.md > Auto-detection > Defaults
-- Phase 1.5 of init: Extract config → Populate templates → Write configured agents
-- CCFlow's own agents (`.claude/agents/`) are customized for self-development
-- See [Agent Template README](.claude/templates/agents/README.md) for details
+**1. Generic Agents** (`.claude/agents/generic/` in user projects):
+- **Purpose**: Universal fallbacks that work with any tech stack
+- **Agents**: codeImplementer, testEngineer, uiDeveloper
+- **Behavior**: Handle ALL tasks directly, NO specialist delegation
+- **Patterns**: Framework-agnostic best practices from CLAUDE.md and systemPatterns.md
+- **When used**: Default after `/cf:init`, or when no stack-specific team configured
+
+**2. Stack-Specific Teams** (`.claude/agents/[domain]/[stack]/` in user projects):
+- **Purpose**: Optimized for specific tech stacks (React-Express, React Native, LangChain, etc.)
+- **Structure**:
+  - `core/` - Framework-aware implementation agents (e.g., expressBackend, reactFrontend, jestTester)
+  - `specialists/` - Domain experts (e.g., sequelizeDb, jwtAuth, reactPerformance)
+  - `routing.md` - Keyword-based delegation rules
+- **Behavior**: Core agents delegate to specialists based on keywords
+- **Configuration**: Via `/cf:configure-team` command (auto-detection or custom creation)
+
+**3. CCFlow's Own Agents** (`.claude/agents/` in THIS repo):
+- **Purpose**: Customized for CCFlow's self-development (markdown specs, commands, agents)
+- **Location**: `development/`, `testing/`, `ui/`, `workflow/`, `system/`
+- **Note**: These are CCFlow's working agents, not templates for user projects
+- **Specialists**: Empty `specialists/` subdirs (CCFlow doesn't need stack-specific specialists)
+
+**Key Distinctions**:
+- Workflow agents → orchestrate and plan
+- Generic agents → implement directly without delegation
+- Stack-specific agents → delegate to specialists
+- CCFlow's agents → customized for specification system work
+
+**Template System**:
+- Generic templates: `.claude/templates/generic/` (3 agents)
+- Stack templates: `.claude/templates/team-types/` (pre-built stacks like React-Express)
+- Blank templates: `.claude/templates/blank-agents/` (for custom team creation)
+- `/cf:init` installs workflow + generic agents
+- `/cf:configure-team` installs stack-specific teams
+- See templates for configuration placeholders
 
 ### 2. Memory Bank as Single Source of Truth
 
@@ -197,15 +222,28 @@ outputs: [file1.md, file2.md]
 
 **Critical**: Validate frontmatter YAML syntax - Phase 8 validation checks this.
 
-### Creating New Specialists
+### Configuring Implementation Teams
 
-Use `/cf:create-specialist` command, which:
-1. Prompts for domain, type (testing/development/ui), name
-2. Creates file in appropriate `specialists/` subdirectory
-3. Generates agent template with proper frontmatter
-4. Updates implementation agent to recognize specialist
+**For user projects**, CCFlow provides two commands:
 
-**Specialist Pattern**: Implementation agents detect repeated delegation patterns (3+ times) and recommend specialist creation.
+**1. `/cf:configure-team`** - Set up stack-specific teams:
+- Auto-detects tech stack from package.json, systemPatterns.md, directory structure
+- Installs pre-built templates (React-Express, React Native, LangChain)
+- OR guides custom team creation via Facilitator
+- Creates: core agents + specialists + routing.md
+- Updates systemPatterns.md with team configuration
+
+**2. `/cf:create-specialist`** - Add specialists to existing teams:
+- Prerequisites: Must run `/cf:configure-team` first
+- Only works with stack-specific teams (NOT generic agents)
+- Creates specialist in `specialists/` subdirectory
+- Updates parent core agent to recognize new specialist
+- Pattern: After 3+ delegations to same domain, recommend specialist creation
+
+**For CCFlow itself**:
+- CCFlow's agents in `.claude/agents/` are already configured
+- Specialists would only be needed if CCFlow's work becomes more specialized
+- Currently, empty `specialists/` subdirs indicate no need for specialization
 
 ## Development Workflow for This Repository
 
@@ -288,12 +326,25 @@ No iteration limits - user controls the loop.
 
 ### Pattern: Implementation Agent Delegation
 
-Implementation agents follow:
+**Generic agents** (user projects without configured team):
 ```
-Load systemPatterns.md → Check for specialist → Delegate OR implement directly → Verify tests pass → Update memory bank
+Load systemPatterns.md + CLAUDE.md → Implement directly (NO delegation) → Verify tests pass → Update memory bank
 ```
+- Handle everything using framework-agnostic patterns
+- Suggest `/cf:configure-team` for better framework integration
 
-After 3+ delegations to same domain → recommend specialist creation.
+**Stack-specific core agents** (user projects with configured team):
+```
+Load systemPatterns.md → Check routing.md → Check for specialist → Delegate OR implement directly → Verify tests pass → Update memory bank
+```
+- After 3+ delegations to same domain → recommend `/cf:create-specialist`
+
+**CCFlow's own agents** (this repository):
+```
+Load systemPatterns.md + CLAUDE.md → Implement directly → Verify tests pass → Update memory bank
+```
+- Customized for CCFlow's markdown/specification work
+- Empty specialists/ subdirs (no specialization needed currently)
 
 ### Pattern: Memory Bank Synchronization
 

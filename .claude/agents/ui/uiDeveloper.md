@@ -209,7 +209,7 @@ src/
 
 → This component requires specialized UI expertise in [domain].
 
-  Recommend creating specialist: /cf:create-specialist [name] ui
+  Recommend creating specialist: /cf:create-specialist [domain] --type ui --name [specialistName]
 
 OR
 
