@@ -636,13 +636,13 @@ After each refinement cycle, Facilitator provides:
 
 **Specialists** (`.claude/agents/[domain]/specialists/`):
 - Created as needed for specific expertise
-- Invoked by: Hub agents for delegation
+- Invoked by: Implementation agents for delegation
 
 **Command Routing**:
 - `/cf:feature` → Assessor (workflow)
 - `/cf:plan` → Architect + Product + Facilitator (workflow, Facilitator auto-enabled for Level 3-4)
 - `/cf:creative` → Facilitator + Architect + Product + Sequential MCP (workflow, always interactive)
-- `/cf:code` → testEngineer + implementation hub (implementation)
+- `/cf:code` → testEngineer + implementation agent (implementation)
 - `/cf:review` → Reviewer (workflow)
 - `/cf:checkpoint` → Documentarian (workflow)
 - `/cf:facilitate` → Facilitator (workflow)
@@ -862,7 +862,7 @@ memory-bank/
 
 **This document covers:**
 - `/code` command - TDD-driven implementation workflow
-- Claude Code sub-agent architecture (hub and specialist agents)
+- Claude Code sub-agent architecture (implementation and specialist agents)
 - Agent file structure and format (YAML frontmatter + Markdown)
 - Test verification and completion gates
 - `/create-specialist` command for creating new agents

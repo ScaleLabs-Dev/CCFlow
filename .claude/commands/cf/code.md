@@ -24,7 +24,7 @@ argument-hint: "[task-id]"
 - `--tdd` (**default**): Full TDD cycle (tests first, then implementation)
 - `--impl-only`: Skip TDD, implement directly (**use sparingly**)
 - `--interactive`: Engage Facilitator for guidance during implementation
-- `--agent=[name]`: Explicitly specify which hub agent to use
+- `--agent=[name]`: Explicitly specify which implementation agent to use
 
 ---
 
@@ -46,7 +46,7 @@ Execute task implementation with:
 
 - **Memory bank initialized**: Run `/cf:init` first
 - **Task exists**: Use `/cf:feature` or `/cf:plan` to create tasks
-- **Hub agents customized**: Complete TODO sections in `.claude/agents/`
+- **Implementation agents customized**: Complete TODO sections in `.claude/agents/`
 
 ---
 
@@ -183,9 +183,9 @@ Select based on task type:
 
 ### Step 4: Agent Implementation
 
-**Invoke selected hub agent** with task context.
+**Invoke selected implementation agent** with task context.
 
-**Hub agent will**:
+**Implementation agent will**:
 1. Analyze task requirements
 2. Review tests from testEngineer
 3. **Decide**: Handle directly OR delegate to specialist
@@ -195,16 +195,16 @@ Select based on task type:
    - Conventions from CLAUDE.md
    - Test requirements
 
-**Hub Delegation Pattern**:
+**Delegation Pattern**:
 
-Hub agent may say:
+Implementation agent may say:
 "This task requires [specific expertise]. I need to use the [specialist-name] specialist for this work."
 
 Claude Code will then:
 - Switch to specialist agent context
 - Specialist implements specific part
-- Returns control to hub
-- Hub continues coordination
+- Returns control to implementation agent
+- Implementation agent continues coordination
 
 **Example Workflow**:
 ```
@@ -835,10 +835,10 @@ Available tasks:
 Create new task: /cf:feature [description]
 ```
 
-### Hub Agents Not Customized
+### Implementation Agents Not Customized
 
 ```
-⚠️ Hub Agent Needs Customization
+⚠️ Implementation Agent Needs Customization
 
 Agent: .claude/agents/testing/testEngineer.md
 

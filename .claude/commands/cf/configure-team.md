@@ -34,7 +34,7 @@ Configure stack-specific implementation team with core agents and specialists, r
 Configures a stack-specific implementation team (product team) tailored to your project's technology stack. This replaces generic fallback agents with specialized core agents and domain-specific specialists that understand your framework patterns, testing strategies, and architectural conventions.
 
 **What You Get**:
-- **Core Agents**: Stack-aware hub agents (e.g., expressBackend, reactFrontend, jestTester)
+- **Core Agents**: Stack-aware implementation agents (e.g., expressBackend, reactFrontend, jestTester)
 - **Specialists**: Domain experts for specific technologies (e.g., sequelizeDb, jwtAuth, reactHooks)
 - **Routing Configuration**: Keyword-based intelligent delegation from core → specialists
 - **Memory Bank Integration**: Team configuration documented in systemPatterns.md
@@ -829,7 +829,7 @@ team-types/
 **Location**: `.claude/templates/blank-agents/`
 
 **Templates Available**:
-- `core-agent.template.md`: For hub agents with delegation capability
+- `core-agent.template.md`: For implementation agents with delegation capability
 - `specialist.template.md`: For focused expertise agents
 - `routing.template.md`: For routing configuration
 
@@ -894,7 +894,7 @@ sequelizeDb implements with Sequelize-specific patterns
 
 ### Agent Discovery Pattern
 
-**Hub Agent Behavior**:
+**Implementation Agent Behavior**:
 - After 3+ delegations to same domain → Recommend specialist creation
 - Check `specialists/` subdirectory before each delegation
 - If specialist exists → Delegate with context

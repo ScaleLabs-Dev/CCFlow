@@ -14,17 +14,17 @@ Instead of a generic "Developer" agent, the system uses **project-specific agent
 
 ### Agent Architecture
 
-**Hub Agents**: 
+**Implementation Agents**: 
 - Can handle implementation directly for straightforward tasks
 - Can delegate to specialist agents for complex or varied work
 - Make routing decisions based on task analysis and project architecture
-- Same hub can do both depending on task complexity
+- Same implementation agent can do both depending on task complexity
 - Defined as Claude Code sub-agents in `.claude/agents/`
 
 **Specialist Agents**:
 - Optional - only created when needed
 - Deep expertise in specific areas (e.g., controller development, component creation)
-- Invoked by hub agents when specialized knowledge required
+- Invoked by implementation agents when specialized knowledge required
 - Also defined as Claude Code sub-agents in `.claude/agents/specialists/`
 
 ### Agent Storage Structure (Claude Code Native)
@@ -33,21 +33,21 @@ Instead of a generic "Developer" agent, the system uses **project-specific agent
 .claude/
 ├── agents/                          # Claude Code sub-agents (project-level)
 │   ├── testing/
-│   │   ├── testEngineer.md          # Hub: routes or handles test creation
+│   │   ├── testEngineer.md          # Implementation agent:routes or handles test creation
 │   │   └── specialists/              # Optional specialists
 │   │       ├── unitTestWriter.md
 │   │       ├── integrationTestWriter.md
 │   │       ├── controllerSpecWriter.md
 │   │       └── e2eTestWriter.md
 │   ├── development/
-│   │   ├── codeImplementer.md        # Hub: general code implementation
+│   │   ├── codeImplementer.md        # Implementation agent:general code implementation
 │   │   └── specialists/              # Optional specialists
 │   │       ├── controllerDeveloper.md
 │   │       ├── modelDeveloper.md
 │   │       ├── serviceDeveloper.md
 │   │       └── [custom specialists]
 │   └── ui/
-│       ├── uiDeveloper.md            # Hub: UI/component development
+│       ├── uiDeveloper.md            # Implementation agent:UI/component development
 │       └── specialists/              # Optional specialists
 │           ├── componentDeveloper.md
 │           ├── hookDeveloper.md
@@ -97,8 +97,8 @@ model: sonnet  # Optional - haiku|sonnet|opus or 'inherit'
 - [What this agent handles]
 - [When this agent is engaged]
 
-## Decision Logic (Hub agents only)
-[How this hub determines whether to handle directly or delegate]
+## Decision Logic (Implementation agents only)
+[How this implementation agent determines whether to handle directly or delegate]
 [Pattern matching rules for routing to specialists]
 
 ### Specialist Routing (if applicable)
@@ -162,7 +162,7 @@ model: sonnet  # Optional - haiku|sonnet|opus or 'inherit'
 - [Common mistakes]
 ```
 
-### Example Hub Agent File
+### Example Implementation Agent File
 
 **File**: `.claude/agents/development/codeImplementer.md`
 
@@ -390,7 +390,7 @@ This is a **slash command**, not an agent. It orchestrates agents to complete wo
 - `--tdd` (default): Full TDD cycle (test first, then implementation)
 - `--impl-only`: Skip TDD, implement directly (override)
 - `--interactive`: Engage Facilitator for guidance during implementation
-- `--agent=[agentName]`: Explicitly specify which hub agent to use
+- `--agent=[agentName]`: Explicitly specify which implementation agent to use
 
 ### Default Behavior
 
@@ -440,7 +440,7 @@ Wait for testEngineer to:
 Do NOT proceed to implementation until RED phase confirmed.
 
 ### Step 3: Identify Implementation Agent
-Based on task type from context, invoke appropriate hub agent:
+Based on task type from context, invoke appropriate implementation agent:
 
 **If task involves backend/server/API work:**
 "Use the codeImplementer agent to implement: [task description]"
@@ -452,7 +452,7 @@ Based on task type from context, invoke appropriate hub agent:
 Use the specified agent.
 
 ### Step 4: Agent Implementation
-The invoked hub agent will:
+The invoked implementation agent will:
 - Analyze the task
 - Decide: handle directly OR delegate to specialist
 - If delegating, invoke appropriate specialist agent
@@ -534,7 +534,7 @@ Provide summary:
 - Task completed successfully
 - Tests status: ALL GREEN (X/X passing)
 - Files created/modified
-- Agents used (hub and/or specialists)
+- Agents used (implementation agent and/or specialists)
 - Next recommended action
 
 **If tests are not GREEN:**
@@ -607,11 +607,11 @@ Load Context (tasks.md, activeContext.md, systemPatterns.md, CLAUDE.md)
 ↓
 Invoke testEngineer agent → Write tests → Confirm RED
 ↓
-Identify hub agent (apiDeveloper, uiDeveloper, or codeImplementer)
+Identify implementation agent (apiDeveloper, uiDeveloper, or codeImplementer)
 ↓
-Invoke hub agent
+Invoke implementation agent
 ↓
-Hub decides: Direct OR Delegate to specialist
+Implementation agent decides: Direct OR Delegate to specialist
 ↓
 Implementation (following all agent guidelines)
 ↓
@@ -644,9 +644,9 @@ Claude Code automatically:
 - Executes the work in agent's context window
 - Returns control when complete
 
-### How Hub Agents Delegate to Specialists
+### How Implementation Agents Delegate to Specialists
 
-Hub agents delegate by explicitly invoking specialists:
+Implementation agents delegate by explicitly invoking specialists:
 
 ```markdown
 # Inside codeImplementer agent's thinking:
@@ -656,15 +656,15 @@ Hub agents delegate by explicitly invoking specialists:
 Claude Code then:
 - Switches to controllerDeveloper agent context
 - Specialist executes the work
-- Returns results to hub agent
-- Hub agent continues coordination
+- Returns results to implementation agent
+- Implementation agent continues coordination
 
 ### Multiple Specialists in Sequence
 
 For complex tasks requiring multiple specialists:
 
 ```markdown
-# Hub agent coordinates:
+# Implementation agent coordinates:
 1. "Use modelDeveloper specialist to create User model"
    [waits for completion]
    
@@ -685,7 +685,7 @@ Each specialist:
 
 ## Test Engineering Integration
 
-### testEngineer Hub Agent
+### testEngineer Implementation Agent
 
 **File**: `.claude/agents/testing/testEngineer.md`
 
@@ -755,7 +755,7 @@ You are a test engineering expert specializing in Test-Driven Development.
 
 ### System-Provided Agent Templates
 
-When `/init` is run, basic hub agent templates are created in `.claude/agents/`:
+When `/init` is run, basic implementation agent templates are created in `.claude/agents/`:
 
 **Created Structure:**
 ```
@@ -791,7 +791,7 @@ Use the `/create-specialist` command to add specialist agents as needed.
 
 **Parameters:**
 - `name`: Specialist name (e.g., "controllerDeveloper", "modelDeveloper")
-- `domain`: Which hub domain (testing/development)
+- `domain`: Which implementation domain (testing/development)
 
 **Default Behavior**: Interactive by default
 
@@ -877,17 +877,17 @@ Coordinate with testEngineer for TDD workflow.
 [Generate examples based on specialist type]
 ```
 
-### Step 4: Update Hub Agent
-Suggest updating the relevant hub agent's decision logic:
+### Step 4: Update Implementation Agent
+Suggest updating the relevant implementation agent's decision logic:
 
 "I've created the [name] specialist. You should update `.claude/agents/[domain]/[hubName].md` to include routing logic for when to use this specialist."
 
-Provide specific text to add to hub agent's "Delegate to Specialists" section.
+Provide specific text to add to implementation agent's "Delegate to Specialists" section.
 
 ### Step 5: Confirm Creation
 Report:
 - Specialist created at [file path]
-- Hub agent update suggestion
+- Implementation agent update suggestion
 - How to invoke: "Use the [name] specialist to..."
 
 ## Example Usage
@@ -935,7 +935,7 @@ Created:
 - .claude/agents/testing/testEngineer.md (template)
 ```
 
-**Week 1 - Customize Hub Agents:**
+**Week 1 - Customize Implementation Agents:**
 ```
 User edits agents:
 - Fill in Ruby on Rails specifics in codeImplementer.md
@@ -950,7 +950,7 @@ User edits agents:
 /create-specialist modelDeveloper development
 /create-specialist controllerSpecWriter testing
 
-User updates hub agents to route to these specialists
+User updates implementation agents to route to these specialists
 ```
 
 **Month 3 - Refine and Expand:**
@@ -959,7 +959,7 @@ User updates hub agents to route to these specialists
 /create-specialist jobDeveloper development
 /create-specialist integrationTestWriter testing
 
-User refines decision logic in hub agents based on patterns learned
+User refines decision logic in implementation agents based on patterns learned
 Updates specialist instructions with real project examples
 ```
 
@@ -1066,8 +1066,8 @@ Files Created/Modified:
 - db/migrate/20240115_create_users.rb (created)
 
 Agents Used:
-- testEngineer (hub) → controllerSpecWriter (specialist)
-- codeImplementer (hub) → controllerDeveloper + modelDeveloper (specialists)
+- testEngineer (implementation agent) → controllerSpecWriter (specialist)
+- codeImplementer (implementation agent) → controllerDeveloper + modelDeveloper (specialists)
 
 → NEXT: Run migration with `rails db:migrate`, then implement login views (TASK-044)
 ```
@@ -1217,11 +1217,11 @@ Available agents:
 - testEngineer (testing)
 
 Options:
-1. Use codeImplementer hub instead (recommended)
+1. Use codeImplementer implementation agent instead (recommended)
 2. Create new agent from template using /create-specialist
 3. Specify different agent with --agent flag
 
-→ Proceeding with codeImplementer hub
+→ Proceeding with codeImplementer agent
 ```
 
 ### Test Failures After Multiple Iterations
@@ -1280,7 +1280,7 @@ What would you like to do?
 
 **Don't create specialists when:**
 - Task is one-off or rare
-- Hub can handle effectively
+- Implementation agent can handle effectively
 - Would create unnecessary complexity
 - Pattern hasn't stabilized yet
 
@@ -1347,7 +1347,7 @@ What would you like to do?
 ### Agent Context Management
 
 **Each agent has its own context window:**
-- Hub agents maintain high-level task context
+- Implementation agents maintain high-level task context
 - Specialist agents focus on specific implementation details
 - Context doesn't bleed between agents
 - Memory bank provides shared project context

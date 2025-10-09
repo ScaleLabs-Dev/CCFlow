@@ -23,7 +23,7 @@ argument-hint: "[domain] --type [testing|development|ui] --name [agent-name]"
 ## Purpose
 
 Create custom specialist agents for specific technical domains:
-1. Extend hub agent capabilities with focused specialists
+1. Extend implementation agent capabilities with focused specialists
 2. Delegate complex domain-specific implementation
 3. Maintain consistent patterns while adding expertise
 4. Support team's unique technology stack and patterns
@@ -37,21 +37,21 @@ Create custom specialist agents for specific technical domains:
 
 **.claude/agents directory structure exists**. Should exist from initialization.
 
-**Hub agent exists** for specialist's category. testEngineer, codeImplementer, or uiDeveloper should already exist.
+**Implementation agent exists** for specialist's category. testEngineer, codeImplementer, or uiDeveloper should already exist.
 
 ---
 
 ## When to Create Specialists
 
 **Good reasons to create specialist**:
-- Hub agent repeatedly delegates to same domain (pattern detected)
+- Implementation agent repeatedly delegates to same domain (pattern detected)
 - Specific technology requires deep expertise (e.g., GraphQL, WebSockets)
 - Complex domain with many patterns (e.g., database optimization, security)
 - Team has specialist expertise to encode
 - Recurring implementation patterns in specific area
 
 **Bad reasons (avoid)**:
-- One-off task (hub agent can handle directly)
+- One-off task (implementation agent can handle directly)
 - Simple domains without complexity
 - Premature specialization (create after pattern proven)
 - Duplicating existing specialist capabilities
@@ -130,7 +130,7 @@ parent: [testEngineer|codeImplementer|uiDeveloper]
 # [AgentName] - [Domain] Specialist
 
 **Domain**: [Domain description]
-**Parent Agent**: [Hub agent that delegates to this specialist]
+**Parent Agent**: [Implementation agent that delegates to this specialist]
 **Specialization**: [What makes this agent specialized]
 
 ---
@@ -350,7 +350,7 @@ Before using this specialist, customize:
 **Specialist Version**: 1.0
 **Created**: [YYYY-MM-DD]
 **Last Updated**: [YYYY-MM-DD]
-**Parent Agent**: [Hub agent name]
+**Parent Agent**: [Implementation agent name]
 ```
 
 ---
@@ -379,9 +379,9 @@ Before using this specialist, customize:
 
 ---
 
-### Step 6: Update Parent Hub Agent
+### Step 6: Update Parent Implementation Agent
 
-**Update parent hub agent** to reference new specialist:
+**Update parent implementation agent** to reference new specialist:
 
 **Add to specialist delegation section**:
 
@@ -447,7 +447,7 @@ Add domain-specific pattern section to systemPatterns.md:
 - [Responsibility 2]
 - [Responsibility 3]
 
-**Parent Agent**: [Hub agent name]
+**Parent Agent**: [Implementation agent name]
 **Delegation Triggers**:
 - [Trigger 1]
 - [Trigger 2]
@@ -455,7 +455,7 @@ Add domain-specific pattern section to systemPatterns.md:
 ## Integration
 
 ✓ Specialist agent file created
-✓ Parent hub agent updated with delegation reference
+✓ Parent implementation agent updated with delegation reference
 [✓ systemPatterns.md updated with domain patterns]
 
 ## Next Steps
@@ -475,7 +475,7 @@ Add domain-specific pattern section to systemPatterns.md:
 
 3. **Test delegation**:
    - Create a task requiring [domain] expertise
-   - Verify parent hub agent delegates to specialist
+   - Verify parent implementation agent delegates to specialist
    - Review specialist's output quality
 
 **Ready to use** after customization checklist is complete.
@@ -523,7 +523,7 @@ Claude:
 ## Integration
 
 ✓ Specialist agent file created
-✓ Parent hub agent updated with delegation reference
+✓ Parent implementation agent updated with delegation reference
 
 ## Next Steps
 
@@ -585,7 +585,7 @@ Claude:
 ## Integration
 
 ✓ Specialist agent file created
-✓ Parent hub agent updated with delegation reference
+✓ Parent implementation agent updated with delegation reference
 ✓ systemPatterns.md updated with data visualization patterns section
 
 ## Next Steps
@@ -648,7 +648,7 @@ Claude:
 ## Integration
 
 ✓ Specialist agent file created
-✓ Parent hub agent updated with delegation reference
+✓ Parent implementation agent updated with delegation reference
 
 ## Next Steps
 
@@ -743,18 +743,18 @@ To overwrite: /cf:create-specialist [domain] --type [type] --name [name] --force
 **Not recommended**: Overwriting loses customization work. Consider renaming instead.
 ```
 
-### Parent Hub Agent Missing
+### Parent Implementation Agent Missing
 
 ```
-❌ Error: Parent hub agent not found
+❌ Error: Parent implementation agent not found
 
 Type: [testing|development|ui]
 Expected file: .claude/agents/[type]/[hubAgent].md
 
-The parent hub agent must exist before creating specialists.
+The parent implementation agent must exist before creating specialists.
 
 **Resolution**:
-Ensure hub agents are initialized:
+Ensure implementation agents are initialized:
 - testEngineer.md (for testing specialists)
 - codeImplementer.md (for development specialists)
 - uiDeveloper.md (for ui specialists)
@@ -776,7 +776,7 @@ These should exist from /cf:init. If missing, re-run initialization.
 [Customize specialists before first use]
 
 # As patterns emerge - add specialists
-[Notice hub agent repeatedly delegates to same domain]
+[Notice implementation agent repeatedly delegates to same domain]
 /cf:create-specialist [domain] --type [type] --name [name]
 [Encode team expertise in specialist]
 
@@ -784,22 +784,22 @@ These should exist from /cf:init. If missing, re-run initialization.
 /cf:create-specialist [domain] --type [type] --name [name]
 [Edit specialist file to customize]
 [Update systemPatterns.md with domain patterns]
-/cf:code TASK-[ID] → Hub agent can now delegate to specialist
+/cf:code TASK-[ID] → Implementation agent can now delegate to specialist
 ```
 
 **When specialists are used**:
-- Hub agents (**testEngineer**, **codeImplementer**, **uiDeveloper**) detect domain-specific work
-- Hub agents delegate to appropriate specialist
+- Implementation agents (**testEngineer**, **codeImplementer**, **uiDeveloper**) detect domain-specific work
+- Implementation agents delegate to appropriate specialist
 - Specialist implements using domain expertise
-- Specialist returns to hub agent for integration
+- Specialist returns to implementation agent for integration
 
 ---
 
 ## Notes
 
-- **Scalable architecture**: Specialists extend hub agents without modifying core framework
+- **Scalable architecture**: Specialists extend implementation agents without modifying core framework
 - **Encapsulate expertise**: Team's domain knowledge encoded in specialist agents
-- **Delegation pattern**: Hub agents remain coordinators, specialists are domain experts
+- **Delegation pattern**: Implementation agents remain coordinators, specialists are domain experts
 - **Customization required**: Generated specialist is template, must be customized for project
 - **Pattern evolution**: Specialists discover and document new patterns over time
 - **One specialist per domain**: Avoid creating multiple specialists for overlapping domains
@@ -815,15 +815,15 @@ These should exist from /cf:init. If missing, re-run initialization.
 **Maintenance**:
 - Review specialist files every [N] tasks or [timeframe]
 - Update as new patterns emerge
-- Remove specialists that are rarely used (consolidate into hub agent)
+- Remove specialists that are rarely used (consolidate into implementation agent)
 - Keep specialist aligned with systemPatterns.md
 
 ---
 
 ## Related Commands
 
-- `/cf:init` - Initialize project (creates hub agents)
-- `/cf:code` - Implementation command (hub agents delegate to specialists)
+- `/cf:init` - Initialize project (creates implementation agents)
+- `/cf:code` - Implementation command (implementation agents delegate to specialists)
 - `/cf:sync` - Review project status (includes agent structure)
 - `/cf:refine-agent` - Optimize specialist agents for token efficiency
 

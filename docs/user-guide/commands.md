@@ -209,7 +209,7 @@ Complete reference for all 13 `/cf:*` commands.
 
 **TDD Workflow:**
 1. testEngineer writes failing tests (RED)
-2. Hub agent implements to make tests pass (GREEN)
+2. Implementation agent implements to make tests pass (GREEN)
 3. GREEN gate: Tests MUST pass
 4. Updates memory bank on completion
 
@@ -363,7 +363,7 @@ Complete reference for all 13 `/cf:*` commands.
 - `ui`: Frontend, components
 - `testing`: Test strategies, quality
 
-**When to use:** After 3+ delegations to same domain from hub agents
+**When to use:** After 3+ delegations to same domain from implementation agents
 
 ---
 

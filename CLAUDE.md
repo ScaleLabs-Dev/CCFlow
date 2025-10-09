@@ -22,9 +22,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Reviewer**: Code quality assessment, technical debt tracking
 
 **Implementation Layer** (`.claude/agents/{testing,development,ui}/`):
-- **Hub agents**: Stack-agnostic coordinators (testEngineer, codeImplementer, uiDeveloper)
+- **Implementation agents**: Stack-agnostic coordinators (testEngineer, codeImplementer, uiDeveloper)
 - **Specialists**: Created on-demand for specific tech stacks/domains (in `specialists/` subdirs)
-- Hub agents delegate to specialists, never implement directly
+- Implementation agents delegate to specialists, never implement directly
 
 **Key Distinction**: Workflow agents orchestrate and plan; implementation agents execute code changes.
 
@@ -69,7 +69,7 @@ Located in `memory-bank/` directory (created per-project, NOT in this repo):
 
 **RED → GREEN → REFACTOR workflow**:
 1. testEngineer writes failing tests FIRST
-2. Hub agent implements to make tests pass (delegates to specialists)
+2. Implementation agent implements to make tests pass (delegates to specialists)
 3. GREEN gate: If tests fail after 3 attempts → STOP, report blocker
 4. Only after 100% GREEN → update memory bank, mark complete
 
@@ -203,9 +203,9 @@ Use `/cf:create-specialist` command, which:
 1. Prompts for domain, type (testing/development/ui), name
 2. Creates file in appropriate `specialists/` subdirectory
 3. Generates agent template with proper frontmatter
-4. Updates hub agent to recognize specialist
+4. Updates implementation agent to recognize specialist
 
-**Specialist Pattern**: Hub agents detect repeated delegation patterns (3+ times) and recommend specialist creation.
+**Specialist Pattern**: Implementation agents detect repeated delegation patterns (3+ times) and recommend specialist creation.
 
 ## Development Workflow for This Repository
 
@@ -286,9 +286,9 @@ Draft → Present → Identify Gaps → Ask Questions → User Responds → Refi
 
 No iteration limits - user controls the loop.
 
-### Pattern: Hub Agent Delegation
+### Pattern: Implementation Agent Delegation
 
-Implementation hubs follow:
+Implementation agents follow:
 ```
 Load systemPatterns.md → Check for specialist → Delegate OR implement directly → Verify tests pass → Update memory bank
 ```
@@ -317,7 +317,7 @@ CCFlow uses Sequential MCP for `/cf:creative` command:
 2. **Agent Invocation**: Agents are invoked by name in command process steps (e.g., "Engage Assessor agent")
 3. **File Path Assumptions**: All memory bank references use `memory-bank/` prefix, external refs use `.claude/`
 4. **Error Recovery**: Commands should detect missing prerequisites and provide exact commands to fix (e.g., "Run: /cf:init [project-name]")
-5. **Specialist Discovery**: Hub agents check `specialists/` subdirectory existence before attempting delegation
+5. **Specialist Discovery**: Implementation agents check `specialists/` subdirectory existence before attempting delegation
 6. **Facilitator Enforcement**: Level 3-4 tasks bypass `--interactive` flag and activate Facilitator automatically
 
 ## Testing This System

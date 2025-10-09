@@ -164,7 +164,7 @@ Apply to ALL agents in CCFlow:
 - **Generic agents**: Always add Framework Adaptation + CLAUDE.md Reference
 
 ### When to Recommend Specialist Creation
-- Hub agent delegates to same domain 3+ times
+- Implementation agent delegates to same domain 3+ times
 - Narrow expertise pattern emerges repeatedly
 - Technology-specific knowledge needed frequently
 

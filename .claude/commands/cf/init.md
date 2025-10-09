@@ -620,7 +620,7 @@ Ensure running from CCFlow directory
 - **Quality gates** (validated before writing)
 - **--quick available** (for manual completion preference)
 - **Idempotent** (warns if already initialized)
-- **Hub agents need customization** (fill TODOs before use)
+- **Implementation agents need customization** (fill TODOs before use)
 - **AgentBuilder available** (use `/cf:refine-agent` to optimize verbose agents post-init)
 
 ---

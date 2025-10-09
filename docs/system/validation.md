@@ -160,7 +160,7 @@ grep "## " .claude/templates/*.template.md
 - `/cf:feature` → Assessor ✅
 - `/cf:plan` → Architect + Product + Facilitator ✅
 - `/cf:creative` → Facilitator + Architect + Product + Sequential ✅
-- `/cf:code` → testEngineer + Hub agents ✅
+- `/cf:code` → testEngineer + Implementation agents ✅
 - `/cf:review` → Reviewer ✅
 - `/cf:checkpoint` → Documentarian ✅
 

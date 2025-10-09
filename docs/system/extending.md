@@ -47,7 +47,7 @@ See [`.claude/templates/agents/CONFIGURATION_SCHEMA.md`](../../.claude/templates
 
 ## Creating Specialists
 
-**When to create:** After 3+ delegations from a hub agent to the same domain
+**When to create:** After 3+ delegations from a implementation agent to the same domain
 
 **Command:**
 ```bash
@@ -99,7 +99,7 @@ Specialist for database operations, ORM usage, migrations, and query optimizatio
 5. Update activeContext.md with changes
 ```
 
-4. Update hub agent to recognize specialist:
+4. Update implementation agent to recognize specialist:
 ```markdown
 # Edit .claude/agents/development/codeImplementer.md
 
@@ -337,9 +337,9 @@ If topic matches [domain]:
 
 ---
 
-## Customizing Hub Agents for Tech Stack
+## Customizing Implementation Agents for Tech Stack
 
-**Edit hub agent files to match your stack:**
+**Edit implementation agent files to match your stack:**
 
 **Example: codeImplementer for Go backend**
 
