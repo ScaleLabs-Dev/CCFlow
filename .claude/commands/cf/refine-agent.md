@@ -7,16 +7,12 @@ Optimize existing agents for token efficiency without information loss using the
 ```
 /cf:refine-agent <agent-name>
 /cf:refine-agent <agent-path>
-/cf:refine-agent --all
-/cf:refine-agent --batch <pattern>
 ```
 
 ## Parameters
 
 - `<agent-name>`: Agent name to refine (e.g., "assessor", "codeImplementer")
 - `<agent-path>`: Full path to agent file relative to `.claude/agents/`
-- `--all`: Refine all agents in the system (prompts for confirmation)
-- `--batch <pattern>`: Refine agents matching pattern (e.g., "workflow/*", "generic/*")
 
 ## Flags
 
@@ -47,8 +43,6 @@ The Agent Builder specification identifies that many agents can become verbose o
 1. **Locate Agent**:
    - If agent-name provided: Search `.claude/agents/` recursively
    - If agent-path provided: Load directly
-   - If `--all`: Discover all agents in system
-   - If `--batch`: Match pattern against agent paths
 
 2. **Engage AgentBuilder** (Load & Analyze):
    - Read agent file content
@@ -128,11 +122,6 @@ The Agent Builder specification identifies that many agents can become verbose o
    - Any manual review items
    - Recommendation for testing
 
-3. **If --batch or --all**:
-   - Generate summary report across all refined agents
-   - Total token savings
-   - Any agents requiring manual review
-
 ## Examples
 
 ### Example 1: Refine Single Agent
@@ -169,7 +158,7 @@ Optimized agent written to: .claude/agents/workflow/assessor.md
 Backup saved to: .claude/agents/.backups/assessor-20251008.md
 ```
 
-### Example 2: Report Only
+### Example 2: Report Only Mode
 ```
 User: /cf:refine-agent generic/codeImplementer --report-only
 
@@ -198,38 +187,12 @@ Recommended Actions:
 Run `/cf:refine-agent generic/codeImplementer` to apply optimizations.
 ```
 
-### Example 3: Batch Refinement
-```
-User: /cf:refine-agent --batch "workflow/*" --interactive
-
-Output:
-Found 6 workflow agents to analyze:
-- assessor (~1250 tokens)
-- architect (~980 tokens)
-- product (~1100 tokens)
-- facilitator (~1300 tokens)
-- documentarian (~890 tokens)
-- reviewer (~1050 tokens)
-
-Agents needing optimization (>1200 tokens):
-- assessor (1250 tokens) - 4% over recommended
-- facilitator (1300 tokens) - at upper limit
-
-Refine assessor? [y/n/skip-all]
-[Interactive prompts for each agent]
-
-Batch Refinement Summary:
-- 2 agents optimized
-- Total savings: ~350 tokens (15% average reduction)
-- 4 agents already optimal
-```
 
 ## Error Handling
 
 | Error | Response |
 |-------|----------|
 | Agent not found | "Agent '[name]' not found. Available agents in [type]: [list]" → Suggest correct name |
-| Invalid pattern | "Pattern '[pattern]' matched no agents. Try: workflow/*, generic/*, {domain}/{stack}/*" |
 | Not initialized | "CCFlow not initialized. Run: /cf:init" |
 | No .backups directory | Create `.claude/agents/.backups/` automatically |
 | YAML syntax error in agent | "Agent file has invalid YAML frontmatter. Manual repair needed before refinement." |
@@ -246,10 +209,6 @@ Batch Refinement Summary:
 - Document any new efficiency patterns discovered
 - Update agent design standards if refined agents reveal better approaches
 
-**progress.md** (for --all or --batch):
-- Record system-wide optimization milestone
-- Document total token savings across all agents
-
 ## Notes
 
 1. **Backup Safety**: Always creates backup before modifying agent files
@@ -257,7 +216,6 @@ Batch Refinement Summary:
 3. **Validation Required**: Will not overwrite if validation fails post-optimization
 4. **Manual Review**: Aggressive optimization may require testing refined agents
 5. **Cross-References**: If agent name changes during refinement, updates references in other files
-6. **Interactive Default**: For --all or --batch, defaults to --interactive unless explicitly disabled
 
 ## Related Commands
 
