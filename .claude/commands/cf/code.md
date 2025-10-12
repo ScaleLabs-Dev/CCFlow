@@ -151,6 +151,13 @@ Analyze task description for domain indicators:
    - Frontend work → reactFrontend (or stack-specific frontend agent)
    - Testing → jestTest (or stack-specific test agent)
 
+**IMPORTANT - Disambiguation**: If task matches multiple agents, **first match wins** (based on agent order in routing.md). Example:
+```
+Task: "Create API endpoint with form UI"
+Keywords: api (backend), form (frontend)
+Result: First matching agent in routing.md order (typically backend)
+```
+
 3. Check if agent file exists:
    ```
    .claude/agents/[agentName].md
@@ -244,6 +251,12 @@ go test ./...              # Go
 **If tests FAIL**:
 
 **Iteration Process** (max 3 attempts):
+
+**Rationale for 3-attempt limit**:
+- Balances persistence with recognizing genuine blockers
+- Prevents runaway debugging loops
+- Forces escalation to planning/facilitation for complex issues
+- Monitor: <10% tasks hitting limit = appropriate, >20% = too restrictive
 
 1. Analyze failure details:
    - What test failed?

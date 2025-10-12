@@ -90,6 +90,14 @@ Extract keywords from task description:
 - Frontend keywords → reactFrontend (or uiDeveloper fallback)
 - Testing keywords → jestTest (or testEngineer fallback)
 
+**IMPORTANT - Disambiguation Strategy**: If task matches multiple agents' keywords, **first match wins** (backend → frontend → testing order). Example:
+```
+Task: "Create API endpoint with form UI"
+Keywords match: api (backend), form (frontend)
+Result: expressBackend selected (backend listed first)
+To prioritize frontend: List frontend keywords first in routing
+```
+
 ### Step 2: Agent Selection
 1. Check if stack-specific agent exists (expressBackend.md)
 2. If yes → Use stack-specific agent

@@ -89,6 +89,13 @@ Extract keywords from task description:
 - [Domain 2] keywords → [CoreAgent2] (or [GenericFallback2])
 - Testing keywords → [TestAgent] (or testEngineer fallback)
 
+**IMPORTANT - Disambiguation Strategy**: If task matches multiple agents' keywords, **first match wins**. Order agents by priority (most specific first). Example:
+```
+Task: "Optimize database query performance"
+Keywords match: database (CoreAgent1), performance (CoreAgent2)
+Result: CoreAgent1 selected (listed first)
+```
+
 ### Step 2: Agent Selection
 1. Check if stack-specific agent exists ([coreAgentName].md)
 2. If yes → Use stack-specific agent

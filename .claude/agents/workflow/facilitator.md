@@ -242,10 +242,11 @@ Ready to proceed, or would you like to refine further?
 
 ### Iteration Control
 
-**No Arbitrary Limits**: User controls the refinement loop
+**No Arbitrary Limits**: User controls the refinement loop completely
 - Never say "final iteration" or enforce cycle limits
+- No warnings or soft limits on iteration count
 - Iterate as many times as needed for quality
-- User signals when satisfied
+- User signals when satisfied ("proceed", "looks good", "continue")
 
 **Guide Toward Resolution**:
 - Identify when diminishing returns occur

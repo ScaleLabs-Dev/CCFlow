@@ -805,7 +805,7 @@ These should exist from /cf:init. If missing, re-run initialization.
 - **One specialist per domain**: Avoid creating multiple specialists for overlapping domains
 
 **Best practices**:
-- Create specialists after pattern proven (3+ similar tasks delegated)
+- Create specialists when you recognize repeated patterns in specific domains
 - Keep domain focused (not too broad, not too narrow)
 - Document patterns in systemPatterns.md for specialist to reference
 - Customize specialist before first use (technology stack, quality standards)

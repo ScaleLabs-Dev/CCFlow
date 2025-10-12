@@ -135,18 +135,15 @@ Existing Features (from code structure):
 - Test suite (tests/)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Would you like to:
-1. Import and refine this documentation (Recommended - saves time)
-2. Start fresh and create from scratch
+Starting fresh guided creation.
+(Type 'use findings' during Facilitator questions to pre-populate from scanned info)
 
-Enter 1 or 2:
+[Continue to Phase 1 with Facilitator-guided creation]
 ```
 
-**[User selects option]**
-
-**If Import (Option 1)**:
+**If user types "use findings" during Facilitator interaction**:
 ```
-✓ Importing discovered documentation...
+✓ Pre-populating from discovered documentation...
 
 Pre-populating memory bank with:
 ✓ Executive Summary (from README.md)
@@ -158,14 +155,8 @@ Gaps to fill during guided creation:
 - Success Criteria (needs definition)
 - Detailed Constraints (partial info only)
 
-Proceeding to guided refinement...
+Proceeding to guided refinement with pre-populated context...
 [Continue to Phase 2 with PRE-POPULATED templates]
-```
-
-**If Fresh (Option 2)**:
-```
-✓ Starting fresh initialization...
-[Continue to Phase 1 with empty templates]
 ```
 
 ---
@@ -432,11 +423,16 @@ Writing files...
 
 🎯 NEXT STEPS:
 
-1. **Customize agents** (.claude/agents/*.md - fill TODOs)
+1. **Configure team** (RECOMMENDED): /cf:configure-team
+   - Installs stack-specific agents for better token efficiency
+   - Can skip if prefer generic agents or unsure of stack
+   - Can run anytime after init (flexible timing)
+
 2. **Review**: /cf:sync
+
 3. **Start building**: /cf:feature [description]
 
-Ready to customize or jump to development?
+Ready to configure team or jump to development?
 ```
 
 ---
@@ -593,6 +589,35 @@ To reinitialize: Delete memory-bank/ first
 Expected: memory-bank/templates/
 Ensure running from CCFlow directory
 ```
+
+### Partial Init Failure
+
+If `/cf:init` fails partway through (e.g., creates some files but not others):
+
+```
+❌ Initialization failed partway through
+
+Rollback Instructions:
+1. Delete memory-bank directory:
+   rm -rf memory-bank/
+
+2. Delete .claude/agents directory:
+   rm -rf .claude/agents/
+
+3. Re-run initialization:
+   /cf:init
+
+Note: Check error message above for root cause before re-running.
+```
+
+**Common Causes**:
+- Template file missing or malformed
+- Permission issues in project directory
+- Interrupted execution
+
+**Prevention**:
+- Verify templates exist before running (see Phase 2 ACTION 5 validation)
+- Ensure write permissions in project directory
 
 ---
 

@@ -310,6 +310,9 @@ Then retry: /cf:configure-team
      - Keyword → Specialist mappings (via core agent)
      - Delegation rules
      - Fallback logic
+   - **IMPORTANT**: Order core agents by priority (most specific first)
+     - Reason: First match wins for ambiguous tasks
+     - Example: Database-focused backend before general backend
    - Validate YAML frontmatter
 
 6. **Update Memory Bank**:

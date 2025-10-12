@@ -238,7 +238,7 @@ outputs: [file1.md, file2.md]
 - Only works with stack-specific teams (NOT generic agents)
 - Creates specialist in `specialists/` subdirectory
 - Updates parent core agent to recognize new specialist
-- Pattern: After 3+ delegations to same domain, recommend specialist creation
+- User-driven: Create specialists when you recognize repeated domain patterns
 
 **For CCFlow itself**:
 - CCFlow's agents in `.claude/agents/` are already configured
@@ -337,7 +337,7 @@ Load systemPatterns.md + CLAUDE.md → Implement directly (NO delegation) → Ve
 ```
 Load systemPatterns.md → Check routing.md → Check for specialist → Delegate OR implement directly → Verify tests pass → Update memory bank
 ```
-- After 3+ delegations to same domain → recommend `/cf:create-specialist`
+- User can create specialists with `/cf:create-specialist` when repeated domain patterns emerge
 
 **CCFlow's own agents** (this repository):
 ```

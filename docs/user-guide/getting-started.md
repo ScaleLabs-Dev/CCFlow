@@ -42,25 +42,25 @@ This copies:
 - Runs guided project brief creation (10-20 minutes)
 - Facilitator agent helps you define scope, goals, and requirements
 
-#### Existing Project (Auto-Import)
+#### Existing Project (Auto-Discovery)
 ```bash
 /cf:init MyProject
-# CCFlow detects existing docs and offers to import
+# CCFlow scans existing docs and shows findings
 ```
 
 **If documentation found:**
 - Scans: README.md, CLAUDE.md, package.json, code structure
 - Presents discovered information
-- Asks: Import & refine OR start fresh?
-- If import: Pre-populates memory bank → validates → fills gaps (5-10 min)
+- Defaults to fresh guided creation
+- Type 'use findings' during Facilitator questions to pre-populate from scanned info
 
-**Import sources:**
+**Discovery sources:**
 - README.md → Executive Summary, Features
-- **CLAUDE.md → Tech Stack, Conventions, Patterns** (populates agent configuration!)
+- **CLAUDE.md → Tech Stack, Conventions, Patterns**
 - package.json → Dependencies, Frameworks
 - Code structure → Architecture patterns
 
-💡 **TIP**: If your project has a CLAUDE.md with Tech Stack, Conventions, and Architecture sections, agent configuration will be almost entirely automated!
+💡 **TIP**: Scan results are available as reference during guided creation - use them to speed up the process without losing the collaborative discovery experience!
 
 #### Flags
 
@@ -180,6 +180,15 @@ CCFlow routes tasks based on assessed complexity:
 - Route: `/cf:plan` (auto-interactive) → `/cf:creative` (for sub-tasks) → `/cf:code`
 
 ## Next Steps
+
+**After `/cf:init`:**
+
+1. **Configure team** (RECOMMENDED): `/cf:configure-team`
+   - Installs stack-specific agents for better token efficiency
+   - Auto-detects tech stack or guides custom team creation
+   - Can skip if prefer generic agents or run later (flexible timing)
+
+2. **Start first feature**: `/cf:feature "description"`
 
 **Learn more:**
 - [Command Reference](commands.md) - All 12 commands with examples
