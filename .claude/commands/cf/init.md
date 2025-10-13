@@ -192,17 +192,20 @@ for template in .claude/templates/*.template.md; do
   cp "$template" "memory-bank/$(basename "$template" .template.md).md"
 done
 
-# Copy workflow agents
-cp .claude/templates/agents/workflow/*.template.md .claude/agents/workflow/
-# Remove .template extension from workflow agents
-for file in .claude/agents/workflow/*.template.md; do
-  mv "$file" "${file%.template.md}.md"
+# Copy workflow agents (removing .template extension during copy)
+for template in .claude/templates/agents/workflow/*.template.md; do
+  target=".claude/agents/workflow/$(basename "$template" .template.md).md"
+  # Only copy if target doesn't exist (preserves existing customizations)
+  if [ ! -f "$target" ]; then
+    cp "$template" "$target"
+  fi
 done
 
 # Copy generic implementation agents (universal fallbacks)
-cp .claude/templates/generic/codeImplementer.template.md .claude/agents/codeImplementer.md
-cp .claude/templates/generic/testEngineer.template.md .claude/agents/testEngineer.md
-cp .claude/templates/generic/uiDeveloper.template.md .claude/agents/uiDeveloper.md
+# Only copy if targets don't exist (preserves existing customizations)
+[ ! -f ".claude/agents/codeImplementer.md" ] && cp .claude/templates/generic/codeImplementer.template.md .claude/agents/codeImplementer.md
+[ ! -f ".claude/agents/testEngineer.md" ] && cp .claude/templates/generic/testEngineer.template.md .claude/agents/testEngineer.md
+[ ! -f ".claude/agents/uiDeveloper.md" ] && cp .claude/templates/generic/uiDeveloper.template.md .claude/agents/uiDeveloper.md
 
 # Note: Stack-specific agents added later with /cf:configure-team
 ```
