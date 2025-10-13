@@ -228,16 +228,14 @@ CCFlow operates through markdown specifications, not executable code:
 - **Commands ARE NOT**: Code that executes validation logic
 
 ### Writing Effective Agents
-**DO**:
-- Write clear procedural instructions
-- Include decision trees and keyword lists
-- Specify manual validation steps
-- Use imperative language ("Check if...", "Verify that...")
 
-**DON'T**:
-- Describe "algorithms" or "logic"
-- Assume automatic enforcement
-- Write as if agents execute code
+For detailed DO's and DON'Ts with examples, see **[Agent and Command Development Guidelines](docs/system/agent-command-development.md)**.
+
+Key principles:
+- Write clear procedural instructions (not algorithms)
+- Include explicit decision trees and keyword lists
+- Specify manual validation steps (not automatic enforcement)
+- Use imperative language ("Check if...", "Verify that...")
 
 ### YAML Frontmatter
 Valid Claude Code fields:
@@ -257,6 +255,24 @@ Used throughout interactive modes:
 3. Ask Clarifying Questions
 4. Refine Based on Feedback
 5. **Always Recommend Next Action** (never leave user without next step)
+
+## Meta-Development Tools
+
+CCFlow includes specialized agents for system development:
+
+### AgentBuilder System
+- **Command**: `/cf:refine-agent [name]` - Optimize existing agents
+- **Agent**: `AgentBuilder` - Universal agent generator/refiner
+- **Purpose**: Maintain token efficiency (500-1500 tokens) and consistency
+- **Usage**: Always use for creating/modifying agents in CCFlow
+
+### CommandBuilder System
+- **Command**: `/cf:refine-command [name]` - Optimize existing commands
+- **Agent**: `CommandBuilder` - Command optimizer (via Task tool)
+- **Purpose**: Ensure clarity, completeness, proper structure
+- **Usage**: Always use for creating/modifying commands in CCFlow
+
+**Best Practice**: Use these meta-tools for ALL system modifications to ensure consistency and compliance with Claude Code specifications.
 
 ## Important Implementation Notes
 
