@@ -9,6 +9,126 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Tech Stack**: Markdown-based specification system with Claude Code custom commands and sub-agents
 **Status**: ✅ Production Ready (v1.0)
 
+## Fundamental Execution Model
+
+**Critical Constraint**: CCFlow is a specification-based system running on Claude Code. Understanding this constraint is essential for all modifications.
+
+### How Claude Code Agents Work
+
+**What agents ARE**:
+- Markdown files with YAML frontmatter (defines metadata)
+- Prose instructions that Claude reads and follows
+- Step-by-step procedures for Claude to execute
+- Reference documentation for context
+
+**What agents ARE NOT**:
+- Executable code or scripts
+- Programs with automatic validation logic
+- Systems that parse/enforce data structures
+- Automated enforcement mechanisms
+
+### How Commands Work
+
+**Commands provide**:
+- Procedural steps for Claude to follow in sequence
+- Decision points with explicit conditions
+- Agent invocation instructions
+- Validation procedures (manual, not automatic)
+
+**Commands do NOT**:
+- Execute code or run validation logic
+- Automatically enforce rules
+- Parse YAML or execute algorithms
+- Provide programmatic guarantees
+
+### Practical Implications for CCFlow Design
+
+**1. Memory Bank Integrity System**
+- YAML headers in memory bank files = **reference documentation** (not parsed data)
+- Documentarian agent = **procedural consultant** (not automated gatekeeper)
+- Health scoring = **manual calculation** following documented formula
+- Validation = **Claude following checklist** (not code execution)
+
+**2. Agent Boundaries**
+- Domain boundaries = **behavioral guidance** in prose
+- Write permissions = **instructions to follow** (not enforced programmatically)
+- Classification = **keyword matching by Claude** (not automated parsing)
+
+**3. TDD Enforcement**
+- GREEN gate = **command-level requirement** that Claude verifies
+- Test validation = **Claude runs tests and checks results**
+- No automatic blocking = **Claude responsible for following rules**
+
+### Writing Effective Agents and Commands
+
+**DO**:
+- Write step-by-step procedural instructions
+- Include decision trees and keyword lists inline
+- Specify manual validation procedures
+- Provide examples and edge cases
+- Use imperative language ("Check if...", "Verify that...", "List all...")
+
+**DON'T**:
+- Describe "validation logic" or "algorithms"
+- Assume automatic enforcement
+- Reference parsed data structures
+- Write as if agents execute code
+- Use terms like "the system will automatically..."
+
+**Examples**:
+
+❌ **Wrong** (assumes code execution):
+```
+The agent validates content against classification rules using semantic analysis.
+```
+
+✅ **Right** (procedural instruction):
+```
+Read the content. Match keywords against the lists below (product_keywords, technical_keywords). Count matches in each category. Choose the category with most matches.
+```
+
+❌ **Wrong** (assumes automatic):
+```
+The system enforces domain boundaries and rejects invalid writes.
+```
+
+✅ **Right** (manual procedure):
+```
+Before writing to systemPatterns.md:
+1. Read the content to be written
+2. Search for product keywords: [user needs, feature, UX, user story]
+3. If found, reject write and recommend productContext.md instead
+4. If not found, proceed with write
+```
+
+### YAML Frontmatter Guidelines
+
+**Valid Claude Code frontmatter fields** (official):
+- `name`: Agent identifier (required)
+- `description`: Purpose and usage (required)
+- `tools`: Tool permissions (optional)
+- `model`: Model selection (optional)
+
+**Custom fields** (for CCFlow):
+- Can add custom fields for documentation purposes
+- These are **not parsed or enforced** by Claude Code
+- Serve as inline reference for Claude to read
+- Examples: `priority`, `triggers`, `dependencies`, `outputs`
+
+**Memory Bank YAML headers**:
+- Entirely custom documentation
+- Claude reads them for context
+- Not programmatically enforced
+- Provide guidance for classification decisions
+
+### This Affects All CCFlow Components
+
+**Commands**: Must include explicit validation steps (not assume automation)
+**Agents**: Must have procedural instructions (not "logic" descriptions)
+**Memory Bank**: YAML headers are reference docs (not enforced schema)
+**Integrity System**: Manual procedures following checklists (not automated)
+**Testing**: Claude runs and interprets tests (not automated CI/CD)
+
 ## Critical Architecture Concepts
 
 ### 1. Two-Layer Agent System
