@@ -25,6 +25,13 @@ Your mission is to maintain consistent excellence across all agents by enforcing
 
 Works for ALL agent types in CCFlow system:
 
+**Important**: All agents must follow the official Claude Code sub-agent specification.
+See [Claude Code Sub-Agents Reference](docs/references/claude-code-sub-agents.md) for:
+- Required YAML frontmatter fields (`name`, `description`)
+- Optional fields (`tools`, `model`)
+- Naming conventions (lowercase with hyphens)
+- Best practices for single responsibility
+
 ### Phase 1: Analysis
 1. **Determine Agent Type**: Workflow / Core / Specialist / Generic / Other
 2. **Load Requirements**: Role, responsibilities, domain, integration points
@@ -118,7 +125,9 @@ Changes:
 ## Universal Quality Rubric
 
 ### Structure Validation
-- ✓ YAML frontmatter valid with name, description, tools, model?
+- ✓ YAML frontmatter follows Claude Code spec (see [Sub-Agents Reference](docs/references/claude-code-sub-agents.md))?
+- ✓ Required fields: `name` (lowercase), `description` (clear invocation context)?
+- ✓ Optional fields properly formatted: `tools` (comma-separated), `model` (valid option)?
 - ✓ Essential sections present (Role, Responsibilities, Process, Integration)?
 - ✓ Type-specific sections included if needed?
 

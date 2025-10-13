@@ -46,6 +46,7 @@ The Agent Builder specification identifies that many agents can become verbose o
 
 2. **Engage AgentBuilder** (Load & Analyze):
    - Read agent file content
+   - Verify YAML frontmatter follows [Claude Code Sub-Agents spec](docs/references/claude-code-sub-agents.md)
    - Identify agent type (workflow/core/specialist/generic)
    - Estimate current token usage (~4 chars = 1 token)
    - Detect verbosity issues:
@@ -88,7 +89,8 @@ The Agent Builder specification identifies that many agents can become verbose o
 ### Phase 3: Validate
 
 1. **AgentBuilder Validation**:
-   - Structure Check: All essential sections present? YAML valid?
+   - Structure Check: All essential sections present? YAML follows Claude Code spec?
+   - Frontmatter Check: Required fields (`name`, `description`) present and valid?
    - Token Budget Check: Within target for agent type?
    - Quality Check: Decision criteria clear and effective?
    - Completeness Check: Sufficient information for role?
@@ -216,6 +218,7 @@ Run `/cf:refine-agent generic/codeImplementer` to apply optimizations.
 3. **Validation Required**: Will not overwrite if validation fails post-optimization
 4. **Manual Review**: Aggressive optimization may require testing refined agents
 5. **Cross-References**: If agent name changes during refinement, updates references in other files
+6. **Claude Code Compliance**: All refined agents must follow official [Sub-Agent specification](docs/references/claude-code-sub-agents.md)
 
 ## Related Commands
 

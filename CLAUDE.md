@@ -342,6 +342,21 @@ outputs: [file1.md, file2.md]
 
 **Critical**: Validate frontmatter YAML syntax - Phase 8 validation checks this.
 
+### Creating Sub-Agents
+
+When creating or modifying sub-agents in CCFlow, consult the **[Claude Code Sub-Agents Reference](docs/references/claude-code-sub-agents.md)** for:
+- Official YAML frontmatter requirements (`name`, `description`, `tools`, `model`)
+- Best practices for sub-agent design and single responsibility
+- Proper file structure and naming conventions
+- Tool permission configuration
+- Integration with CCFlow's agent architecture
+
+Sub-agents follow the official Claude Code specification with these key requirements:
+- **name**: lowercase, alphanumeric with hyphens
+- **description**: clear invocation context
+- **tools**: (optional) restricted tool access
+- **model**: (optional) sonnet, opus, haiku, or inherit
+
 ### Configuring Implementation Teams
 
 **For user projects**, CCFlow provides two commands:
