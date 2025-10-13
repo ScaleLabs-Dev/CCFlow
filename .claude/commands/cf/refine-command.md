@@ -52,9 +52,11 @@ The CommandBuilder specification identifies that commands can become unclear, in
 
 2. **Engage CommandBuilder** (Load & Analyze):
    - Read command file content
+   - Verify YAML frontmatter follows [Claude Code Slash Commands spec](docs/references/claude-code-slash-commands.md)
    - Identify complexity level (simple/moderate/complex)
    - Estimate current token usage (~4 chars = 1 token)
    - Detect issues:
+     * Missing or invalid frontmatter fields (description, allowed-tools, argument-hint)
      * Missing essential sections (Usage, Purpose, Process, Examples, Error Handling)
      * Unclear process or decision logic
      * Insufficient examples (<2 scenarios)
@@ -100,7 +102,8 @@ The CommandBuilder specification identifies that commands can become unclear, in
 ### Phase 3: Validate
 
 1. **CommandBuilder Validation**:
-   - Structure Check: All essential sections present? YAML valid? Conditional sections only when needed?
+   - Structure Check: All essential sections present? YAML follows Claude Code spec?
+   - Frontmatter Check: Required fields (description, allowed-tools, argument-hint) valid?
    - Token Budget Check: Within target for complexity level?
    - Quality Check: Clear process, comprehensive errors, action recommendations?
    - Completeness Check: Sufficient information for execution?
@@ -242,6 +245,7 @@ Run `/cf:refine-command code` to apply optimizations.
 4. **Manual Review**: Aggressive optimization may require testing refined commands
 5. **Cross-References**: If command integrations change during refinement, updates references
 6. **Redundancy Removal**: Automatically removes Prerequisites sections that only mention "memory bank initialized"
+7. **Claude Code Compliance**: All refined commands must follow official [Slash Commands specification](docs/references/claude-code-slash-commands.md)
 
 ---
 

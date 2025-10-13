@@ -271,8 +271,20 @@ Uses Sequential MCP for structured reasoning, always interactive, 20-35 minutes 
 
 ### Modifying Commands
 
-**Command Structure** (all commands follow this):
+When creating or modifying slash commands in CCFlow, consult the **[Claude Code Slash Commands Reference](docs/references/claude-code-slash-commands.md)** for:
+- Official YAML frontmatter options (`description`, `allowed-tools`, `argument-hint`, `model`)
+- Argument handling with placeholders (`$ARGUMENTS`, `$1`, `$2`)
+- Best practices for command structure and security
+- Directory organization and namespacing conventions
+
+**Command Structure** (all CCFlow commands follow this):
 ```markdown
+---
+description: Brief one-line description
+allowed-tools: tool1, tool2, tool3
+argument-hint: <required> [optional]
+---
+
 # Command: /cf:name
 
 [Brief description]
@@ -309,6 +321,7 @@ Uses Sequential MCP for structured reasoning, always interactive, 20-35 minutes 
 ```
 
 **Required Sections**: Usage, Purpose, Process, Examples, Error Handling
+**Required Frontmatter**: `description`, `allowed-tools`, `argument-hint`
 
 ### Modifying Agents
 
