@@ -1,290 +1,283 @@
 # CLAUDE.md
 
-CCFlow orchestrates development through commands that coordinate specialized sub-agents. Each agent has a single responsibility and minimal tool permissions, following Claude Code best practices for efficient, modular workflows.
+CCFlow orchestrates development through commands that coordinate specialized sub-agents. Each component has a single responsibility, creating clean, testable workflows with enforced quality gates.
 
-## System Architecture
+## Primary Goal
 
-CCFlow uses a three-tier architecture:
-1. **Commands** orchestrate workflows (user interface)
-2. **Workflow agents** analyze and plan (decision layer)
-3. **Implementation agents** execute tasks (execution layer)
+**Specification-driven development enabling speed AND quality**
 
-This separation enables parallel processing, clean context windows, and framework-specific customization while maintaining consistent TDD enforcement.
+- **Specs First**: Define WHAT before HOW - every feature starts with specifications
+- **TDD is Non-Negotiable**: RED → GREEN → REFACTOR enforced at every step
+- **Quality Gates**: Prevent technical debt accumulation through systematic validation
+- **Parallel Execution**: Maximize velocity without compromising quality
 
-## CCFlow Workflow & Agent Orchestration
+## Core Architecture
 
-```
-ENTRY → ROUTING → PLANNING → IMPLEMENTATION → VALIDATION → PERSISTENCE
-  ↓         ↓          ↓            ↓              ↓            ↓
-/cf:feature → Assessor → /cf:plan → /cf:code → /cf:review → /cf:checkpoint
-              (L1-L4)    ↓            ↓          Reviewer    Documentarian
-                      Architect    testEngineer
-                      Product      +
-                      Facilitator  Implementation
-                                   Agents
+```mermaid
+graph LR
+    C[COMMANDS<br/>Orchestrate] --> W[WORKFLOW AGENTS<br/>Analyze]
+    W --> I[IMPLEMENTATION AGENTS<br/>Execute]
 
-Complexity Routing:
-- Level 1: /cf:feature → /cf:code → /cf:checkpoint
-- Level 2-3: /cf:feature → /cf:plan → /cf:code → /cf:checkpoint
-- Level 4: /cf:feature → /cf:plan → /cf:creative → /cf:code → /cf:checkpoint
+    style C fill:#e1f5fe
+    style W fill:#fff3e0
+    style I fill:#f3e5f5
 ```
 
-## Quick Decision Guide
+- **Commands**: Orchestrate workflows, no logic
+- **Workflow Agents**: Analyze and plan, read-only tools
+- **Implementation Agents**: Execute tasks, full tool access
+- **Memory Bank**: Persistent context across sessions
 
-**New Task?**
-→ `/cf:feature` → Complexity assessment → Routing
+## Command Domains
 
-**Complexity Routing:**
-- L1 (Quick: <30min, 1-2 files) → Direct to `/cf:code`
-- L2 (Simple: 2-6h, 3-5 files) → Requires `/cf:plan`
-- L3 (Intermediate: 1-3 days, 5-15 files) → `/cf:plan` with auto-facilitation
-- L4 (Complex: 3+ days, 15+ files) → `/cf:plan` → `/cf:creative` sub-tasks
+### 1. Project Initialization
+**Setup and configure your project**
+- `/cf:init` - Initialize CCFlow with memory bank
+- `/cf:configure-team` - Install stack-specific teams
+- `/cf:create-specialist` - Add domain specialists
 
-**Need Specialist?**
-- Pattern repeated 3+ times → `/cf:create-specialist`
-- New tech stack → `/cf:configure-team`
-- Domain expertise → Create specialist agent
+### 2. Workflow Execution
+**Core development loop**
+- `/cf:feature` - Entry point → complexity routing (L1-L4)
+- `/cf:plan` - Planning with Architect + Product agents
+- `/cf:creative` - Deep exploration for L4 complexity
+- `/cf:code` - TDD implementation (RED → GREEN → REFACTOR)
+- `/cf:review` - Quality validation gate
 
-## Sub-Agent Best Practices
+### 3. State Management
+**Persist and load project context**
+- `/cf:checkpoint` - Save memory bank snapshot
+- `/cf:context` - Load project context
+- `/cf:sync` - Inspect memory bank status
+- `/cf:git` - Smart commits with memory integration
 
-### Single Responsibility Principle
-Each agent has ONE clear goal:
-- **Assessor**: Analyze complexity, route to workflow
-- **Architect**: Technical design and architecture decisions
-- **Product**: User requirements and feature validation
+### 4. Interactive Support
+**Human-in-the-loop refinement**
+- `/cf:ask [agent]` - Direct agent consultation
+- `/cf:facilitate [topic]` - Interactive exploration
+- `--interactive` flag - Add to any command for Facilitator engagement
+
+### 5. Meta-Development
+**System optimization and consistency**
+- `/cf:refine-agent` - Optimize agents (target: 500-1500 tokens)
+- `/cf:refine-command` - Optimize commands (via commandBuilder)
+- `/cf:status` - Quick task overview
+
+**Best Practice**: Always use meta-tools for ALL system modifications to ensure consistency
+
+## Facilitator Pattern
+
+Interactive modes follow this 5-step pattern:
+1. **Present Current State** - Show what exists
+2. **Identify Gaps/Concerns** - Find what's missing or unclear
+3. **Ask Clarifying Questions** - Gather needed information
+4. **Refine Based on Feedback** - Iterate with user input
+5. **Always Recommend Next Action** - Never leave user without next step
+
+## Complexity Routing
+
+The Assessor agent automatically routes based on task complexity:
+
+| Level | Criteria | Route |
+|-------|----------|-------|
+| **L1** | 1-2 files, clear scope, known pattern | → `/cf:code` |
+| **L2** | 3-5 files, established patterns | → `/cf:plan` → `/cf:code` |
+| **L3** | 5-15 files, some ambiguity, cross-cutting | → `/cf:plan --interactive` → `/cf:code` |
+| **L4** | 15+ files, high uncertainty, architectural | → `/cf:plan` → `/cf:creative` → sub-tasks |
+
+**Note**: Complexity is determined by scope and clarity, NOT temporal estimates. Never use time references in specifications or routing decisions.
+
+## Agent Hierarchy
+
+### Workflow Agents (`workflow/`)
+**Decision layer - read-only tools**
+- **Assessor**: Complexity analysis and routing
+- **Architect**: Technical design decisions
+- **Product**: User requirements and UX
 - **Facilitator**: Interactive refinement through questions
-- **testEngineer**: Write failing tests (RED phase)
-- **codeImplementer**: Make tests pass (GREEN phase)
-- **uiDeveloper**: Frontend implementation
-- **Reviewer**: Validate quality and completeness
-- **Documentarian**: Memory bank consistency
-
-### Agent Communication Patterns
-Commands orchestrate agents through explicit handoffs:
-- **Status Transitions**: ASSESSED → PLANNED → TESTING → IMPLEMENTING → REVIEWING
-- **Tool Isolation**: Each agent has minimal required tools (see Agent Permission Matrix)
-- **Context Passing**: Via memory bank files, not direct agent-to-agent communication
-- **No Direct Invocation**: Agents don't call other agents; commands orchestrate
-
-### Parallel vs Sequential Execution
-- **Sequential** (high-risk): Planning → Design → Test Writing → Implementation
-- **Parallel** (safe): Multiple file edits, independent test runs, documentation updates
-- **Delegation Triggers**: Keywords in task description trigger specialist invocation
-- **Context Isolation**: Each agent operates in clean context window
-
-### Performance Optimization
-- **Separate Context Windows**: Each agent operates independently
-- **Lazy Loading**: Load only required memory bank files per agent
-- **Early Termination**: GREEN gate stops execution if tests fail 3 times
-- **Batch Operations**: Group similar operations for efficiency
-
-## Agent Permission Matrix
-
-| Agent | Tools | Rationale |
-|-------|-------|-----------|
-| Assessor | Read, Grep, Glob | Read-only complexity analysis |
-| Architect | Read, Write (patterns) | Design documentation |
-| Product | Read, Write (context) | Requirements documentation |
-| Facilitator | Read | Question-driven exploration |
-| testEngineer | Read, Write, Edit, Bash | Test creation & execution |
-| codeImplementer | Read, Write, Edit, Bash, Glob, Grep | Implementation |
-| uiDeveloper | Read, Write, Edit, Bash, Glob, Grep | Frontend implementation |
-| Reviewer | Read, Grep, Glob, Bash | Quality assessment |
-| Documentarian | Read, Edit | Memory bank updates |
-
-## Agent Architecture
-
-### Command Layer (Orchestration)
-Commands coordinate agent execution based on complexity:
-- `/cf:feature` → Invokes Assessor for routing
-- `/cf:plan` → Coordinates Architect + Product + Facilitator
-- `/cf:code` → Orchestrates testEngineer → Implementation agents
-- `/cf:checkpoint` → Triggers Documentarian for memory sync
-- `/cf:review` → Engages Reviewer for quality validation
-
-### Workflow Layer (Analysis & Planning)
-Located in `.claude/agents/workflow/`:
-- **Assessor**: Complexity analysis (L1-L4 routing)
-- **Architect + Product**: Technical/user requirement planning
-- **Facilitator**: Human-in-the-loop refinement
 - **Reviewer**: Quality validation
 - **Documentarian**: Memory bank consistency
 
-### Implementation Layer (Execution)
-Configurable per project via `/cf:configure-team`:
+### Implementation Agents (`generic/` or `[stack]/`)
+**Execution layer - full tool access**
+- **testEngineer**: Write failing tests (RED phase)
+- **codeImplementer**: Make tests pass (GREEN phase)
+- **uiDeveloper**: Frontend-specific implementation
+- **[Specialists]**: Domain-specific agents (optional)
 
-**Option 1: Generic Agents** (Default)
-- Direct implementation without delegation
-- Framework-agnostic patterns
-- Located in `.claude/agents/generic/` (user projects)
+### System Agents (`system/`)
+**Meta-development - CCFlow optimization**
+- **agentBuilder**: Agent creation and refinement
+- **commandBuilder**: Command optimization
+- **project-discovery**: Project analysis during init
 
-**Option 2: Stack-Specific Teams**
-- Core agents delegate to specialists
-- Framework-aware patterns
-- Keyword-based routing via `routing.md`
-- Located in `.claude/agents/[domain]/[stack]/` (user projects)
+## Agent Communication Patterns
 
-## Custom Implementation Teams
+Critical architectural rules that enforce clean separation:
 
-CCFlow supports two team models:
-
-### Generic Team (Default)
-- Installed via `/cf:init`
-- Framework-agnostic implementation
-- No delegation, direct implementation
-- Good for: prototypes, simple projects, learning
-
-### Stack-Specific Teams
-- Configured via `/cf:configure-team`
-- Framework-aware patterns
-- Core agents delegate to specialists
-- Good for: production apps, complex stacks
-
-Example team structure:
-```
-.claude/agents/
-├── web/react-express/
-│   ├── core/
-│   │   ├── expressBackend.md
-│   │   ├── reactFrontend.md
-│   │   └── jestTester.md
-│   ├── specialists/
-│   │   ├── sequelizeDb.md
-│   │   ├── jwtAuth.md
-│   │   └── reactHooks.md
-│   └── routing.md
-```
-
-### Creating Specialists
-When patterns emerge (3+ similar tasks):
-```bash
-/cf:create-specialist database --type development --name postgresDb
-```
-- Specialists handle domain-specific implementation
-- Parent core agent delegates based on keywords
-- Maintains single responsibility principle
-
-## Memory Bank Structure
-
-CCFlow's persistent context system:
-
-```
-memory-bank/
-├── projectbrief.md       # Immutable scope definition
-├── productContext.md     # Features, user needs, UX
-├── systemPatterns.md     # Architecture, patterns, ADRs
-├── activeContext.md      # Current focus, recent changes
-├── progress.md           # Completed work, milestones
-└── tasks.md              # Task tracking with status
-```
-
-**Update Strategy**:
-- Commands auto-update relevant files during execution
-- `/cf:checkpoint` creates formal savepoints
-- Documentarian ensures cross-file consistency
+- **No Direct Agent-to-Agent**: Agents cannot invoke other agents directly
+- **Single Layer Deep**: Claude Code only supports main → sub-agent (no sub-sub-agents)
+- **Status Transitions**: ASSESSED → PLANNED → TESTING → IMPLEMENTING → REVIEWING
+- **Context Passing**: Via command context or memory bank files
+- **Tool Isolation**: Each agent has minimal required tools (see Permission Matrix in docs)
 
 ## TDD Enforcement (GREEN Gate)
 
-**Absolute Rule**: Tests MUST pass before task completion
+**TDD is the foundation of quality - enforced systematically, no exceptions**
 
-**RED → GREEN → REFACTOR workflow**:
-1. testEngineer writes failing tests FIRST (RED)
-2. Implementation agent makes tests pass (GREEN)
-3. GREEN gate: If tests fail after 3 attempts → STOP, report blocker
-4. Only after 100% GREEN → update memory bank, mark complete
+1. **RED**: testEngineer writes failing tests FIRST (specification as tests)
+2. **GREEN**: Implementation agent makes tests pass (minimum viable code)
+3. **REFACTOR**: Improve code while keeping tests green (maintain quality)
+4. **3-Strike Rule**: After 3 failures → STOP, report blocker (prevent endless loops)
+5. **No Bypass**: Tasks cannot complete with failing tests (quality gate)
 
-**No exceptions**: Tasks cannot be marked complete with failing tests.
+**Why TDD is Central**:
+- Tests ARE the specification
+- Prevents incomplete implementation
+- Catches issues immediately when cheapest to fix
+- Ensures memory bank reflects working state
 
-## Command Namespace
+## Memory Bank
 
-All commands use `/cf:` prefix to avoid conflicts:
+Persistent context maintained across sessions:
 
-**Core Workflow Commands**:
-- `/cf:feature` - Entry point for new work
-- `/cf:plan` - Planning with agents
-- `/cf:code` - TDD implementation
-- `/cf:creative` - Deep exploration for complex tasks
-- `/cf:review` - Quality assessment
-- `/cf:checkpoint` - Memory bank savepoint
+```mermaid
+graph TD
+    MB[memory-bank/]
+    MB --> PB[projectbrief.md<br/>Project scope - immutable]
+    MB --> PC[productContext.md<br/>Features and user needs]
+    MB --> SP[systemPatterns.md<br/>Architecture decisions]
+    MB --> AC[activeContext.md<br/>Current work focus]
+    MB --> PR[progress.md<br/>Completed milestones]
+    MB --> TK[tasks.md<br/>Task tracking]
 
-**Team Management**:
-- `/cf:init` - Initialize project
-- `/cf:configure-team` - Set up stack-specific team
-- `/cf:create-specialist` - Add domain specialist
+    style MB fill:#e8f5e9
+    style PB fill:#ffebee
+    style PC fill:#f3e5f5
+    style SP fill:#e3f2fd
+    style AC fill:#fff9c4
+    style PR fill:#e0f2f1
+    style TK fill:#fce4ec
+```
 
-**Utility Commands**:
-- `/cf:sync` - Read memory bank status
-- `/cf:status` - Quick task overview
-- `/cf:context` - Load project context
-- `/cf:git` - Smart commit with memory integration
+**Update Strategy**:
+- Commands auto-update during execution
+- `/cf:checkpoint` creates formal savepoints
+- Documentarian ensures cross-file consistency
 
-## Critical Design Principles
+## Workflow Patterns
 
-### Specification-Based System
-CCFlow operates through markdown specifications, not executable code:
-- **Agents ARE**: Step-by-step instructions Claude reads and follows
-- **Agents ARE NOT**: Programs with automatic enforcement
-- **Commands ARE**: Procedural orchestration steps
-- **Commands ARE NOT**: Code that executes validation logic
+### Standard Development Flow
 
-### Writing Effective Agents
+```mermaid
+graph LR
+    F[/cf:feature] --> A[Assessor routes]
+    A --> P[/cf:plan<br/>if L2+]
+    P --> C[/cf:code]
+    A --> C
+    C --> R[/cf:review]
+    R --> CH[/cf:checkpoint]
 
-For detailed DO's and DON'Ts with examples, see **[Agent and Command Development Guidelines](docs/system/agent-command-development.md)**.
+    style F fill:#e1f5fe
+    style A fill:#fff3e0
+    style P fill:#f3e5f5
+    style C fill:#e8f5e9
+    style R fill:#ffebee
+    style CH fill:#fce4ec
+```
 
-Key principles:
-- Write clear procedural instructions (not algorithms)
-- Include explicit decision trees and keyword lists
-- Specify manual validation steps (not automatic enforcement)
-- Use imperative language ("Check if...", "Verify that...")
+### Session Management
+```
+Start: /cf:context          # Load state
+Work:  /cf:checkpoint       # Regular intervals
+End:   /cf:checkpoint → /cf:git  # Save and commit
+```
 
-### YAML Frontmatter
-Valid Claude Code fields:
-- `name`: Agent identifier (required)
-- `description`: Purpose and usage (required)
-- `tools`: Tool permissions (optional)
-- `model`: Model selection (optional)
+### Getting Help
+```
+/cf:ask [agent] "question"        # Direct consultation
+/cf:facilitate "topic"             # Interactive exploration
+/cf:status                        # Quick overview
+```
 
-Custom documentation fields (not enforced):
-- `priority`, `triggers`, `dependencies`, `outputs`
+## Critical Principles
 
-## Facilitator Action Recommendation Pattern
+### Single Responsibility
+- Each agent has ONE clear goal
+- Commands orchestrate, agents execute
+- No direct agent-to-agent communication
 
-Used throughout interactive modes:
-1. Present Current State
-2. Identify Gaps/Concerns
-3. Ask Clarifying Questions
-4. Refine Based on Feedback
-5. **Always Recommend Next Action** (never leave user without next step)
+### Clean Context Windows
+- Agents operate independently
+- Context passed through command layer
+- Parallel execution where possible
 
-## Meta-Development Tools
+### Quality Gates
+1. Complexity assessment (routing)
+2. Planning validation (technical + user)
+3. TDD enforcement (GREEN gate)
+4. Quality review (standards)
+5. Memory consistency (documentation)
 
-CCFlow includes specialized agents for system development:
+### Specification-Based Development
+- **Specs define behavior**: What the system should do, not how
+- **Agents are instructions**: Markdown specs Claude reads and follows
+- **Commands are procedures**: Orchestration steps, not executable code
+- **Validation is explicit**: Each step must verify correctness
+- **No temporal references**: Specs focus on scope/complexity, never time estimates
 
-### AgentBuilder System
-- **Command**: `/cf:refine-agent [name]` - Optimize existing agents
-- **Agent**: `AgentBuilder` - Universal agent generator/refiner
-- **Purpose**: Maintain token efficiency (500-1500 tokens) and consistency
-- **Usage**: Always use for creating/modifying agents in CCFlow
+### Parallel vs Sequential Execution
+- **Sequential (high-risk)**: Planning → Design → Test Writing → Implementation
+- **Parallel (safe)**: Multiple file edits, independent test runs, documentation updates
+- **Performance optimization**: Identify independent operations for concurrent execution
+- **Context isolation**: Each agent operates in clean context window
 
-### CommandBuilder System
-- **Command**: `/cf:refine-command [name]` - Optimize existing commands
-- **Agent**: `CommandBuilder` - Command optimizer (via Task tool)
-- **Purpose**: Ensure clarity, completeness, proper structure
-- **Usage**: Always use for creating/modifying commands in CCFlow
+## Quick Reference
 
-**Best Practice**: Use these meta-tools for ALL system modifications to ensure consistency and compliance with Claude Code specifications.
+### Common Commands by Workflow Stage
 
-## Important Implementation Notes
+**Starting Work**: `/cf:feature` → automatic routing
+**Planning**: `/cf:plan` → add `--interactive` if unclear
+**Building**: `/cf:code` → enforces TDD
+**Validating**: `/cf:review` → quality check
+**Saving**: `/cf:checkpoint` → memory snapshot
 
-1. **Command Execution Context**: Commands run from project root with `memory-bank/` present
-2. **Agent Invocation**: Commands invoke agents by name in process steps
-3. **File Paths**: Memory bank refs use `memory-bank/` prefix
-4. **Error Recovery**: Commands detect missing prerequisites and provide fix commands
-5. **Specialist Discovery**: Implementation agents check `specialists/` subdirectory
-6. **Auto-Facilitation**: Level 3-4 tasks automatically enable interactive mode
+### Agent Invocation Rules
+- Commands invoke agents via Task tool
+- Agents cannot invoke other agents
+- Single layer deep (no sub-sub-agents)
+- Clean context per invocation
+
+### Specialist Pattern
+When patterns repeat 3+ times:
+```bash
+/cf:create-specialist [domain] --type [development|testing] --name [agentName]
+```
+
+## Implementation Notes
+
+Critical operational requirements:
+- **Command Context**: Commands run from project root with `memory-bank/` present
+- **Error Recovery**: Commands detect missing prerequisites and provide fix commands
+- **Specialist Discovery**: Implementation agents check `specialists/` subdirectory
+- **Auto-Facilitation**: Level 3-4 tasks automatically enable interactive mode
+
+## Documentation Standards
+
+**Diagramming**: Use Mermaid for all diagrams (architecture, workflows, relationships)
+
+For detailed information, see:
+- `docs/architecture/` - System design details
+- `docs/workflows/` - Complete workflow examples
+- `docs/agents/` - Agent specifications
+- `docs/commands/` - Command documentation
+- `docs/troubleshooting/` - Common issues and solutions
 
 ---
 
-**Version**: 2.0 (Focused on Sub-Agent Architecture)
-**Last Updated**: 2025-01-13
-**Documentation**: See `docs/` for detailed guides and specifications
+**Version**: 2.0 (Specification-Driven)
+**Core Principles**:
+- Specification-driven development (specs before code)
+- TDD enforcement through GREEN gate (no exceptions)
+- No temporal references in specs or routing
+**Architecture**: Commands orchestrate → Agents analyze → Agents execute
