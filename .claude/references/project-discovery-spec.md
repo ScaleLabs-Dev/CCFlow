@@ -1,6 +1,6 @@
-# Agent Configuration Schema
+# Project Discovery Specification
 
-This document defines how implementation agent templates get configured during `/cf:init` Phase 1.5.
+This document defines patterns and extraction logic for the projectDiscovery agent used during `/cf:init` Phase 0.
 
 ## Configuration Sources (Priority Order)
 
@@ -11,13 +11,13 @@ This document defines how implementation agent templates get configured during `
 
 ---
 
-## Configuration Mapping
+## Discovery Extraction Patterns
 
-### codeImplementer Template
+### Technology Stack Discovery
 
 #### Technology Stack Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{LANGUAGE}}` | "Tech Stack" → language | - | File extensions | "Primary language?" | JavaScript |
 | `{{FRAMEWORK}}` | "Tech Stack" → framework | dependencies (express, fastify, nestjs) | - | "Backend framework?" | Express |
@@ -27,7 +27,7 @@ This document defines how implementation agent templates get configured during `
 
 #### Coding Conventions Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{VAR_NAMING}}` | "Conventions" → variables | - | Code analysis (camelCase/snake_case) | "Variable naming?" | camelCase |
 | `{{FUNC_NAMING}}` | "Conventions" → functions | - | Code analysis | "Function naming?" | camelCase |
@@ -41,7 +41,7 @@ This document defines how implementation agent templates get configured during `
 
 #### Common Patterns Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{SERVICE_PATTERN}}` | "Architecture" → service_layer | - | src/services/ analysis | "Service layer pattern?" | Class-based |
 | `{{ERROR_PATTERN}}` | "Architecture" → error_handling | - | Error handler analysis | "Error handling?" | Middleware |
@@ -51,7 +51,7 @@ This document defines how implementation agent templates get configured during `
 
 #### File Templates Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{SERVICE_TEMPLATE}}` | "Templates" → service | - | Existing service analysis | - | Generic template |
 | `{{MODEL_TEMPLATE}}` | "Templates" → model | - | Existing model analysis | - | Generic template |
@@ -59,7 +59,7 @@ This document defines how implementation agent templates get configured during `
 
 #### Specialist Routing Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{DB_SPECIALIST_TRIGGER}}` | "Specialists" → database | - | - | "When delegate DB work?" | Complex queries |
 | `{{API_SPECIALIST_TRIGGER}}` | "Specialists" → api_integration | - | - | "When delegate API work?" | External APIs |
@@ -72,7 +72,7 @@ This document defines how implementation agent templates get configured during `
 
 #### Testing Framework Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{TEST_FRAMEWORK}}` | "Tech Stack" → testing | devDependencies (jest, vitest, mocha) | - | "Testing framework?" | Jest |
 | `{{TEST_DIRECTORY}}` | - | - | tests/ or __tests__/ or spec/ | - | tests/ |
@@ -81,7 +81,7 @@ This document defines how implementation agent templates get configured during `
 
 #### Test Running Commands Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{TEST_COMMAND}}` | - | scripts.test | - | - | npm test |
 | `{{TEST_FILE_COMMAND}}` | - | - | - | - | npm test <file> |
@@ -90,7 +90,7 @@ This document defines how implementation agent templates get configured during `
 
 #### Coverage Thresholds Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{MIN_LINES}}` | "Quality Standards" → coverage_lines | jest.coverageThreshold | - | "Min line coverage?" | 80 |
 | `{{MIN_BRANCHES}}` | "Quality Standards" → coverage_branches | jest.coverageThreshold | - | "Min branch coverage?" | 75 |
@@ -98,7 +98,7 @@ This document defines how implementation agent templates get configured during `
 
 #### Test Patterns Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{TEST_NAMING}}` | "Conventions" → test_naming | - | Test file analysis | - | should X when Y |
 | `{{FIXTURE_LOCATION}}` | - | - | Fixture analysis | - | tests/fixtures/ |
@@ -107,7 +107,7 @@ This document defines how implementation agent templates get configured during `
 
 #### Specialist Routing Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{PERF_TEST_TRIGGER}}` | "Specialists" → performance | - | - | "When delegate perf testing?" | Load testing needed |
 | `{{SECURITY_TEST_TRIGGER}}` | "Specialists" → security | - | - | "When delegate security testing?" | Auth/crypto code |
@@ -120,7 +120,7 @@ This document defines how implementation agent templates get configured during `
 
 #### UI Framework Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{UI_FRAMEWORK}}` | "Tech Stack" → frontend | dependencies (react, vue, angular, svelte) | - | "UI framework?" | React |
 | `{{UI_VERSION}}` | "Tech Stack" → version | dependencies version | - | - | Latest |
@@ -129,7 +129,7 @@ This document defines how implementation agent templates get configured during `
 
 #### Styling Approach Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{CSS_FRAMEWORK}}` | "Tech Stack" → styling | dependencies (tailwind, bootstrap, mui) | - | "CSS framework?" | CSS Modules |
 | `{{CSS_IN_JS}}` | "Tech Stack" → css_in_js | dependencies (styled-components, emotion) | - | "CSS-in-JS?" | No |
@@ -137,7 +137,7 @@ This document defines how implementation agent templates get configured during `
 
 #### Component Patterns Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{COMPONENT_STRUCTURE}}` | "Architecture" → component_pattern | - | Component analysis | "Component pattern?" | Functional |
 | `{{PROP_TYPES}}` | "Tech Stack" → typescript | dependencies (typescript, prop-types) | .ts/.tsx files | - | TypeScript/PropTypes |
@@ -145,19 +145,19 @@ This document defines how implementation agent templates get configured during `
 
 #### Accessibility Standards Section
 
-| Template Placeholder | CLAUDE.md Section | package.json | Code Structure | Prompt | Default |
+| Discovery Field | CLAUDE.md Section | Package Files | Code Structure | User Prompt | Default Value |
 |---------------------|-------------------|--------------|----------------|---------|----------|
 | `{{WCAG_LEVEL}}` | "Quality Standards" → accessibility | - | - | "WCAG compliance level?" | AA |
 | `{{A11Y_TESTING}}` | "Tech Stack" → a11y_testing | devDependencies (axe, pa11y) | - | "A11y testing tool?" | Manual review |
 
 ---
 
-## Extraction Logic
+## Extraction Logic for projectDiscovery Agent
 
 ### Phase 1: Parse CLAUDE.md
 
-```javascript
-// Pseudo-code for extraction
+```markdown
+// Steps for extraction
 function extractFromClaudeMd(claudeMdContent) {
   const config = {}
 

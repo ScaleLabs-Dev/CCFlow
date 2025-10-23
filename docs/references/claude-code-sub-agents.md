@@ -192,6 +192,116 @@ You are a database optimization expert specializing in:
 Always consider scalability and provide performance metrics where possible.
 ```
 
+## Invoking Sub-Agents
+
+### Explicit Invocation
+
+You can directly invoke a specific sub-agent by mentioning it in your request. This gives you control over which specialized agent handles a particular task.
+
+**Syntax Examples:**
+```
+> Use the test-runner subagent to fix failing tests
+> Have the code-reviewer subagent look at my recent changes
+> Ask the database-specialist subagent to optimize this query
+> Get the test-engineer subagent to write tests for the new feature
+```
+
+**Key Points:**
+- Name the specific sub-agent you want to use
+- Describe the task you want it to perform
+- Natural language syntax - no special commands needed
+- The sub-agent must exist in `.claude/agents/` or `~/.claude/agents/`
+
+**In CCFlow Commands:**
+When writing CCFlow commands (which are markdown instruction files), you specify agent invocation using natural language that Claude interprets:
+
+```markdown
+**Step 2: Code Review**
+**Invoke code-reviewer agent** from `.claude/agents/workflow/code-reviewer.md`:
+- Review recent changes for quality issues
+- Check security vulnerabilities
+- Validate adherence to patterns
+```
+
+**Important:** This is NOT code that executes automatically. CCFlow commands are instruction documents that Claude reads and follows. When Claude sees "Invoke X agent", it understands to use that specific sub-agent for the task.
+
+**How it works:**
+1. User runs command: `/cf:review`
+2. Claude reads the command markdown file
+3. Claude sees instruction: "Invoke code-reviewer agent"
+4. Claude explicitly invokes that sub-agent
+5. Sub-agent performs task in its own context
+6. Results return to main Claude context
+
+The command acts as orchestrator instructions, telling Claude which agents to use for each step.
+
+### Using the Task Tool
+
+The Task tool is Claude's built-in mechanism for invoking sub-agents programmatically:
+
+```
+Task(
+  subagent_type: "code-reviewer",
+  description: "Review the authentication module",
+  prompt: "Check for security vulnerabilities and code quality issues"
+)
+```
+
+**Note:** The Task tool is used by Claude when following command instructions, not directly in command markdown files. Commands use natural language instructions that Claude interprets.
+
+### Automatic Invocation
+
+Sub-agents can also be invoked automatically based on their `description` field when it matches the task context. This happens when:
+- The task matches keywords in the agent's description
+- Claude determines the agent is best suited for the work
+- No explicit agent is requested
+
+### Chaining Sub-Agents
+
+You can chain multiple sub-agents together for complex, multi-step operations. Each agent handles a specific part of the workflow.
+
+**Sequential Chaining Example:**
+```
+> First use the code-analyzer subagent to find performance issues,
+> then use the optimizer subagent to fix them
+```
+
+**In CCFlow Context:**
+```markdown
+**Step 1: Analysis**
+**Invoke code-analyzer agent** to identify issues
+
+**Step 2: Optimization**
+**Invoke optimizer agent** to fix identified issues
+```
+
+**Important Limitations:**
+- **Single Layer Deep**: Claude Code only supports main context → sub-agent (no sub-sub-agents)
+- **No Direct Agent-to-Agent**: Sub-agents cannot directly invoke other sub-agents
+- **Command Orchestration**: Commands must orchestrate the chain, passing results between agents
+- **Context Isolation**: Each agent works in its own context window
+
+**Workarounds for Complex Chains:**
+1. **Command-Level Orchestration**: Commands invoke agents in sequence
+2. **Memory Bank Handoffs**: Store results in memory bank for next agent
+3. **Context Passing**: Include previous agent's output in next agent's prompt
+
+**Example CCFlow Chain:**
+```markdown
+# In /cf:analyze command
+
+**Step 1: Complexity Assessment**
+Invoke assessor agent → Returns complexity score
+
+**Step 2: Architecture Design**
+Pass complexity score to architect agent → Returns design
+
+**Step 3: Implementation Planning**
+Pass design to product agent → Returns requirements
+
+Each step explicitly invoked by the command, not by agents calling each other.
+```
+
 ## Integration with CCFlow
 
 ### Workflow Agents vs Sub-Agents
@@ -199,7 +309,7 @@ Always consider scalability and provide performance metrics where possible.
 **Workflow Agents** (CCFlow's orchestration layer):
 - Located in `.claude/agents/workflow/`
 - Coordinate complex multi-step operations
-- Examples: Assessor, Facilitator, Documentarian
+- Examples: assessor, facilitator, documentarian
 
 **Implementation Sub-Agents** (Task execution layer):
 - Located in `.claude/agents/` subdirectories
@@ -220,7 +330,7 @@ This automatically:
 
 ### Agent Builder Integration
 
-The AgentBuilder meta-agent (`/cf:refine-agent`) ensures:
+The agent-builder meta-agent (`/cf:refine-agent`) ensures:
 - Proper YAML frontmatter structure
 - Token efficiency (400-1500 tokens)
 - Clear decision logic and triggers
@@ -265,7 +375,7 @@ Before deploying a sub-agent, verify:
 
 ## Related CCFlow Documentation
 
-- [AgentBuilder Specification](./../specifications/agent_builder.md) - Meta-agent for creating and refining agents
+- [agent-builder Specification](./../specifications/agent_builder.md) - Meta-agent for creating and refining agents
 - [CCFlow Agents Guide](./../user-guide/agents.md) - Overview of CCFlow's agent system
 - [Product Teams Architecture](./../specifications/product_teams.md) - Stack-specific team configuration
 - [CLAUDE.md](./../../CLAUDE.md) - Main guidance for modifying agents

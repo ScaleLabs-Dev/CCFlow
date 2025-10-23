@@ -28,7 +28,7 @@ argument-hint: "[--quick] [--force-fresh]"
 Bootstrap CCFlow system through:
 1. Creating memory bank directory structure
 2. Creating .claude agent directory structure
-3. **Guided project brief creation** (default) - Collaborative discovery with Facilitator + Product + Architect agents
+3. **Guided project brief creation** (default) - Collaborative discovery with facilitator + product + architect agents
 
 **Philosophy**: Initialization is a **collaborative discovery process**, not form-filling. Agents guide you through creating a comprehensive project brief that serves as the foundation for all future work.
 
@@ -38,51 +38,38 @@ Bootstrap CCFlow system through:
 
 ### Phase 0: Project Discovery (Automated)
 
-**Purpose**: Detect existing project documentation and offer to import context.
+**Purpose**: Detect existing project documentation and tech stack to streamline initialization.
 
-**Step 1: Scan for Existing Documentation**
+**Step 1: Project Discovery**
 
-Check for common project files:
-```bash
-# Check for documentation
-- README.md (project description, features, tech stack)
-- CLAUDE.md (tech stack, constraints, patterns)
-- package.json (dependencies, framework detection)
+**Invoke the project-discovery subagent** to analyze the existing project:
+- Check for package manager files (package.json, Gemfile, requirements.txt, etc.)
+- Extract tech stack from dependencies
+- Parse README.md and CLAUDE.md
+- Analyze code structure
+- Generate structured discovery report
 
-# Check for code structure
-- src/ or app/ directory
-- components/ or pages/ directory
-- api/ or routes/ or server/ directory
-- tests/ or __tests__/ directory
-```
+The agent uses `.claude/references/stack-patterns.md` for multi-language detection:
+- JavaScript/TypeScript (package.json)
+- Python (requirements.txt, Pipfile)
+- Ruby (Gemfile)
+- Go (go.mod)
+- Java (pom.xml, build.gradle)
+- PHP (composer.json)
+- And more...
 
 ---
 
-**Step 2: Parse Discovered Content**
+**Step 2: Process Discovery Report**
 
-**If README.md exists**:
-- Extract first heading and paragraph as Executive Summary candidate
-- Look for sections: "Features", "Tech Stack", "Built With", "Problem", "Why"
-- Identify project description and purpose
+Parse the returned discovery report to extract:
+- Project name and description
+- Technology stack (language, frameworks, database)
+- Existing documentation
+- Code structure and patterns
+- Team type recommendation
 
-**If CLAUDE.md exists**:
-- Extract "Tech Stack" or "Project Overview" sections
-- Extract "Status" or project maturity information
-- Extract architectural patterns or constraints
-
-**If package.json exists**:
-- **Frontend frameworks**: React, Vue, Angular, Svelte, Next.js, Nuxt
-- **Backend frameworks**: Express, Fastify, NestJS, Koa, Hapi
-- **Databases**: pg (PostgreSQL), mysql, mongodb, mongoose
-- **Testing**: Jest, Vitest, Playwright, Cypress
-- **Build tools**: Vite, Webpack, esbuild, Turbopack
-- Extract project name and description fields
-
-**If code structure exists**:
-- `src/components/` or `components/` → Component-based architecture
-- `src/pages/` or `pages/` → Page-based routing (Next.js, Nuxt, etc.)
-- `api/` or `routes/` or `server/` → Backend API structure
-- `tests/` or `__tests__/` → Testing infrastructure exists
+Store this information in command context for use in later phases.
 
 ---
 
@@ -112,36 +99,35 @@ Proceeding with fresh project initialization...
 ```
 📋 EXISTING PROJECT DETECTED
 
-Found:
-✓ README.md - Project description available
-✓ CLAUDE.md - Tech stack and constraints documented
-✓ package.json - React 18, TypeScript, Express dependencies
-✓ Code structure - src/components/, api/, tests/
+[Display summary from project-discovery report]
 
 Discovered Information:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Executive Summary (from README.md):
-"[Extracted first paragraph]"
+Project: [Name from discovery]
+Language: [e.g., JavaScript/TypeScript, Python, Ruby]
 
-Tech Stack (from CLAUDE.md + package.json):
-- Frontend: React 18, TypeScript
-- Backend: Express, Node.js
-- Database: PostgreSQL
-- Testing: Jest, Playwright
+Tech Stack (auto-detected):
+- Frontend: [if applicable]
+- Backend: [frameworks found]
+- Database: [if detected]
+- Testing: [test frameworks]
 
-Existing Features (from code structure):
-- Component library (src/components/)
-- API routes (api/)
-- Test suite (tests/)
+Project Structure:
+- [Key directories and their purpose]
+
+Documentation Found:
+✓ README.md - [what was extracted]
+✓ CLAUDE.md - [if found]
+✓ Package files - [which ones]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Starting fresh guided creation.
-(Type 'use findings' during Facilitator questions to pre-populate from scanned info)
+This information will be used to streamline the setup process.
+The facilitator will incorporate these findings automatically.
 
-[Continue to Phase 1 with Facilitator-guided creation]
+[Continue to Phase 1 with pre-populated context]
 ```
 
-**If user types "use findings" during Facilitator interaction**:
+**If user types "use findings" during facilitator interaction**:
 ```
 ✓ Pre-populating from discovered documentation...
 
@@ -230,7 +216,7 @@ Structure created successfully!
 **Purpose**: Generic agents are now installed and ready to use.
 
 **What Was Installed**:
-- **Workflow agents**: Assessor, Architect, Product, Facilitator, Documentarian, Reviewer (no configuration needed)
+- **Workflow agents**: assessor, architect, product, facilitator, documentarian, reviewer (no configuration needed)
 - **Generic implementation agents**: codeImplementer, testEngineer, uiDeveloper (framework-agnostic, work with any stack)
 
 **No Configuration Needed**: Generic agents use universal patterns that work across all tech stacks. They adapt to your project by reading CLAUDE.md and systemPatterns.md during execution.
@@ -242,7 +228,7 @@ Structure created successfully!
 ✅ AGENTS INSTALLED
 
 Workflow Agents (6):
-✓ Assessor, Architect, Product, Facilitator, Documentarian, Reviewer
+✓ assessor, architect, product, facilitator, documentarian, reviewer
 
 Generic Implementation Agents (3):
 ✓ codeImplementer (universal backend/logic)
@@ -276,8 +262,8 @@ Error: [Error message]
 
 Troubleshooting:
 - Check template file exists and is valid
-- Verify configuration values are valid
-- See .claude/templates/agents/CONFIGURATION_SCHEMA.md for details
+- Verify agent naming follows lowercase-with-hyphens convention
+- See .claude/references/project-discovery-spec.md for details
 
 Continuing with remaining agents...
 ```
@@ -286,11 +272,16 @@ Continuing with remaining agents...
 
 ### Phase 2: Guided Brief Creation (Default Interactive)
 
-**Duration**: 10-20 minutes (Fresh) | 5-10 minutes (Import mode - fewer gaps)
+**Duration**: 10-20 minutes (Fresh) | 5-10 minutes (With discovery data - fewer questions)
 
-**Agents**: 🔄 Facilitator (lead), 🎨 Product (expert), 🏗️ Architect (technical)
+**Invoke these agents in sequence**:
+- 🔄 **facilitator subagent** (lead) - Guides the conversation
+- 🎨 **product subagent** (expert) - Provides requirements expertise
+- 🏗️ **architect subagent** (technical) - Validates feasibility
 
-**Introduction (Fresh Mode)**:
+**Context Passing**: Include the discovery report from Phase 0 when invoking the facilitator agent.
+
+**Introduction (Fresh Mode - No discovery data)**:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -300,39 +291,35 @@ Guided conversation to create comprehensive project brief.
 Typically takes 10-20 minutes.
 
 Agents:
-🔄 Facilitator - Guides conversation, identifies gaps
-🎨 Product - Domain expertise, requirements structure
-🏗️ Architect - Technical feasibility, constraints
+🔄 facilitator - Guides conversation, identifies gaps
+🎨 product - Domain expertise, requirements structure
+🏗️ architect - Technical feasibility, constraints
 
 Ready to begin?
 ```
 
-**Introduction (Import Mode)**:
+**Introduction (With Discovery Data)**:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-📋 PROJECT BRIEF VALIDATION & REFINEMENT
+📋 PROJECT BRIEF CREATION (WITH DISCOVERED CONTEXT)
 
-Reviewing imported documentation and filling gaps.
+Building on discovered project information.
 Typically takes 5-10 minutes.
 
-Agents:
-🔄 Facilitator - Validates imported content, identifies gaps
-🎨 Product - Ensures completeness, refines requirements
-🏗️ Architect - Validates tech stack, adds missing constraints
+Agents (with discovery context):
+🔄 facilitator - Uses discovery data to skip redundant questions
+🎨 product - Validates and refines based on existing structure
+🏗️ architect - Confirms detected tech stack
 
-Pre-populated sections:
-✓ Executive Summary (from README.md)
-✓ Tech Stack (from CLAUDE.md + package.json)
-✓ Project Structure (from code analysis)
+Discovered and incorporated:
+✓ Project: [name from discovery]
+✓ Tech Stack: [detected stack]
+✓ Structure: [discovered patterns]
 
-Sections to define:
-- Problem Statement
-- Objectives
-- Success Criteria
-- Detailed Constraints
+The facilitator will use this context to streamline questions.
 
-Ready to validate and complete?
+Ready to build on this foundation?
 ```
 
 ---
@@ -342,7 +329,7 @@ Ready to validate and complete?
 Each section follows **iteration pattern**:
 1. Agent asks questions
 2. User responds
-3. Facilitator captures and identifies gaps
+3. facilitator captures and identifies gaps
 4. Agent provides structure/validation
 5. User refines
 6. Iterate until user approves
@@ -351,38 +338,38 @@ Each section follows **iteration pattern**:
 **Sections**:
 
 #### 1. Executive Summary
-- **🎨 Product asks**: "In 1-2 sentences, what are you building and why?"
-- **🔄 Facilitator**: Captures, refines through iteration
+- **🎨 product asks**: "In 1-2 sentences, what are you building and why?"
+- **🔄 facilitator**: Captures, refines through iteration
 - **Goal**: Clear, compelling summary (what + why)
 
 #### 2. Problem Statement
-- **🎨 Product asks**: "What problem? Who has it? Current solutions?"
-- **🎨 Product structures**: Who / Current Pain / Impact / Existing Solutions → Limitations
-- **🔄 Facilitator**: Ensures clarity and specificity
+- **🎨 product asks**: "What problem? Who has it? Current solutions?"
+- **🎨 product structures**: Who / Current Pain / Impact / Existing Solutions → Limitations
+- **🔄 facilitator**: Ensures clarity and specificity
 
 #### 3. Objectives
-- **🎨 Product asks**: "What does success look like? Measurable goals?"
-- **🎨 Product validates**: Specific, measurable, prioritized
-- **🔄 Facilitator**: Refines until actionable
+- **🎨 product asks**: "What does success look like? Measurable goals?"
+- **🎨 product validates**: Specific, measurable, prioritized
+- **🔄 facilitator**: Refines until actionable
 
 #### 4. Scope Definition
-- **🎨 Product asks**: "Must have? Should have? Out of scope?"
-- **🏗️ Architect checks**: Technical feasibility, complexity estimates
-- **🔄 Facilitator**: Structures into table (Must/Should/Out) with complexity
-- **🎨 Product validates**: "Anything critical forgotten?"
+- **🎨 product asks**: "Must have? Should have? Out of scope?"
+- **🏗️ architect checks**: Technical feasibility, complexity estimates
+- **🔄 facilitator**: Structures into table (Must/Should/Out) with complexity
+- **🎨 product validates**: "Anything critical forgotten?"
 
 #### 5. Constraints
 - **��️ Architect asks**: "Technical? Resource? Business constraints?"
-- **🔄 Facilitator**: Organizes by type with impact notes
-- **🏗️ Architect validates**: Constraints are workable together
+- **🔄 facilitator**: Organizes by type with impact notes
+- **🏗️ architect validates**: Constraints are workable together
 
 #### 6. Success Criteria
-- **🎨 Product asks**: "How will we know project succeeded?"
-- **🔄 Facilitator**: Creates measurable checklist
-- **🎨 Product validates**: Aligns with objectives
+- **🎨 product asks**: "How will we know project succeeded?"
+- **🔄 facilitator**: Creates measurable checklist
+- **🎨 product validates**: Aligns with objectives
 
 #### 7. Complete Review
-- **🔄 Facilitator**: Presents complete brief draft
+- **🔄 facilitator**: Presents complete brief draft
 - **All agents**: Quality gate validation (see below)
 - **User**: Final approval
 
@@ -390,18 +377,18 @@ Each section follows **iteration pattern**:
 
 **Quality Gates** (before writing files):
 
-**🔄 Facilitator**:
+**🔄 facilitator**:
 - [ ] All sections complete
 - [ ] Information structured
 - [ ] User approved
 
-**🎨 Product**:
+**🎨 product**:
 - [ ] Problem clear
 - [ ] Objectives measurable
 - [ ] Scope well-defined
 - [ ] Success criteria align
 
-**🏗️ Architect**:
+**🏗️ architect**:
 - [ ] Constraints documented
 - [ ] Technically feasible
 - [ ] No show-stoppers
@@ -427,9 +414,13 @@ Writing files...
 🎯 NEXT STEPS:
 
 1. **Configure team** (RECOMMENDED): /cf:configure-team
-   - Installs stack-specific agents for better token efficiency
-   - Can skip if prefer generic agents or unsure of stack
-   - Can run anytime after init (flexible timing)
+   [If discovery found matching team]:
+   Based on your [detected stack], consider:
+   → /cf:configure-team --type [recommended team]
+
+   [If no matching team]:
+   Generic agents will adapt to your [detected language/framework]
+   No additional configuration needed.
 
 2. **Review**: /cf:sync
 
@@ -463,7 +454,7 @@ OR run /cf:init WITHOUT --quick for guided creation
 
 ## Agent Collaboration Patterns
 
-### 🔄 Facilitator (Primary)
+### 🔄 facilitator (Primary)
 **Responsibilities**:
 - Guides conversation flow
 - Identifies gaps after each response
@@ -476,7 +467,7 @@ OR run /cf:init WITHOUT --quick for guided creation
   4. Refine
   5. Recommend next
 
-### 🎨 Product (Expert)
+### 🎨 product (Expert)
 **Responsibilities**:
 - Asks insightful domain questions
 - Provides structure for requirements
@@ -484,7 +475,7 @@ OR run /cf:init WITHOUT --quick for guided creation
 - Ensures critical items not forgotten
 - Shares best practices
 
-### 🏗️ Architect (Technical)
+### 🏗️ architect (Technical)
 **Responsibilities**:
 - Flags complex features early
 - Identifies dependencies
@@ -492,7 +483,7 @@ OR run /cf:init WITHOUT --quick for guided creation
 - Documents technical constraints
 - Raises trade-offs
 
-**Collaboration**: Agents work in sequence per section, with Facilitator synthesizing.
+**Collaboration**: Agents work in sequence per section, with facilitator synthesizing.
 
 ---
 
@@ -510,11 +501,11 @@ Ready to begin?
 
 User: Yes
 
-🎨 Product: In 1-2 sentences, what are you building and why?
+🎨 product: In 1-2 sentences, what are you building and why?
 
 User: A task manager for developers that integrates with IDEs
 
-🔄 Facilitator: Let me capture that...
+🔄 facilitator: Let me capture that...
 
 Draft: "A task manager for developers that integrates with IDEs"
 
@@ -525,7 +516,7 @@ Questions:
 
 User: For solo developers who context-switch. Tasks show in IDE to reduce app-switching.
 
-🔄 Facilitator: Updated:
+🔄 facilitator: Updated:
 "A task manager for solo developers who context-switch between projects,
 surfacing tasks directly in their IDE to reduce app-switching and maintain focus."
 
@@ -537,7 +528,7 @@ User: Perfect!
 
 [Continues through all sections with same pattern...]
 
-🔄 Facilitator: Here's the complete brief:
+🔄 facilitator: Here's the complete brief:
 
 [Shows full brief]
 
@@ -549,7 +540,7 @@ Review questions:
 
 User: Add keyboard shortcuts requirement
 
-🔄 Facilitator: Added to constraints. Ready to finalize?
+🔄 facilitator: Added to constraints. Ready to finalize?
 
 User: Yes
 
@@ -564,16 +555,16 @@ User: Yes
 ## Edge Cases
 
 ### Minimal Information
-**🔄 Facilitator**: "Description is brief. Let me ask specific questions..." [targeted extraction]
+**🔄 facilitator**: "Description is brief. Let me ask specific questions..." [targeted extraction]
 
 ### Wants to Skip Section
-**🔄 Facilitator**: "Skipping [X] means missing [Y], causes [Z]. Just 2-3 minutes? Or use --quick mode instead?"
+**🔄 facilitator**: "Skipping [X] means missing [Y], causes [Z]. Just 2-3 minutes? Or use --quick mode instead?"
 
 ### Changes Mind
-**🔄 Facilitator**: "No problem! Let's go back to [section]..." [re-iterate]
+**🔄 facilitator**: "No problem! Let's go back to [section]..." [re-iterate]
 
 ### Technical Issues
-**🏗️ Architect**: "[Feature] requires [dependencies] - adds complexity. Options: 1) Keep 2) Simplify 3) Defer. Your call?"
+**🏗️ architect**: "[Feature] requires [dependencies] - adds complexity. Options: 1) Keep 2) Simplify 3) Defer. Your call?"
 
 ---
 

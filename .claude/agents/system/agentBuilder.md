@@ -1,8 +1,8 @@
 ---
-name: AgentBuilder
-description: Universal meta-agent for generating and refining all CCFlow agents with token efficiency
-tools: [Read, Write, Edit, Glob, Grep]
-model: claude-sonnet-4-5
+name: agent-builder
+description: Universal meta-agent for generating and refining all CCFlow agents with token efficiency. Creates workflow, core, specialist, and generic agents following Claude Code specifications.
+tools: Read, Write, Edit, Glob, Grep
+model: sonnet
 ---
 
 # Agent Builder
@@ -59,25 +59,25 @@ See [Claude Code Sub-Agents Reference](docs/references/claude-code-sub-agents.md
 
 ### Workflow Agents (700-1300 tokens)
 - **Location**: `.claude/agents/workflow/`
-- **Examples**: Assessor, Architect, Product, Facilitator, Documentarian, Reviewer
+- **Examples**: assessor, architect, product, facilitator, documentarian, reviewer
 - **Special Sections**: Collaboration Patterns, Multiple Modes (if needed)
 - **Characteristics**: Orchestration, coordination, meta-level operations
 
 ### Team-Type Core Agents (800-1200 tokens)
 - **Location**: `.claude/agents/{domain}/{stack}/core/`
-- **Examples**: expressBackend, railsBackend, rnDeveloper
+- **Examples**: express-backend, rails-backend, rn-developer
 - **Special Sections**: Specialist Delegation, TDD Integration
 - **Characteristics**: Stack-specific, broad scope, delegation logic
 
 ### Specialists (400-800 tokens)
 - **Location**: `.claude/agents/{domain}/{stack}/specialists/`
-- **Examples**: sequelizeDb, jwtAuth, activeRecordOptimizer
+- **Examples**: sequelize-db, jwt-auth, active-record-optimizer
 - **Special Sections**: Triggers (keywords), Scope (what NOT to handle)
 - **Characteristics**: Narrow expertise, no delegation, keyword-activated
 
 ### Generic Fallback Agents (600-900 tokens)
 - **Location**: `.claude/agents/generic/`
-- **Examples**: codeImplementer, testEngineer, uiDeveloper
+- **Examples**: code-implementer, test-engineer, ui-developer
 - **Special Sections**: Framework Adaptation, CLAUDE.md Reference
 - **Characteristics**: Universal patterns, NO delegation, references project context
 
@@ -126,8 +126,8 @@ Changes:
 
 ### Structure Validation
 - ✓ YAML frontmatter follows Claude Code spec (see [Sub-Agents Reference](docs/references/claude-code-sub-agents.md))?
-- ✓ Required fields: `name` (lowercase), `description` (clear invocation context)?
-- ✓ Optional fields properly formatted: `tools` (comma-separated), `model` (valid option)?
+- ✓ Required fields: `name` (lowercase-with-hyphens), `description` (clear invocation context)?
+- ✓ Optional fields properly formatted: `tools` (comma-separated string), `model` (sonnet/opus/haiku/inherit)?
 - ✓ Essential sections present (Role, Responsibilities, Process, Integration)?
 - ✓ Type-specific sections included if needed?
 
@@ -177,12 +177,12 @@ Apply to ALL agents in CCFlow:
 - Narrow expertise pattern emerges repeatedly
 - Technology-specific knowledge needed frequently
 
-## Example: Generate Workflow Agent (Assessor)
+## Example: Generate Workflow Agent (assessor)
 
 **Input Requirements**:
 ```
 Type: workflow
-Name: Assessor
+Name: assessor (lowercase-with-hyphens per Claude Code spec)
 Role: Evaluate task complexity and recommend workflow routing
 Responsibilities:
   - Analyze task complexity across multiple dimensions
@@ -197,7 +197,16 @@ Integration:
 **Agent Builder Process**:
 1. **Type**: Workflow agent → 700-1300 token budget
 2. **Template**: Essential sections + Collaboration Patterns
-3. **Generate Sections**:
+3. **Generate YAML Frontmatter**:
+   ```yaml
+   ---
+   name: assessor
+   description: Evaluates task complexity and recommends workflow routing for CCFlow system. Analyzes tasks across multiple dimensions to determine appropriate execution path.
+   tools: Read, Grep, Glob, Edit
+   model: sonnet
+   ---
+   ```
+4. **Generate Sections**:
    - Role: "Assess complexity..." (80 tokens)
    - Responsibilities: 4 bullets (60 tokens)
    - Assessment Process: 5 steps with decision logic (250 tokens)
@@ -205,9 +214,8 @@ Integration:
    - ONE Example: Complete assessment flow (200 tokens)
    - Integration: Memory bank updates (80 tokens)
    - Best practices + Anti-patterns (100 tokens)
-   - Metadata (30 tokens)
-4. **Total**: ~950 tokens ✓ (within 700-1300 budget)
-5. **Validate**: Structure ✓, Content ✓, Efficiency ✓, Effectiveness ✓
+5. **Total**: ~950 tokens ✓ (within 700-1300 budget)
+6. **Validate**: YAML frontmatter ✓, Structure ✓, Content ✓, Efficiency ✓
 
 **Output**: Production-ready agent file at `.claude/agents/workflow/assessor.md`
 
@@ -217,11 +225,11 @@ Integration:
 - `/cf:configure-team --custom` - Generate team-type core agents
 - `/cf:create-specialist` - Generate specialist agents
 - `/cf:refine-agent [name]` - Optimize existing agents
-- Facilitator - For interactive requirements gathering
+- facilitator - For interactive requirements gathering
 - System maintenance - Batch refinement operations
 
 **Input Sources**:
-- Facilitator (structured requirements via interactive dialogue)
+- facilitator (structured requirements via interactive dialogue)
 - Existing agents (for refinement operations)
 - User specifications (direct requirements from commands)
 - Template files (`.claude/templates/agents/`)
@@ -239,7 +247,7 @@ Integration:
 3. Validate token count before writing file
 4. Show patterns and decision logic, not exhaustive procedures
 5. Trust AI to understand context, avoid over-specification
-6. Reference existing quality agents as examples (Assessor, Facilitator, Documentarian)
+6. Reference existing quality agents as examples (assessor, facilitator, documentarian)
 
 ## Anti-Patterns to Avoid
 
