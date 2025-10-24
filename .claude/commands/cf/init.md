@@ -178,15 +178,6 @@ for template in .claude/templates/*.template.md; do
   cp "$template" "memory-bank/$(basename "$template" .template.md).md"
 done
 
-# Copy workflow agents (removing .template extension during copy)
-for template in .claude/templates/agents/workflow/*.template.md; do
-  target=".claude/agents/workflow/$(basename "$template" .template.md).md"
-  # Only copy if target doesn't exist (preserves existing customizations)
-  if [ ! -f "$target" ]; then
-    cp "$template" "$target"
-  fi
-done
-
 # Copy generic implementation agents (universal fallbacks)
 # Only copy if targets don't exist (preserves existing customizations)
 [ ! -f ".claude/agents/codeImplementer.md" ] && cp .claude/templates/generic/codeImplementer.template.md .claude/agents/codeImplementer.md
@@ -202,9 +193,10 @@ done
 
 Creating structure...
 ✓ memory-bank/ (6 files)
-✓ .claude/agents/workflow/ (6 agents)
 ✓ .claude/agents/ (3 generic implementation agents)
 ✓ .claude/agents/specialists/ (empty, for future specialists)
+
+Note: Workflow agents remain in framework (.claude/agents/workflow/)
 
 Structure created successfully!
 ```
@@ -216,10 +208,11 @@ Structure created successfully!
 **Purpose**: Generic agents are now installed and ready to use.
 
 **What Was Installed**:
-- **Workflow agents**: assessor, architect, product, facilitator, documentarian, reviewer (no configuration needed)
 - **Generic implementation agents**: codeImplementer, testEngineer, uiDeveloper (framework-agnostic, work with any stack)
 
-**No Configuration Needed**: Generic agents use universal patterns that work across all tech stacks. They adapt to your project by reading CLAUDE.md and systemPatterns.md during execution.
+**Note**: Workflow agents (assessor, architect, product, facilitator, documentarian, reviewer) remain in the framework and are not project-specific. They are automatically available to all commands.
+
+**Configuration Required**: Generic agents have TODO sections that should be customized for your tech stack, coding style, and testing approach.
 
 **Next Step (Optional)**: For stack-specific optimization, run `/cf:configure-team` after initialization completes.
 
@@ -227,15 +220,16 @@ Structure created successfully!
 ```
 ✅ AGENTS INSTALLED
 
-Workflow Agents (6):
-✓ assessor, architect, product, facilitator, documentarian, reviewer
-
 Generic Implementation Agents (3):
 ✓ codeImplementer (universal backend/logic)
 ✓ testEngineer (universal testing)
 ✓ uiDeveloper (universal UI/frontend)
 
-ℹ️ Generic agents work with ALL tech stacks
+Framework Agents (always available):
+✓ Workflow: assessor, architect, product, facilitator, documentarian, reviewer
+✓ System: commandBuilder, agentBuilder, project-discovery
+
+ℹ️ Generic agents work with ALL tech stacks - customize TODOs for your project
 ℹ️ Configure stack-specific team: /cf:configure-team
 ```
 
