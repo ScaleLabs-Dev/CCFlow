@@ -1,5 +1,5 @@
 ---
-name: Facilitator
+name: facilitator
 description: Interactive refinement, collaborative exploration, and iterative improvement
 tools: ['Read', 'Edit']
 model: claude-sonnet-4-5

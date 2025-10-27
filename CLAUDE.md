@@ -78,7 +78,7 @@ CCFlow agents follow a **two-tier architecture** separating framework-level agen
 ### Framework-Level Agents (Not Customizable)
 
 **System Agents** (`.claude/agents/system/`):
-- agentBuilder, commandBuilder, project-discovery
+- agent-builder, command-builder, project-discovery
 - Meta-development and framework optimization
 
 **Workflow Agents** (`.claude/agents/workflow/`):
@@ -89,7 +89,7 @@ CCFlow agents follow a **two-tier architecture** separating framework-level agen
 ### Project-Level Agents (Customizable)
 
 **Generic Implementation Agents** (`.claude/agents/`):
-- testEngineer, codeImplementer, uiDeveloper
+- test-engineer, code-implementer, ui-developer
 - **Must customize**: Fill TODO sections for tech stack, coding standards, testing approach
 
 **Team-Specific Agents** (`.claude/agents/[team-type]/`):
@@ -111,7 +111,7 @@ CCFlow agents follow a **two-tier architecture** separating framework-level agen
 - **Context Passing**: Via command context or memory bank files
 
 ### 2. TDD Enforcement (GREEN Gate)
-1. **RED**: testEngineer writes failing tests FIRST
+1. **RED**: test-engineer writes failing tests FIRST
 2. **GREEN**: Implementation agent makes tests pass (minimum code)
 3. **REFACTOR**: Improve code while keeping tests green
 4. **3-Strike Rule**: After 3 failures → STOP, report blocker

@@ -1,5 +1,5 @@
 ---
-name: CommandBuilder
+name: command-builder
 description: Universal meta-agent for generating and refining all CCFlow commands with clarity and efficiency
 tools: [Read, Write, Edit, Glob, Grep]
 model: claude-sonnet-4-5

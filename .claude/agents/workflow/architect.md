@@ -1,5 +1,5 @@
 ---
-name: Architect
+name: architect
 description: System design, architecture decisions, and technical planning
 tools: ['Read', 'Glob', 'Grep', 'Edit']
 model: claude-sonnet-4-5

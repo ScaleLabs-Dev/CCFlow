@@ -1,5 +1,5 @@
 ---
-name: codeImplementer
+name: code-implementer
 description: Universal backend/business logic implementation agent (generic fallback)
 tools: ['Read', 'Write', 'Edit', 'Bash', 'Glob', 'Grep']
 model: claude-sonnet-4-5
