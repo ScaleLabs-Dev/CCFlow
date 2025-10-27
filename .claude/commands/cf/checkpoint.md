@@ -31,7 +31,7 @@ Engage the Documentarian agent to:
 
 ## Prerequisites
 
-**Memory bank must be initialized**. Run `/cf:init [project-name]` first if needed.
+**Memory bank must be initialized**. Run `/cf:init` first if needed.
 
 **Active work to checkpoint**. Use after completing meaningful work, not at project start.
 
@@ -62,7 +62,7 @@ Check if `memory-bank/` directory exists:
 ```
 ⚠️ Memory Bank Not Initialized
 
-Run: /cf:init [project-name]
+Run: /cf:init
 ```
 
 **Stop execution.**
@@ -561,7 +561,7 @@ Full checkpoint details in memory-bank/progress.md
 
 Memory bank not found at: memory-bank/
 
-To initialize, run: /cf:init [project-name]
+To initialize, run: /cf:init
 
 Example: /cf:init MyProject
 ```

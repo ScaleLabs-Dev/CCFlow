@@ -1,4 +1,4 @@
-# Product Context: [Project Name]
+# Product Context
 
 <!-- IMPORT NOTE: This file may be pre-populated from existing project documentation -->
 <!-- Product information may be imported from README.md or other docs -->

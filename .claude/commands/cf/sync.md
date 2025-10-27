@@ -47,7 +47,7 @@ Check if `memory-bank/` directory exists:
 
 CCFlow memory bank not found.
 
-To initialize, run: /cf:init [project-name]
+To initialize, run: /cf:init
 
 Example: /cf:init MyProject
 ```
@@ -427,7 +427,7 @@ Claude:
 **Immediate Next Steps**:
 1. Define first feature
 2. Set up development environment
-3. Customize hub agents
+3. Customize implementation agents
 
 ---
 
@@ -462,10 +462,10 @@ A task management application for solo developers to organize work...
 ⚠️ **Project Needs Setup**:
 - No features defined yet
 - No active tasks
-- Hub agents need customization
+- Implementation agents need customization
 
 **Recommendations**:
-- Customize hub agents in .claude/agents/ for your tech stack
+- Customize implementation agents in .claude/agents/ for your tech stack
 - Define first feature with /cf:feature [description]
 
 ---
@@ -475,7 +475,7 @@ A task management application for solo developers to organize work...
 ✅ Memory bank initialized
 ✅ Project brief defined
 ⚠️ Active work not yet defined
-⚠️ Hub agents need customization
+⚠️ Implementation agents need customization
 
 **Status**: Needs setup
 
@@ -483,7 +483,7 @@ A task management application for solo developers to organize work...
 
 ## Next Actions
 
-1. Customize hub agents for your tech stack
+1. Customize implementation agents for your tech stack
 2. Run: /cf:feature [description] to define first feature
 ```
 
@@ -614,7 +614,7 @@ OR start next priority:
 
 CCFlow memory bank not found at: memory-bank/
 
-To initialize, run: /cf:init [project-name]
+To initialize, run: /cf:init
 
 Example: /cf:init TaskManager
 

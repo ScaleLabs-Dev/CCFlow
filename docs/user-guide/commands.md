@@ -1,6 +1,6 @@
 # CCFlow Command Reference
 
-Complete reference for all 12 `/cf:*` commands.
+Complete reference for all 15 `/cf:*` commands.
 
 ## Initialization Commands
 
@@ -61,6 +61,65 @@ Complete reference for all 12 `/cf:*` commands.
 - Gaps or inconsistencies
 
 **When to use:** To understand current project state without making changes
+
+---
+
+### /cf:git
+
+**Purpose:** Create focused git commits with intelligent message generation
+
+**Syntax:**
+```bash
+/cf:git                          # Interactive: analyze and suggest message
+/cf:git -m "commit message"      # Quick commit with custom message
+/cf:git --all                    # Stage all changes before committing
+/cf:git --staged                 # Commit only staged files
+/cf:git --no-update              # Skip memory bank update
+```
+
+**What it does:**
+1. Analyzes git changes (staged/unstaged/untracked files)
+2. Detects sensitive files (.env, credentials, keys) and blocks if found
+3. Warns if on main/master branch (suggests feature branch)
+4. Generates intelligent commit message based on changes (or uses custom message)
+5. Follows project's commit message convention (auto-detected)
+6. Creates git commit
+7. Updates `activeContext.md` Recent Changes (unless --no-update)
+
+**Key Features:**
+- **Safety checks**: Blocks sensitive files, warns about main/master branch
+- **Smart messages**: Analyzes changes, follows project conventions
+- **Memory integration**: Updates activeContext.md with commit info
+- **Flexible staging**: Interactive, --all, or --staged modes
+- **Standalone mode**: Works without memory bank (git-only)
+
+**vs /cf:checkpoint:**
+- `/cf:git` = VERSION CONTROL (git commits, code history)
+- `/cf:checkpoint` = PROJECT MEMORY (documentation state, milestones)
+- Different purposes, complementary use
+
+**When to use:**
+- After implementing features (`/cf:code` completion)
+- Incremental commits during development
+- End of session (commit work in progress)
+- Quick fixes and updates
+
+**Examples:**
+```bash
+# After feature implementation
+/cf:code TASK-005
+/cf:git -m "feat(auth): implement JWT token authentication"
+
+# Interactive mode (AI suggests message)
+/cf:git
+# Shows changes, suggests message, asks for approval
+
+# Bulk commit at end of session
+/cf:git --all -m "refactor: simplify error handling logic"
+
+# Quick fix without memory update
+/cf:git -m "fix: typo in login button" --no-update
+```
 
 ---
 
@@ -150,7 +209,7 @@ Complete reference for all 12 `/cf:*` commands.
 
 **TDD Workflow:**
 1. testEngineer writes failing tests (RED)
-2. Hub agent implements to make tests pass (GREEN)
+2. Implementation agent implements to make tests pass (GREEN)
 3. GREEN gate: Tests MUST pass
 4. Updates memory bank on completion
 
@@ -288,9 +347,117 @@ Complete reference for all 12 `/cf:*` commands.
 
 ## Agent Management
 
+### /cf:configure-team [--quick|--template NAME|--custom]
+
+**Purpose:** Configure stack-specific implementation team with core agents and specialists
+
+**Syntax:**
+```bash
+/cf:configure-team                          # Interactive with auto-detection
+/cf:configure-team --quick                  # Use auto-detected stack
+/cf:configure-team --template web/react-express  # Direct template selection
+/cf:configure-team --custom                 # Facilitator-guided custom team
+```
+
+**What it does:**
+
+Replaces generic fallback agents with **stack-specific teams** tailored to your technology stack. Provides:
+
+1. **Core Agents**: Framework-aware implementation agents (e.g., expressBackend, reactFrontend, jestTester)
+2. **Specialists**: Domain experts for specific technologies (e.g., sequelizeDb, jwtAuth, reactPerformance)
+3. **Routing Configuration**: Keyword-based intelligent delegation system
+4. **Memory Bank Integration**: Team configuration documented in systemPatterns.md
+
+**Architecture Models:**
+
+```
+GENERIC AGENTS (Default after /cf:init)
+├── codeImplementer, testEngineer, uiDeveloper
+├── NO specialists (handle everything directly)
+├── Framework-agnostic patterns
+└── Good for simple projects or prototypes
+
+STACK-SPECIFIC TEAMS (After /cf:configure-team)
+├── Core agents (framework-aware)
+├── Specialists (domain experts)
+├── routing.md (keyword-based delegation)
+└── Optimal for production projects with defined stack
+```
+
+**When to use:**
+- After `/cf:init` when you have a defined tech stack
+- When generic agents lack stack-specific knowledge
+- When you want framework-aware TDD patterns
+- When project grows beyond simple full-stack needs
+
+**Process:**
+
+**Phase 1: Detection** (unless --template specified)
+1. Analyzes package.json, systemPatterns.md, directory structure
+2. Detects frameworks: React, Express, Jest, etc.
+3. Matches to template: web/react-express, mobile/react-native, ai/langchain-python
+4. Presents recommendation with confidence score
+5. User confirms or chooses alternative
+
+**Phase 2: Installation**
+1. Copies core agents to `.claude/agents/[domain]/[stack]/core/`
+2. Copies specialists to `.claude/agents/[domain]/[stack]/specialists/`
+3. Creates routing.md with keyword mappings
+4. Updates systemPatterns.md with team configuration
+5. Validates all agent files and routing references
+
+**Phase 3: Verification**
+- Verifies agent files exist and have valid YAML frontmatter
+- Confirms routing.md references only existing agents
+- Reports success with agent capabilities summary
+
+**Available Templates:**
+- `web/react-express`: React frontend + Express backend + Jest testing
+- `mobile/react-native`: React Native mobile apps (iOS/Android)
+- `ai/langchain-python`: LangChain AI applications with Python
+
+**Custom Team Creation:**
+- `--custom` flag engages Facilitator for guided team design
+- Answers questions about tech stack and domains
+- Creates custom core agents and specialists
+- Uses AgentBuilder for token-efficient agents
+
+**Examples:**
+
+```bash
+# Auto-detect and configure
+/cf:configure-team
+# Detects React+Express → Recommends web/react-express → User confirms
+
+# Quick mode (no prompts)
+/cf:configure-team --quick
+# Auto-detects and installs without confirmation
+
+# Direct template
+/cf:configure-team --template web/react-express
+# Installs React+Express team immediately
+
+# Custom team for unique stack
+/cf:configure-team --custom
+# Facilitator guides through custom agent creation
+```
+
+**After Configuration:**
+
+Generic agents remain as fallbacks. Routing priority:
+1. Stack-specific core agent (if keywords match)
+2. Stack-specific specialist (if core agent delegates)
+3. Generic agent fallback (if no match)
+
+**Related:** After configuring team, use `/cf:create-specialist` to add more specialists to the team.
+
+---
+
 ### /cf:create-specialist [domain] --type [type] --name [name]
 
-**Purpose:** Create domain-specific specialist agents
+**Purpose:** Add domain-specific specialist to configured stack-specific team
+
+**Prerequisites:** Must run `/cf:configure-team` first to set up stack-specific team
 
 **Syntax:**
 ```bash
@@ -304,7 +471,121 @@ Complete reference for all 12 `/cf:*` commands.
 - `ui`: Frontend, components
 - `testing`: Test strategies, quality
 
-**When to use:** After 3+ delegations to same domain from hub agents
+**When to use:** After 3+ delegations to same domain from stack-specific core agents
+
+**Important:** This command only works with stack-specific teams. Generic agents do NOT delegate to specialists - they handle everything directly. If you haven't configured a team yet, run `/cf:configure-team` first.
+
+---
+
+## Meta-Agent System Commands
+
+### /cf:refine-agent [agent-name] [--report-only] [--interactive]
+
+**Purpose:** Optimize existing agents for token efficiency and clarity
+
+**Syntax:**
+```bash
+/cf:refine-agent assessor                    # Refine and update agent
+/cf:refine-agent testEngineer --report-only  # Analysis only, no changes
+/cf:refine-agent facilitator --interactive   # Interactive refinement with validation
+```
+
+**What it does:**
+1. AgentBuilder analyzes existing agent structure and content
+2. Identifies verbosity issues (excessive examples, redundancy, tutorial-style)
+3. Optimizes for token efficiency (target: 500-1500 tokens based on type)
+4. Validates against quality rubric (structure, content, efficiency, effectiveness)
+5. Writes refined agent file or generates report
+
+**Agent Types Supported:**
+- **Workflow agents** (700-1300 tokens): Assessor, Architect, Product, Facilitator, Documentarian, Reviewer
+- **Core agents** (800-1200 tokens): codeImplementer, testEngineer, uiDeveloper
+- **Specialists** (400-800 tokens): Domain-specific agents in `specialists/` subdirs
+- **Generic agents** (600-900 tokens): Stack-agnostic fallback agents
+
+**Optimization Principles:**
+- Structure over content (clear structure beats verbose explanation)
+- Patterns over examples (teach reasoning, not procedures)
+- Reference over duplicate (point to CLAUDE.md/systemPatterns.md)
+- ONE comprehensive example maximum
+
+**When to use:**
+- Agent exceeds token budget for its type
+- Verbosity detected (multiple examples, tutorial content, redundancy)
+- Performance optimization needed
+- Systematic refinement across all agents
+
+**Examples:**
+```bash
+# Refine verbose workflow agent
+/cf:refine-agent facilitator
+
+# Check specialist without changing
+/cf:refine-agent jwtAuth --report-only
+
+# Interactive refinement with validation
+/cf:refine-agent architect --interactive
+```
+
+---
+
+### /cf:refine-command [command-name] [--report-only] [--interactive]
+
+**Purpose:** Optimize command clarity, completeness, and maintainability
+
+**Syntax:**
+```bash
+/cf:refine-command feature                   # Refine and update command
+/cf:refine-command code --report-only        # Analysis only, no changes
+/cf:refine-command plan --interactive        # Interactive refinement with validation
+```
+
+**What it does:**
+1. CommandBuilder analyzes existing command structure and content
+2. Identifies issues (missing sections, unclear decision trees, insufficient examples)
+3. Optimizes for clarity and completeness (target: 800-5000 tokens by complexity)
+4. Validates against quality rubric (structure, content, efficiency, effectiveness)
+5. Writes refined command file or generates report
+
+**Command Complexity Levels:**
+- **Simple** (800-1500 tokens): sync, status, ask, context
+- **Moderate** (1500-3000 tokens): code, plan, review, checkpoint
+- **Complex** (3000-5000 tokens): init, creative, configure-team
+
+**Essential Sections** (always required):
+- YAML frontmatter (description, allowed-tools, argument-hint)
+- Usage (command syntax with examples)
+- Purpose (what it does and why)
+- Process (step-by-step execution with decision points)
+- Examples (2-3 scenarios showing different use cases)
+- Error Handling (common errors with actionable recovery)
+
+**Conditional Sections** (only when meaningful):
+- Parameters (if command accepts positional arguments)
+- Flags (if optional flags exist)
+- Prerequisites (ONLY if specific beyond memory bank initialization)
+- Memory Bank Updates (ONLY if command modifies files)
+- Related Commands (ONLY if strong integration points)
+
+**When to use:**
+- Command missing essential sections
+- Unclear process or decision logic
+- Insufficient examples (<2 scenarios)
+- Incomplete error handling
+- Redundant Prerequisites section
+- Verbosity (>20% over token budget)
+
+**Examples:**
+```bash
+# Refine command with missing sections
+/cf:refine-command checkpoint
+
+# Check command without changing
+/cf:refine-command init --report-only
+
+# Interactive refinement with validation
+/cf:refine-command creative --interactive
+```
 
 ---
 
@@ -330,6 +611,12 @@ Complete reference for all 12 `/cf:*` commands.
 **Daily routine:**
 ```bash
 /cf:context → /cf:status → [work] → /cf:checkpoint (regularly)
+```
+
+**Meta-agent system maintenance:**
+```bash
+/cf:refine-agent [name] --report-only  # Check agent quality
+/cf:refine-command [name] --report-only  # Check command quality
 ```
 
 ---

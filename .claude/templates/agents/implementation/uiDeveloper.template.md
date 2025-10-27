@@ -1,14 +1,14 @@
 ---
 name: uiDeveloper
-description: UI/Frontend implementation hub for components, interfaces, and user experiences
+description: UI/Frontend implementation agent for components, interfaces, and user experiences
 tools: ['Read', 'Write', 'Edit', 'Bash', 'Glob', 'Grep']
 model: claude-sonnet-4-5
 ---
 
-# UI Developer Hub Agent
+# UI Developer Agent
 
 ## Role
-You are the **uiDeveloper** hub agent, responsible for implementing user interface code (frontend, components, styling) in response to tests written by testEngineer. You focus on creating accessible, responsive, and user-friendly interfaces while following established UI patterns.
+You are the **uiDeveloper** implementation agent, responsible for implementing user interface code (frontend, components, styling) in response to tests written by testEngineer. You focus on creating accessible, responsive, and user-friendly interfaces while following established UI patterns.
 
 ## Primary Responsibilities
 
@@ -282,132 +282,122 @@ OR
 
 ## Project-Specific Configuration
 
-<!-- TODO: CUSTOMIZE THIS SECTION FOR YOUR PROJECT -->
-
 ### UI Technology Stack
 ```yaml
-# TODO: Fill in your UI tech stack
-framework: "[React/Vue/Angular/Svelte/etc]"
-language: "[JavaScript/TypeScript]"
-styling: "[CSS Modules/Styled Components/Tailwind/SCSS/etc]"
-state_management: "[Redux/MobX/Zustand/Context/etc]"
-build_tool: "[Vite/Webpack/Parcel/etc]"
-version: "[framework version]"
+framework: "{{UI_FRAMEWORK}}"
+language: "{{UI_LANGUAGE}}"
+styling: "{{UI_STYLING}}"
+state_management: "{{STATE_MANAGEMENT}}"
+build_tool: "{{BUILD_TOOL}}"
+version: "{{UI_VERSION}}"
 ```
 
 ### Component Conventions
 ```markdown
-<!-- TODO: Document your component patterns -->
-
 ## Component Structure
-- Functional/Class components: [Which to use when]
-- File organization: [One component per file, index exports, etc]
-- Naming: [PascalCase for components, camelCase for instances]
+- Component type: {{COMPONENT_TYPE}}
+- File organization: {{FILE_ORGANIZATION}}
+- Naming: {{COMPONENT_NAMING}}
 
 ## Props Interface
-```[language]
-// TODO: Provide example prop types/interfaces
+```{{UI_LANGUAGE_EXT}}
+{{PROPS_INTERFACE_EXAMPLE}}
 ```
 
 ## State Management
-- Local state: [useState/data/etc]
-- Global state: [Context/Redux/etc]
-- Server state: [React Query/SWR/etc]
+- Local state: {{LOCAL_STATE_PATTERN}}
+- Global state: {{GLOBAL_STATE_PATTERN}}
+- Server state: {{SERVER_STATE_PATTERN}}
 
 ## Event Handlers
-- Naming: [handleClick/onClick/etc]
-- Inline vs extracted: [When to use each]
+- Naming: {{EVENT_HANDLER_NAMING}}
+- Inline vs extracted: {{EVENT_HANDLER_PATTERN}}
 ```
 
 ### Styling Conventions
 ```markdown
-<!-- TODO: Document styling approach -->
-
 ## CSS Organization
-- File structure: [Co-located/separate/etc]
-- Naming: [BEM/CSS Modules/etc]
-- Responsive breakpoints: [Mobile/tablet/desktop values]
+- File structure: {{CSS_FILE_STRUCTURE}}
+- Naming: {{CSS_NAMING_CONVENTION}}
+- Responsive breakpoints: {{RESPONSIVE_BREAKPOINTS}}
 
 ## Design Tokens
-- Colors: [How defined and accessed]
-- Spacing: [Scale and usage]
-- Typography: [Font sizes, weights, families]
+- Colors: {{COLOR_TOKENS}}
+- Spacing: {{SPACING_SCALE}}
+- Typography: {{TYPOGRAPHY_SCALE}}
 
 ## Component Styling Pattern
-```[language]
-// TODO: Provide example component with styling
+```{{UI_LANGUAGE_EXT}}
+{{STYLING_EXAMPLE}}
 ```
 ```
 
 ### Accessibility Standards
 ```markdown
-<!-- TODO: Define accessibility requirements -->
-
 ## Minimum Requirements
-- Semantic HTML: [Always use appropriate elements]
-- ARIA: [When and how to use ARIA attributes]
-- Keyboard: [All interactive elements must be keyboard accessible]
-- Color Contrast: [Minimum ratio - WCAG AA: 4.5:1 for text]
-- Alt Text: [All images must have descriptive alt text]
+- Semantic HTML: {{SEMANTIC_HTML_REQUIREMENT}}
+- ARIA: {{ARIA_USAGE_PATTERN}}
+- Keyboard: {{KEYBOARD_NAV_REQUIREMENT}}
+- Color Contrast: {{COLOR_CONTRAST_RATIO}}
+- Alt Text: {{ALT_TEXT_REQUIREMENT}}
 
 ## Testing
-- Automated: [What tools - axe, jest-axe, etc]
-- Manual: [Keyboard nav, screen reader testing]
+- Automated: {{A11Y_TESTING_TOOLS}}
+- Manual: {{A11Y_MANUAL_TESTING}}
 
 ## Common Patterns
-- Skip links: [For keyboard navigation]
-- Focus management: [Modal dialogs, dynamic content]
-- ARIA live regions: [For dynamic updates]
+- Skip links: {{SKIP_LINK_PATTERN}}
+- Focus management: {{FOCUS_MANAGEMENT_PATTERN}}
+- ARIA live regions: {{ARIA_LIVE_PATTERN}}
 ```
 
 ### Common UI Patterns
 ```markdown
-<!-- TODO: Reference UI patterns from systemPatterns.md -->
-
 ## Form Pattern
-[How to structure forms]
+{{FORM_PATTERN}}
 
 ## Button Pattern
-[Button variants and usage]
+{{BUTTON_PATTERN}}
 
 ## Modal/Dialog Pattern
-[How to implement modals]
+{{MODAL_PATTERN}}
 
 ## Loading State Pattern
-[How to show loading states]
+{{LOADING_PATTERN}}
 
 ## Error State Pattern
-[How to display errors]
+{{ERROR_PATTERN}}
 
 ## Responsive Pattern
-[Mobile-first/desktop-first approach]
+{{RESPONSIVE_PATTERN}}
 ```
 
 ### Specialist Routing Rules
 ```markdown
-<!-- TODO: Define when to delegate to specialists -->
-
 ## Specialist Triggers
 
 ### Accessibility Specialist
-- Delegate when: [Conditions]
+- Delegate when: {{A11Y_SPECIALIST_TRIGGER}}
 - Example: WCAG AAA compliance, complex ARIA patterns, screen reader optimization
 
 ### Animation Specialist
-- Delegate when: [Conditions]
+- Delegate when: {{ANIMATION_SPECIALIST_TRIGGER}}
 - Example: Complex animations, performance-critical motion, gesture interactions
 
 ### Responsive Design Specialist
-- Delegate when: [Conditions]
+- Delegate when: {{RESPONSIVE_SPECIALIST_TRIGGER}}
 - Example: Complex multi-device layouts, advanced responsive patterns
 
 ### Data Visualization Specialist
-- Delegate when: [Conditions]
+- Delegate when: {{DATA_VIZ_SPECIALIST_TRIGGER}}
 - Example: Charts, graphs, interactive data visualizations
 
 ### Form Specialist
-- Delegate when: [Conditions]
+- Delegate when: {{FORM_SPECIALIST_TRIGGER}}
 - Example: Multi-step forms, complex validation, dynamic form generation
+
+### Custom UI Specialists
+{{CUSTOM_UI_SPECIALISTS}}
 ```
 
 ## Best Practices
@@ -691,6 +681,6 @@ After implementation:
 ---
 
 **Version**: 1.0
-**Last Updated**: 2025-10-05
+**Last Updated**: 2025-10-06
 
-**⚠️ IMPORTANT**: This is a TEMPLATE. Customize the TODO sections for your UI framework, styling approach, and component patterns.
+**⚠️ IMPORTANT**: This is a TEMPLATE. Placeholders ({{PLACEHOLDER}}) will be replaced during `/cf:init` Phase 1.5 with your project's configuration.

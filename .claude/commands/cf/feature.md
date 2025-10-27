@@ -30,7 +30,7 @@ Entry point for new work that:
 
 ## Prerequisites
 
-**Memory bank must be initialized**. Run `/cf:init [project-name]` first if needed.
+**Memory bank must be initialized**. Run `/cf:init` first if needed.
 
 ---
 
@@ -44,7 +44,7 @@ Check if `memory-bank/` directory exists:
 ```
 ⚠️ Memory Bank Not Initialized
 
-Run: /cf:init [project-name]
+Run: /cf:init
 ```
 
 **Stop execution.**
@@ -347,7 +347,7 @@ Effort: 12-16 hours (multi-day)
 
 Memory bank not found at: memory-bank/
 
-To initialize, run: /cf:init [project-name]
+To initialize, run: /cf:init
 
 Example: /cf:init MyProject
 ```

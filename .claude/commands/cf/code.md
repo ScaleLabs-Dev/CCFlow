@@ -24,7 +24,7 @@ argument-hint: "[task-id]"
 - `--tdd` (**default**): Full TDD cycle (tests first, then implementation)
 - `--impl-only`: Skip TDD, implement directly (**use sparingly**)
 - `--interactive`: Engage Facilitator for guidance during implementation
-- `--agent=[name]`: Explicitly specify which hub agent to use
+- `--agent=[name]`: Explicitly specify which implementation agent to use
 
 ---
 
@@ -44,9 +44,9 @@ Execute task implementation with:
 
 ## Prerequisites
 
-- **Memory bank initialized**: Run `/cf:init [project-name]` first
+- **Memory bank initialized**: Run `/cf:init` first
 - **Task exists**: Use `/cf:feature` or `/cf:plan` to create tasks
-- **Hub agents customized**: Complete TODO sections in `.claude/agents/`
+- **Implementation agents customized**: Complete TODO sections in `.claude/agents/`
 
 ---
 
@@ -119,32 +119,80 @@ Extract task information:
 
 ### Step 3: Identify Implementation Agent
 
-Based on task type, identify appropriate hub agent:
+**Multi-Step Selection Process**:
 
-**Decision Logic**:
+#### 3.1: Check for Team Configuration
 
-**If task involves backend/server/API/business logic**:
-→ Use `codeImplementer` hub agent
+**Read routing.md** (if exists):
+```bash
+if [ -f .claude/agents/routing.md ]; then
+  # Team configured - use routing logic
+else
+  # No team - use generic agents
+fi
+```
 
-**If task involves UI/components/frontend**:
-→ Use `uiDeveloper` hub agent
+#### 3.2: Extract Keywords from Task
 
-**If task involves ONLY testing (no implementation)**:
-→ Use `testEngineer` hub agent
+Analyze task description for domain indicators:
+- **Backend keywords**: api, endpoint, route, server, backend, database, auth
+- **Frontend keywords**: component, ui, page, form, frontend, react, vue, hooks
+- **Performance keywords**: optimization, memoization, performance, slow
+- **Database keywords**: query, schema, migration, model, sequelize, database
+- **Testing keywords**: test, spec, testing, coverage
+
+#### 3.3: Select Agent Using Routing Logic
+
+**If routing.md exists** (team configured):
+
+1. Match task keywords to routing.md agent scopes
+2. Select stack-specific agent:
+   - Backend work → expressBackend (or stack-specific backend agent)
+   - Frontend work → reactFrontend (or stack-specific frontend agent)
+   - Testing → jestTest (or stack-specific test agent)
+
+**IMPORTANT - Disambiguation**: If task matches multiple agents, **first match wins** (based on agent order in routing.md). Example:
+```
+Task: "Create API endpoint with form UI"
+Keywords: api (backend), form (frontend)
+Result: First matching agent in routing.md order (typically backend)
+```
+
+3. Check if agent file exists:
+   ```
+   .claude/agents/[agentName].md
+   ```
+
+4. If exists → Use stack-specific agent
+5. If missing → Fall back to generic agent (from routing.md fallback path)
+
+**If routing.md does NOT exist** (generic fallback):
+
+Select based on task type:
+- **Backend/server/API/business logic** → `codeImplementer` (generic)
+- **UI/components/frontend** → `uiDeveloper` (generic)
+- **Testing only** → `testEngineer` (generic)
 
 **If user specified --agent flag**:
-→ Use specified agent
+→ Override routing, use specified agent
 
-**Example Invocation**:
-"Use the codeImplementer agent to implement: [task description]"
+**Agent Invocation Pattern**:
+
+*For stack-specific agents*:
+"Use the [stackAgent] agent to implement: [task description]"
+→ Stack agent will delegate to specialists as needed per routing.md
+
+*For generic agents*:
+"Use the [genericAgent] agent to implement: [task description]"
+→ Generic agent handles all work directly (no specialist delegation)
 
 ---
 
 ### Step 4: Agent Implementation
 
-**Invoke selected hub agent** with task context.
+**Invoke selected implementation agent** with task context.
 
-**Hub agent will**:
+**Implementation agent will**:
 1. Analyze task requirements
 2. Review tests from testEngineer
 3. **Decide**: Handle directly OR delegate to specialist
@@ -154,16 +202,16 @@ Based on task type, identify appropriate hub agent:
    - Conventions from CLAUDE.md
    - Test requirements
 
-**Hub Delegation Pattern**:
+**Delegation Pattern**:
 
-Hub agent may say:
+Implementation agent may say:
 "This task requires [specific expertise]. I need to use the [specialist-name] specialist for this work."
 
 Claude Code will then:
 - Switch to specialist agent context
 - Specialist implements specific part
-- Returns control to hub
-- Hub continues coordination
+- Returns control to implementation agent
+- Implementation agent continues coordination
 
 **Example Workflow**:
 ```
@@ -203,6 +251,12 @@ go test ./...              # Go
 **If tests FAIL**:
 
 **Iteration Process** (max 3 attempts):
+
+**Rationale for 3-attempt limit**:
+- Balances persistence with recognizing genuine blockers
+- Prevents runaway debugging loops
+- Forces escalation to planning/facilitation for complex issues
+- Monitor: <10% tasks hitting limit = appropriate, >20% = too restrictive
 
 1. Analyze failure details:
    - What test failed?
@@ -779,7 +833,7 @@ Memory bank NOT updated (tests must be GREEN first).
 ```
 ⚠️ Memory Bank Not Initialized
 
-Run: /cf:init [project-name]
+Run: /cf:init
 ```
 
 ### Task Not Found
@@ -794,10 +848,10 @@ Available tasks:
 Create new task: /cf:feature [description]
 ```
 
-### Hub Agents Not Customized
+### Implementation Agents Not Customized
 
 ```
-⚠️ Hub Agent Needs Customization
+⚠️ Implementation Agent Needs Customization
 
 Agent: .claude/agents/testing/testEngineer.md
 
@@ -860,10 +914,14 @@ Proceeding with codeImplementer...
 
 - **GREEN GATE is absolute** - no task complete without all tests passing
 - TDD is enforced by default, use `--impl-only` sparingly
-- Hub agents coordinate and may delegate to specialists
+- **Agent routing**: Reads `routing.md` (if exists) for stack-specific agent selection
+- **Fallback chain**: Stack-specific → Generic → Error
+- **Generic agents** handle all work directly (no specialist delegation)
+- **Stack-specific agents** can delegate to specialists per routing.md
 - Interactive mode (`--interactive`) useful for complex or unclear tasks
 - Maximum 3 iteration attempts before escalation
 - Memory bank only updated when tests GREEN
+- Configure team with `/cf:configure-team` for stack-specific agents
 
 ---
 
@@ -871,6 +929,7 @@ Proceeding with codeImplementer...
 
 - `/cf:feature` - Create task before coding
 - `/cf:plan` - Plan Level 2+ tasks before coding
+- `/cf:configure-team` - Configure stack-specific implementation team
 - `/cf:review` - Review code quality after implementation
 - `/cf:checkpoint` - Save state with all changes
 - `/cf:create-specialist` - Create specialist agents as needed

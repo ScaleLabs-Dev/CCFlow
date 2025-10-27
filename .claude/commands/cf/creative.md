@@ -34,7 +34,7 @@ Engage in deep, structured exploration for:
 
 ## Prerequisites
 
-**Memory bank must be initialized**: Run `/cf:init [project-name]` first if needed.
+**Memory bank must be initialized**: Run `/cf:init` first if needed.
 
 **Problem or task must exist**: Works best with:
 - Task ID from tasks.md (especially complex sub-tasks)
@@ -77,7 +77,7 @@ Need to explore idea? → /cf:facilitate --mode explore
 **Check memory bank exists**:
 ```
 If NOT EXISTS:
-⚠️ Memory bank not initialized. Run: /cf:init [project-name]
+⚠️ Memory bank not initialized. Run: /cf:init
 ```
 
 **Check task exists (if task-id provided)**:
@@ -937,7 +937,7 @@ Create task with: /cf:feature [description]
 ```
 ⚠️ Memory Bank Not Initialized
 
-Run: /cf:init [project-name]
+Run: /cf:init
 ```
 
 ### Topic Too Vague

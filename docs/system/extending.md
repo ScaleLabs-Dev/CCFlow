@@ -2,9 +2,52 @@
 
 How to customize and extend the CCFlow system for your needs.
 
+## Understanding the Template System
+
+**CCFlow uses a template-based architecture** to remain universally applicable across different tech stacks.
+
+### Two Agent Locations
+
+1. **`.claude/templates/agents/`** - Generic templates (what ships with CCFlow)
+   - Contains TODO placeholders like `{{LANGUAGE}}`, `{{FRAMEWORK}}`
+   - Workflow agents (already generic, no customization needed)
+   - Implementation agents (with project-specific TODOs)
+
+2. **`.claude/agents/`** - Configured agents (created per-project during `/cf:init`)
+   - Fully configured for your specific tech stack
+   - NO TODO sections (replaced with actual configuration)
+   - Ready to use immediately
+
+### Configuration Process (Phase 1.5 of /cf:init)
+
+```
+1. Read CLAUDE.md → Extract Tech Stack, Conventions, Patterns
+2. Auto-detect → package.json, code structure, config files
+3. Merge → Priority: CLAUDE.md > Auto-detected > Defaults
+4. Prompt → Only for critical gaps not found
+5. Populate → Replace {{PLACEHOLDERS}} in templates
+6. Write → Configured agents to .claude/agents/
+```
+
+See [`.claude/templates/agents/CONFIGURATION_SCHEMA.md`](../../.claude/templates/agents/CONFIGURATION_SCHEMA.md) for complete details.
+
+### When to Modify Templates
+
+**Modify `.claude/templates/agents/` when:**
+- Adding new TODO sections to implementation agents
+- Changing workflow agent logic (applies to all projects)
+- Creating new agent types
+
+**Modify `.claude/agents/` when:**
+- Customizing agents for YOUR specific project
+- Adding project-specific patterns or conventions
+- Creating specialists for your domain
+
+---
+
 ## Creating Specialists
 
-**When to create:** After 3+ delegations from a hub agent to the same domain
+**When to create:** After 3+ delegations from a implementation agent to the same domain
 
 **Command:**
 ```bash
@@ -56,7 +99,7 @@ Specialist for database operations, ORM usage, migrations, and query optimizatio
 5. Update activeContext.md with changes
 ```
 
-4. Update hub agent to recognize specialist:
+4. Update implementation agent to recognize specialist:
 ```markdown
 # Edit .claude/agents/development/codeImplementer.md
 
@@ -294,9 +337,9 @@ If topic matches [domain]:
 
 ---
 
-## Customizing Hub Agents for Tech Stack
+## Customizing Implementation Agents for Tech Stack
 
-**Edit hub agent files to match your stack:**
+**Edit implementation agent files to match your stack:**
 
 **Example: codeImplementer for Go backend**
 

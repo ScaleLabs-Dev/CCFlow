@@ -14,10 +14,10 @@ Core architectural concepts requiring cross-file understanding.
 
 **Implementation Layer** (`.claude/agents/{testing,development,ui}/`):
 - **Purpose:** Execute code changes with TDD enforcement
-- **Hub agents:** testEngineer, codeImplementer, uiDeveloper
+- **Implementation agents:** testEngineer, codeImplementer, uiDeveloper
 - **Specialists:** Created on-demand in `specialists/` subdirectories
 - **Characteristics:** Tech-stack specific, low-level execution
-- **Pattern:** Hubs delegate to specialists after 3+ uses
+- **Pattern:** Implementation agents delegate to specialists after 3+ uses
 
 **Key distinction:** Workflow agents plan and decide; implementation agents build and test.
 
@@ -93,7 +93,7 @@ Routes to appropriate workflow
     ↓
 testEngineer: Write failing tests (RED)
     ↓
-Hub agent: Implement to make tests pass
+Implementation agent: Implement to make tests pass
     ↓
 Run tests
     ↓
@@ -191,10 +191,10 @@ Result: Comprehensive solution design + patterns documented
 
 ## 8. Specialist Delegation Pattern
 
-**Hub Agent Behavior:**
+**Implementation Agent Behavior:**
 
 ```
-Task assigned to hub (e.g., codeImplementer)
+Task assigned to implementation agent (e.g., codeImplementer)
     ↓
 Check: Does specialist exist for this domain?
     ↓

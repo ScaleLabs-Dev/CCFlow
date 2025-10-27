@@ -1,4 +1,4 @@
-# Progress: [Project Name]
+# Progress
 
 <!-- NOTE: This file tracks progress and is rarely pre-populated during import -->
 

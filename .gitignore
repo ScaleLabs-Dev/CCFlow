@@ -1,0 +1,8 @@
+# CCFlow memory bank (project-specific context)
+# This contains workspace state and should not be committed
+memory-bank/
+
+# Note: We keep .claude/agents/ committed in CCFlow repo
+# as an example of configured agents for dogfooding.
+# Other projects should decide whether to gitignore this
+# if they regenerate agents during their own /cf:init.

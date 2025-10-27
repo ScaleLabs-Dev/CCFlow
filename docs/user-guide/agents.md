@@ -10,8 +10,8 @@ Understanding the 9 specialized agents in CCFlow's two-layer architecture.
 
 **Implementation Layer** (`.claude/agents/{testing,development,ui}/`):
 - Execute code changes
-- 3 hub agents: testEngineer, codeImplementer, uiDeveloper
-- Hub agents delegate to specialists (created on-demand)
+- 3 implementation agents: testEngineer, codeImplementer, uiDeveloper
+- Implementation agents delegate to specialists (created on-demand)
 
 ---
 
@@ -130,7 +130,7 @@ Risk: Medium
 
 ---
 
-## Implementation Hub Agents
+## Implementation Agents
 
 ### ⚗️ testEngineer
 
@@ -196,7 +196,7 @@ Risk: Medium
 ## Specialist Creation
 
 **When to create:**
-After 3+ delegations from a hub agent to the same domain
+After 3+ delegations from a implementation agent to the same domain
 
 **How to create:**
 ```bash
@@ -230,7 +230,7 @@ Facilitator + Architect + Product + Sequential MCP → systemPatterns.md update
 
 ### Implementation:
 ```
-testEngineer (writes tests) → Hub agent (implements) → Specialist (if needed) → GREEN gate
+testEngineer (writes tests) → Implementation agent (implements) → Specialist (if needed) → GREEN gate
 ```
 
 ### Quality Review:

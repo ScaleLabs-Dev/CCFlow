@@ -1,332 +1,216 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## Project Overview
-
-**CCFlow** is a comprehensive workflow system for Claude Code providing structured development with TDD enforcement, persistent memory bank context, and intelligent agent-based task coordination.
-
-**Tech Stack**: Markdown-based specification system with Claude Code custom commands and sub-agents
-**Status**: ✅ Production Ready (v1.0)
-
-## Critical Architecture Concepts
-
-### 1. Two-Layer Agent System
-
-**Workflow Layer** (`.claude/agents/workflow/`):
-- **Assessor**: Analyzes task complexity (1-4 levels), routes to appropriate workflow
-- **Architect**: Technical design, system architecture, pattern identification
-- **Product**: Requirements analysis, user needs, feature prioritization
-- **Facilitator**: Interactive refinement through question-driven dialogue (Action Recommendation Pattern)
-- **Documentarian**: Memory bank maintenance, cross-file consistency
-- **Reviewer**: Code quality assessment, technical debt tracking
-
-**Implementation Layer** (`.claude/agents/{testing,development,ui}/`):
-- **Hub agents**: Stack-agnostic coordinators (testEngineer, codeImplementer, uiDeveloper)
-- **Specialists**: Created on-demand for specific tech stacks/domains (in `specialists/` subdirs)
-- Hub agents delegate to specialists, never implement directly
-
-**Key Distinction**: Workflow agents orchestrate and plan; implementation agents execute code changes.
-
-### 2. Memory Bank as Single Source of Truth
-
-Located in `memory-bank/` directory (created per-project, NOT in this repo):
-
-**6 Core Files**:
-- `projectbrief.md`: Immutable scope definition (rarely changes)
-- `productContext.md`: Feature specs, user needs, UX requirements
-- `systemPatterns.md`: Architectural decisions, design patterns, ADRs
-- `activeContext.md`: Current focus, recent changes (most frequently updated)
-- `progress.md`: Completed work, milestones, technical debt
-- `tasks.md`: Task tracking with status, complexity, sub-tasks, blockers
-
-**Update Strategy**:
-- Commands auto-update relevant files during execution
-- `/cf:checkpoint` creates formal savepoints across ALL files
-- Documentarian ensures cross-file consistency
-
-### 3. Complexity-Based Routing
-
-**4-Level System**:
-- **Level 1** (Quick): 1-2 files, <2h → Direct to `/cf:code`
-- **Level 2** (Simple): 3-5 files, 2-6h → Requires `/cf:plan`
-- **Level 3** (Intermediate): 5-15 files, 1-3 days → Requires `/cf:plan` (auto-interactive)
-- **Level 4** (Complex): 15+ files, 3+ days → Requires `/cf:plan` (auto-interactive) → `/cf:creative` for sub-tasks
-
-**Auto-Facilitation**: Level 3-4 tasks automatically enable `--interactive` mode (can override with `--skip-facilitation`)
-
-### 4. TDD Enforcement (GREEN Gate)
-
-**Absolute Rule**: Tests MUST pass before task completion
-
-**RED → GREEN → REFACTOR workflow**:
-1. testEngineer writes failing tests FIRST
-2. Hub agent implements to make tests pass (delegates to specialists)
-3. GREEN gate: If tests fail after 3 attempts → STOP, report blocker
-4. Only after 100% GREEN → update memory bank, mark complete
-
-**No exceptions**: Implementation cannot be marked complete with failing tests.
-
-### 5. Command Namespace: `/cf:*`
-
-All commands use `/cf:` prefix to avoid conflicts. Commands are self-documenting (see `.claude/commands/cf/`).
-
-**Core workflow**: `/cf:feature` → `/cf:plan` → `/cf:creative` (if complex) → `/cf:code` → `/cf:checkpoint`
-
-### 6. Facilitator Action Recommendation Pattern
-
-**Critical Pattern** (used throughout interactive modes):
-```
-1. Present Current State
-2. Identify Gaps/Concerns
-3. Ask Clarifying Questions
-4. Refine Based on Feedback
-5. Recommend Next Action (always ends with recommendation)
-```
-
-Never leave user without clear next step. See `docs/specifications/facilitator-patterns.md` for templates.
-
-### 7. Creative Session for Deep Exploration
-
-For high-complexity sub-tasks without established patterns:
-
-**4-Phase Process** (`/cf:creative`):
-- Phase 1: Problem Deep-Dive (with "think" directive)
-- Phase 2: Solution Exploration (with "think hard/harder/ultrathink")
-- Phase 3: Design Refinement (with "think hard")
-- Phase 4: Validation & Documentation (with "think")
-
-Uses Sequential MCP for structured reasoning, always interactive, 20-35 minutes investment.
-
-## Working with This Repository
-
-### Understanding File Organization
-
-**Implementation Files**:
-- `.claude/commands/cf/`: 12 command implementations (cf-*.md)
-- `.claude/agents/`: 9 agent definitions with YAML frontmatter
-- `.claude/templates/`: 6 templates for new project initialization
-
-**Documentation** (`docs/`):
-- `user-guide/`: Getting started, commands, agents, workflows
-- `system/`: Architecture, validation, extending CCFlow
-- `specifications/`: Complete technical specifications
-
-**Root Files**:
-- `README.md`: User-facing quick start and reference
-- `CLAUDE.md`: This file - guidance for Claude Code instances
-
-### Modifying Commands
-
-**Command Structure** (all commands follow this):
-```markdown
-# Command: /cf:name
-
-[Brief description]
-
-## Usage
-[Syntax examples]
-
-## Parameters / Flags
-[Arguments and options]
-
-## Purpose
-[What it does and why]
-
-## Prerequisites
-[What must exist first]
-
-## Process
-[Step-by-step execution with decision points]
-
-## Examples
-[Real-world usage scenarios]
-
-## Error Handling
-[Common errors and responses]
-
-## Memory Bank Updates
-[Which files get updated and how]
-
-## Notes
-[Important caveats]
-
-## Related Commands
-[Integration points]
-```
-
-**Required Sections**: Usage, Purpose, Process, Examples, Error Handling
-
-### Modifying Agents
-
-**Agent Structure** (YAML frontmatter + markdown):
-```yaml
----
-name: AgentName
-role: Brief role description
-priority: high|medium|low
-triggers: [command1, command2]
-dependencies: [file1.md, file2.md]
-outputs: [file1.md, file2.md]
----
-
-# Agent: AgentName
-
-[Full role description]
-
-## Responsibilities
-[Specific duties]
-
-## Process
-[How agent operates]
-
-## Output Format
-[What agent produces]
-
-## Integration
-[How agent works with others]
-```
-
-**Critical**: Validate frontmatter YAML syntax - Phase 8 validation checks this.
-
-### Creating New Specialists
-
-Use `/cf:create-specialist` command, which:
-1. Prompts for domain, type (testing/development/ui), name
-2. Creates file in appropriate `specialists/` subdirectory
-3. Generates agent template with proper frontmatter
-4. Updates hub agent to recognize specialist
-
-**Specialist Pattern**: Hub agents detect repeated delegation patterns (3+ times) and recommend specialist creation.
-
-## Development Workflow for This Repository
-
-### Making Changes
-
-1. **Read specifications first**: Understand intent in `docs/specifications/` files
-2. **Check validation**: Changes must maintain validation standards (see `docs/system/validation.md`)
-3. **Update documentation**: Keep README.md and user guides synchronized
-4. **Cross-reference integrity**: Update all related files (commands ↔ agents ↔ specs)
-
-### Validation Checklist
-
-Before considering changes complete:
-- [ ] All command files have required sections
-- [ ] All agent files have valid YAML frontmatter
-- [ ] Cross-references between files are accurate
-- [ ] Memory bank templates are consistent (6 files)
-- [ ] README.md reflects any command/agent changes
-- [ ] Error handling is documented for new scenarios
-- [ ] Integration points are specified
-
-### Key Design Constraints
-
-**Non-Negotiables**:
-- TDD with GREEN gate enforcement (no skipping tests)
-- Memory bank as single source of truth (no duplicate state)
-- Action Recommendation Pattern in all interactive modes
-- Two-layer agent architecture (workflow vs implementation)
-- Complexity-based routing (can't skip planning for Level 2-4)
-- `/cf:` command namespace (avoid conflicts)
-
-**Extensibility Points**:
-- Creating specialists for new tech stacks (encouraged)
-- Adding memory bank files for specific needs (optional)
-- Custom facilitation templates for domains (see `docs/specifications/facilitator-patterns.md`)
-
-## Common Patterns
-
-### Pattern: Project Initialization (Fresh vs Existing)
-
-`/cf:init` auto-detects project type and imports existing documentation:
-```
-Phase 0: Scan for docs (README.md, CLAUDE.md, package.json, code structure)
-         ↓
-    If found → Present findings → User confirms import
-         ↓
-    Import mode: Pre-populate templates → Validate with user → Fill gaps
-         ↓
-    If not found → Fresh mode: Empty templates → Standard guided creation
-```
-
-**Import Sources**:
-- README.md → Executive Summary, Features, Problem Statement
-- CLAUDE.md → Tech Stack, Constraints, Patterns
-- package.json → Dependencies, Framework detection
-- Code structure → Architecture style, Component patterns
-
-**Flags**:
-- Default: Auto-detect (import if docs exist, fresh if not)
-- `--force-fresh`: Skip discovery, use empty templates
-- `--quick`: Skip guided creation (works with both modes)
-
-**Token Efficiency**: Discovery logic inline in command (not in agents) to avoid loading on frequent operations.
-
-### Pattern: Complexity Assessment
-
-Every new feature request goes through Assessor:
-```
-Keywords → Scope estimation → Risk analysis → Effort calculation → Level assignment (1-4) → Route recommendation
-```
-
-### Pattern: Interactive Refinement
-
-Facilitator-led commands cycle through:
-```
-Draft → Present → Identify Gaps → Ask Questions → User Responds → Refine → Repeat until satisfied → Recommend Next Action
-```
-
-No iteration limits - user controls the loop.
-
-### Pattern: Hub Agent Delegation
-
-Implementation hubs follow:
-```
-Load systemPatterns.md → Check for specialist → Delegate OR implement directly → Verify tests pass → Update memory bank
-```
-
-After 3+ delegations to same domain → recommend specialist creation.
-
-### Pattern: Memory Bank Synchronization
-
-Commands that modify state:
-```
-Pre-read relevant files → Execute operation → Update activeContext.md (always) → Update domain files (as needed) → Checkpoint opportunity
-```
-
-Documentarian ensures no conflicts between files.
-
-## MCP Server Integration
-
-CCFlow uses Sequential MCP for `/cf:creative` command:
-- Extended thinking mode with progressive budgets (think → think hard → think harder → ultrathink)
-- Hypothesis-driven solution comparison
-- Structured multi-step reasoning for architectural decisions
-
-## Important Implementation Notes
-
-1. **Command Execution Context**: Commands assume they're run from project root with `memory-bank/` directory present
-2. **Agent Invocation**: Agents are invoked by name in command process steps (e.g., "Engage Assessor agent")
-3. **File Path Assumptions**: All memory bank references use `memory-bank/` prefix, external refs use `.claude/`
-4. **Error Recovery**: Commands should detect missing prerequisites and provide exact commands to fix (e.g., "Run: /cf:init [project-name]")
-5. **Specialist Discovery**: Hub agents check `specialists/` subdirectory existence before attempting delegation
-6. **Facilitator Enforcement**: Level 3-4 tasks bypass `--interactive` flag and activate Facilitator automatically
-
-## Testing This System
-
-This is a specification-based system (no executable code). Validation is through:
-1. **Structural validation**: Check all required files exist and have proper format
-2. **Cross-reference validation**: Verify all mentioned commands/agents exist
-3. **Template validation**: Ensure memory bank templates match spec
-4. **Consistency validation**: Check command outputs match agent inputs
-
-See `docs/system/validation.md` for validation methodology.
+CCFlow orchestrates development through commands that coordinate specialized sub-agents. Each component has a single responsibility, creating clean, testable workflows with enforced quality gates.
 
 ---
 
-**Version**: 1.0
-**Last Updated**: 2025-10-05
-**Full Documentation**:
-- User guide: `docs/user-guide/getting-started.md`
-- System architecture: `docs/system/architecture.md`
-- Complete specifications: `docs/specifications/`
+## Primary Goal
+
+**Specification-driven development enabling speed AND quality**
+
+- **Specs First**: Define WHAT before HOW - every feature starts with specifications
+- **TDD is Non-Negotiable**: RED → GREEN → REFACTOR enforced at every step
+- **Quality Gates**: Prevent technical debt accumulation through systematic validation
+- **Parallel Execution**: Maximize velocity without compromising quality
+
+---
+
+## Core Architecture
+
+```mermaid
+graph LR
+    C[COMMANDS<br/>Orchestrate] --> W[WORKFLOW AGENTS<br/>Analyze]
+    W --> I[IMPLEMENTATION AGENTS<br/>Execute]
+
+    style C fill:#e1f5fe
+    style W fill:#fff3e0
+    style I fill:#f3e5f5
+```
+
+**Three-Layer Model**:
+- **Commands**: Orchestrate workflows, no logic
+- **Workflow Agents**: Analyze and plan, read-only tools
+- **Implementation Agents**: Execute tasks, full tool access
+- **Memory Bank**: Persistent context across sessions
+
+---
+
+## Command Categories
+
+### 1. Project Initialization
+Setup and configure - `/cf:init`, `/cf:configure-team`, `/cf:create-specialist`, `/cf:reset`
+
+### 2. Workflow Execution
+Core development loop - `/cf:feature`, `/cf:plan`, `/cf:creative`, `/cf:code`, `/cf:review`
+
+### 3. State Management
+Persist and load context - `/cf:checkpoint`, `/cf:context`, `/cf:sync`, `/cf:status`, `/cf:git`
+
+### 4. Interactive Support
+Human-in-the-loop - `/cf:ask`, `/cf:facilitate`, `--interactive` flag
+
+### 5. Meta-Development
+System optimization - `/cf:refine-agent`, `/cf:refine-command`
+
+**Complete reference**: `docs/commands/README.md` - All commands with usage and examples
+
+---
+
+## Complexity Routing
+
+Assessor agent automatically routes based on task complexity:
+
+| Level | Criteria | Route |
+|-------|----------|-------|
+| **L1** | 1-2 files, clear scope, known pattern | → `/cf:code` |
+| **L2** | 3-5 files, established patterns | → `/cf:plan` → `/cf:code` |
+| **L3** | 5-15 files, some ambiguity, cross-cutting | → `/cf:plan --interactive` → `/cf:code` |
+| **L4** | 15+ files, high uncertainty, architectural | → `/cf:plan` → `/cf:creative` → sub-tasks |
+
+**Note**: Complexity determined by scope and clarity, NOT temporal estimates.
+
+---
+
+## Agent Architecture
+
+CCFlow agents follow a **two-tier architecture** separating framework-level agents (consistent across all projects) from project-level agents (customized per project).
+
+### Framework-Level Agents (Not Customizable)
+
+**System Agents** (`.claude/agents/system/`):
+- agentBuilder, commandBuilder, project-discovery
+- Meta-development and framework optimization
+
+**Workflow Agents** (`.claude/agents/workflow/`):
+- assessor, architect, product, facilitator, documentarian, reviewer
+- Decision layer providing consistent CCFlow workflow behavior
+- **Why not customizable**: Ensures predictable workflows and quality gates
+
+### Project-Level Agents (Customizable)
+
+**Generic Implementation Agents** (`.claude/agents/`):
+- testEngineer, codeImplementer, uiDeveloper
+- **Must customize**: Fill TODO sections for tech stack, coding standards, testing approach
+
+**Team-Specific Agents** (`.claude/agents/[team-type]/`):
+- Added via `/cf:configure-team` for stack optimization
+
+**Specialists** (`.claude/agents/specialists/`):
+- Created via `/cf:create-specialist` for recurring patterns (3+ times)
+- Domain-specific expertise (auth, payments, migrations, etc.)
+
+**Complete details**: `docs/architecture/agent-organization.md`
+
+---
+
+## Critical Rules
+
+### 1. Agent Communication
+- **No Direct Agent-to-Agent**: Agents cannot invoke other agents directly
+- **Single Layer Deep**: Claude Code supports main → sub-agent only (no sub-sub-agents)
+- **Context Passing**: Via command context or memory bank files
+
+### 2. TDD Enforcement (GREEN Gate)
+1. **RED**: testEngineer writes failing tests FIRST
+2. **GREEN**: Implementation agent makes tests pass (minimum code)
+3. **REFACTOR**: Improve code while keeping tests green
+4. **3-Strike Rule**: After 3 failures → STOP, report blocker
+5. **No Bypass**: Tasks cannot complete with failing tests
+
+**Why**: Tests ARE the specification, prevents incomplete implementation
+
+### 3. Specification-Based Development
+- **Specs define behavior**: What the system should do, not how
+- **Agents are instructions**: Markdown specs Claude reads and follows
+- **No temporal references**: Specs focus on scope/complexity, never time estimates
+
+### 4. Quality Gates
+1. Complexity assessment (routing)
+2. Planning validation (technical + user)
+3. TDD enforcement (GREEN gate)
+4. Quality review (standards)
+5. Memory consistency (documentation)
+
+### 5. Memory Bank Structure
+Six files maintain persistent context:
+- `projectbrief.md` - Project scope (immutable)
+- `productContext.md` - Features and user needs
+- `systemPatterns.md` - Architecture decisions
+- `activeContext.md` - Current work focus
+- `progress.md` - Completed milestones
+- `tasks.md` - Task tracking
+
+---
+
+## Memory Bank
+
+Persistent context maintained across sessions:
+
+```mermaid
+graph TD
+    MB[memory-bank/]
+    MB --> PB[projectbrief.md<br/>Project scope - immutable]
+    MB --> PC[productContext.md<br/>Features and user needs]
+    MB --> SP[systemPatterns.md<br/>Architecture decisions]
+    MB --> AC[activeContext.md<br/>Current work focus]
+    MB --> PR[progress.md<br/>Completed milestones]
+    MB --> TK[tasks.md<br/>Task tracking]
+
+    style MB fill:#e8f5e9
+    style PB fill:#ffebee
+    style PC fill:#f3e5f5
+    style SP fill:#e3f2fd
+    style AC fill:#fff9c4
+    style PR fill:#e0f2f1
+    style TK fill:#fce4ec
+```
+
+**Update Strategy**: Commands auto-update during execution, `/cf:checkpoint` creates formal savepoints, Documentarian ensures cross-file consistency
+
+---
+
+## Standard Development Flow
+
+```mermaid
+graph LR
+    F[/cf:feature] --> A[Assessor routes]
+    A --> P[/cf:plan<br/>if L2+]
+    P --> C[/cf:code]
+    A --> C
+    C --> R[/cf:review]
+    R --> CH[/cf:checkpoint]
+
+    style F fill:#e1f5fe
+    style A fill:#fff3e0
+    style P fill:#f3e5f5
+    style C fill:#e8f5e9
+    style R fill:#ffebee
+    style CH fill:#fce4ec
+```
+
+**Session Pattern**: Start with `/cf:context` → Work → Checkpoint regularly → End with `/cf:checkpoint` + `/cf:git`
+
+**See**: `docs/workflows/session-management.md` for detailed session patterns
+
+---
+
+## Documentation Standards
+
+**All documentation belongs in `docs/` folder**:
+- `docs/architecture/` - System design, agent organization, operational requirements
+- `docs/workflows/` - Workflow guides (facilitator pattern, session management, specialist creation)
+- `docs/commands/` - Complete command reference
+- `docs/agents/` - Agent specifications and customization guides
+- `docs/troubleshooting/` - Common issues and solutions
+- `docs/planning/` - Design decisions and planning documents
+
+**Rules**:
+- **Never**: Create README files scattered throughout `.claude/` structure
+- **Always**: Centralize documentation in `docs/` with clear organization
+- **Diagramming**: Use Mermaid for all diagrams
+
+---
+
+**Version**: 2.0 (Specification-Driven)
+**Architecture**: Commands orchestrate → Agents analyze → Agents execute
+**Core Principles**: Specs before code | TDD non-negotiable | Quality gates enforced

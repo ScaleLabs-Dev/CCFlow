@@ -31,7 +31,7 @@ Quickly load relevant project context to:
 
 ## Prerequisites
 
-**Memory bank must be initialized**. Run `/cf:init [project-name]` first if needed.
+**Memory bank must be initialized**. Run `/cf:init` first if needed.
 
 **Some project history**. Works best after at least one checkpoint has been created.
 
@@ -47,7 +47,7 @@ Check if `memory-bank/` directory exists:
 ```
 ⚠️ Memory Bank Not Initialized
 
-Run: /cf:init [project-name]
+Run: /cf:init
 ```
 
 **Stop execution.**
@@ -789,7 +789,7 @@ Example: /cf:feature set up user authentication system
 
 Memory bank not found at: memory-bank/
 
-To initialize, run: /cf:init [project-name]
+To initialize, run: /cf:init
 
 Example: /cf:init MyProject
 ```

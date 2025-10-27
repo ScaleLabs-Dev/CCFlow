@@ -14,8 +14,8 @@ CCFlow is a comprehensive workflow system for Claude Code that provides structur
 - 🎯 **Two-layer agent architecture** (workflow coordination + implementation)
 - ✅ **TDD workflow with 100% GREEN gate** (tests must pass)
 - 📚 **Memory bank system** for persistent project context
-- 🤖 **12 commands** under `/cf:` namespace
-- 👥 **9 agents** (6 workflow + 3 hub) + specialist extensibility
+- 🤖 **13 commands** under `/cf:` namespace
+- 👥 **9 agents** (6 workflow + 3 implementation) + specialist extensibility
 - 📊 **4-level complexity assessment** for intelligent routing
 - 🔄 **Interactive modes** for ambiguous requirements
 
@@ -54,7 +54,7 @@ CCFlow is a comprehensive workflow system for Claude Code that provides structur
 - package.json → Dependencies, Framework detection
 - Code structure → Architecture style, Component patterns
 
-### 2. Customize Hub Agents (Important!)
+### 2. Customize Implementation Agents (Important!)
 
 Before first use, edit these 3 files to match your tech stack:
 
@@ -111,13 +111,14 @@ Component Conventions: [Naming, structure]
 |---------|---------|----------|
 | `/cf:feature [description]` | Entry point for new work | Assessor |
 | `/cf:plan TASK-[ID] [--interactive]` | Plan Level 2-4 tasks | Architect, Product, Facilitator |
-| `/cf:code TASK-[ID]` | TDD implementation with GREEN gate | testEngineer, Hub agents |
+| `/cf:code TASK-[ID]` | TDD implementation with GREEN gate | testEngineer, Implementation agents |
 
-### Support (6)
+### Support (7)
 | Command | Purpose | Agent(s) |
 |---------|---------|----------|
+| `/cf:git [-m "..."] [--all\|--staged]` | Create git commits with smart messages | None (git operations) |
 | `/cf:review [task-id\|all]` | Quality assessment | Reviewer |
-| `/cf:checkpoint [--message "..."]` | Save progress | Documentarian |
+| `/cf:checkpoint [--message "..."]` | Save project state | Documentarian |
 | `/cf:ask [question]` | Query memory bank | None (semantic search) |
 | `/cf:context [--full]` | Load work context | None (file reads) |
 | `/cf:status [--filter ...]` | Quick task overview | None (file reads) |
@@ -197,10 +198,10 @@ Located in `.claude/agents/workflow/`:
 | **Reviewer** | Code quality, technical debt, progress evaluation |
 | **Facilitator** | Interactive refinement, gap identification, collaborative exploration |
 
-### Implementation Hub Agents (3)
+### Implementation Agents (3)
 Stack-agnostic coordinators that delegate to specialists:
 
-| Hub Agent | Domain | Delegates To |
+| Agent | Domain | Delegates To |
 |-----------|--------|--------------|
 | **testEngineer** | TDD coordination | Testing specialists |
 | **codeImplementer** | Backend/business logic | Development specialists |
@@ -259,7 +260,7 @@ Located in `memory-bank/`:
 # - Tests define expected behavior
 # - No implementation yet
 
-# Step 2: GREEN Phase (Hub Agent)
+# Step 2: GREEN Phase (Implementation Agent)
 # - Implement to make tests pass
 # - May delegate to specialists
 # - Verify ALL tests pass
