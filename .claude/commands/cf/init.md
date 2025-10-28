@@ -212,7 +212,7 @@ Structure created successfully!
 
 **Note**: Workflow agents (assessor, architect, product, facilitator, documentarian, reviewer) remain in the framework and are not project-specific. They are automatically available to all commands.
 
-**Configuration Required**: Generic agents have TODO sections that should be customized for your tech stack, coding style, and testing approach.
+**How They Work**: Generic agents automatically adapt to your project by reading CLAUDE.md for tech stack, coding style, and testing approach.
 
 **Next Step (Optional)**: For stack-specific optimization, run `/cf:configure-team` after initialization completes.
 
@@ -229,8 +229,8 @@ Framework Agents (always available):
 ✓ Workflow: assessor, architect, product, facilitator, documentarian, reviewer
 ✓ System: commandBuilder, agentBuilder, project-discovery
 
-ℹ️ Generic agents work with ALL tech stacks - customize TODOs for your project
-ℹ️ Configure stack-specific team: /cf:configure-team
+ℹ️ Generic agents work with ALL tech stacks and will adapt to your project
+ℹ️ For stack-specific optimization: /cf:configure-team
 ```
 
 ---
@@ -633,7 +633,7 @@ Note: Check error message above for root cause before re-running.
 - **Quality gates** (validated before writing)
 - **--quick available** (for manual completion preference)
 - **Idempotent** (warns if already initialized)
-- **Implementation agents need customization** (fill TODOs before use)
+- **Generic agents adapt automatically** (read CLAUDE.md for project context)
 - **AgentBuilder available** (use `/cf:refine-agent` to optimize verbose agents post-init)
 
 ---
