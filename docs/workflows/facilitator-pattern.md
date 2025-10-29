@@ -8,34 +8,61 @@
 
 ## Overview
 
-The Facilitator Pattern is a 5-step interaction protocol used across CCFlow for human-in-the-loop refinement. It ensures no user is left without clear next steps and systematically fills information gaps.
+The Facilitator Pattern is a 6-step interaction protocol used across CCFlow for human-in-the-loop refinement. It ensures no user is left without clear next steps and systematically fills information gaps through structured questioning.
+
+**Core Principle**: Facilitator outputs ONLY questions. User (and specialized agents) provide all answers, decisions, and content.
 
 ---
 
-## The 5-Step Pattern
+## The 6-Step Pattern
 
-### 1. Present Current State
-**Purpose**: Show what exists or has been captured
+### 0. Detect Ambiguities (NEW - FIRST STEP)
+**Purpose**: Question ambiguous requests BEFORE diving into refinement
 
 **Example**:
 ```
-🔄 Facilitator: Let me capture that...
+🔄 Facilitator: Before we proceed, let me clarify your request...
 
-Draft Executive Summary:
-"A task manager for developers that integrates with IDEs"
+Questions About Your Request:
+- By "task manager" do you mean personal tasks, code tasks, or project tasks?
+- When you say "integrates with IDEs" - which IDEs are you targeting?
+- Is this for solo developers or teams?
 
-Current understanding captured.
+Please help me understand what you're asking for.
 ```
 
 **Key Points**:
-- Show user their input reflected back
-- Confirm understanding before proceeding
-- Make implicit explicit
+- Question vague terms ("better", "improve", "fix", "manager")
+- Clarify unclear scope (which components? what boundaries?)
+- Identify multiple interpretations and ask which one is correct
+- Resolve ambiguities BEFORE proceeding with content refinement
 
 ---
 
-### 2. Identify Gaps/Concerns
-**Purpose**: Find what's missing, unclear, or needs refinement
+### 1. Present Current State
+**Purpose**: Show what exists or has been captured WITHOUT interpretation
+
+**Example**:
+```
+🔄 Facilitator: Here's what you said...
+
+Your Description:
+"A task manager for solo developers working with VS Code,
+focused on code-level TODOs and technical debt tracking"
+
+Is this accurate?
+```
+
+**Key Points**:
+- Show user their input reflected back (their exact words)
+- Do NOT interpret or synthesize - present what they said
+- Confirm understanding before proceeding
+- Ask if accurate, not assume it is
+
+---
+
+### 2. Identify Gaps via Questions
+**Purpose**: Find what's missing, unclear, or needs refinement through questions
 
 **Example**:
 ```
@@ -70,22 +97,27 @@ To refine this further:
 
 ---
 
-### 4. Refine Based on Feedback
-**Purpose**: Incorporate user responses and iterate
+### 4. Present User's Answers and Validate
+**Purpose**: Show user's responses organized clearly and validate accuracy
 
 **Example**:
 ```
-🔄 Facilitator: Updated version:
+🔄 Facilitator: Here's what I captured from your answers:
 
+Your Project:
 "A task manager for solo developers who context-switch between projects,
 surfacing tasks directly in their IDE to reduce app-switching and maintain focus."
 
-Better?
+Validation Questions:
+1. Does this accurately reflect what you described?
+2. Is anything missing or misrepresented?
+3. Should we refine any aspect further?
 ```
 
 **Key Points**:
-- Show how feedback improved the output
-- Iterate until user approves
+- Present user's answers (their words, not your synthesis)
+- Ask validation questions, don't assume accuracy
+- Iterate until user explicitly approves
 - No iteration limits - continue until satisfied
 
 ---
@@ -218,32 +250,36 @@ When facilitator works with domain experts:
 
 ### Pattern with Product Agent
 ```
-🔄 Facilitator: [Presents topic]
+🔄 Facilitator: [Requests Product agent analysis from parent command]
   ↓
-🎨 Product: [Asks domain-specific questions]
+🎨 Product: [Provides domain-specific questions and analysis]
   ↓
-User: [Responds]
+🔄 Facilitator: [Presents Product's questions to user]
   ↓
-🔄 Facilitator: [Synthesizes] "Here's what I captured..."
+User: [Responds to questions]
   ↓
-🎨 Product: [Validates] "Does this align with objectives?"
+🔄 Facilitator: [Presents user's answers] "Here's what you said..."
   ↓
-🔄 Facilitator: [Refines] "Updated version..."
+🔄 Facilitator: [Asks validation questions] "Does this align with your objectives?"
+  ↓
+User: [Confirms or clarifies]
 ```
 
 ### Pattern with Architect Agent
 ```
-🔄 Facilitator: [Presents technical plan]
+🔄 Facilitator: [Requests Architect agent analysis from parent command]
   ↓
-🏗️ Architect: [Raises feasibility concerns]
+🏗️ Architect: [Provides technical questions and concerns]
   ↓
-🔄 Facilitator: [Asks clarifying questions]
+🔄 Facilitator: [Presents Architect's questions to user]
   ↓
-User: [Provides context]
+User: [Provides answers and context]
   ↓
-🏗️ Architect: [Suggests approach]
+🔄 Facilitator: [Presents user's answers] "Here's what you decided..."
   ↓
-🔄 Facilitator: [Synthesizes] "Refined approach..."
+🔄 Facilitator: [Asks validation questions] "Is this technically sound?"
+  ↓
+User: [Confirms or requests changes]
 ```
 
 ---
@@ -421,6 +457,14 @@ A successful facilitation session:
 
 ---
 
-**Version**: 1.0
-**Last Updated**: 2025-10-23
+**Version**: 2.0
+**Last Updated**: 2025-10-29
 **Status**: Active - Core workflow pattern
+
+**Changes in v2.0**:
+- Added Step 0: "Detect Ambiguities" as first step before any refinement
+- Updated Step 1: Emphasize presenting user's exact words without interpretation
+- Updated Step 4: Changed from "Refine Based on Feedback" to "Present User's Answers and Validate"
+- Clarified facilitator outputs ONLY questions, never answers or synthesis
+- Updated Multi-Agent Collaboration patterns to show facilitator coordinates via parent command
+- Removed all "synthesizes" language - facilitator presents and asks questions only
