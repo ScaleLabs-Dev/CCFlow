@@ -204,6 +204,13 @@ graph LR
 - `docs/troubleshooting/` - Common issues and solutions
 - `docs/planning/` - Design decisions and planning documents
 
+**Templates belong in `.claude/templates/` folder**:
+- `.claude/templates/workflow/` - Reusable templates for commands and workflow agents
+  - Used by commands/agents to generate consistent output (specs, reports, summaries)
+  - Examples: creative-spec-template.md, checkpoint-template.md, review-template.md
+- Commands and agents reference templates using Read tool
+- Templates use markdown format with placeholder sections
+
 **Rules**:
 - **Never**: Create README files scattered throughout `.claude/` structure
 - **Always**: Centralize documentation in `docs/` with clear organization

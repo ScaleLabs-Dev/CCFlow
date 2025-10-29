@@ -80,6 +80,431 @@ Guide open-ended exploration and refinement.
 6. Document refined understanding
 7. Recommend next steps
 
+### Mode 4: Creative Session (`/cf:creative [task-id|description]`)
+Orchestrate multi-perspective creative exploration for complex, ambiguous challenges.
+
+**Purpose**: Enable structured exploration through 3-phase interactive process for Level 3-4 problems requiring deep analysis before implementation.
+
+**Process Overview**:
+```
+Context Loading → Phase 1: Problem Definition → Phase 2: Multi-Perspective Analysis → Phase 3: Synthesis → Memory Bank Updates
+```
+
+**Total Duration**: 18-28 minutes
+**Always Interactive**: Validation gates at each phase transition
+
+#### Phase 1: Problem Definition (5-8 minutes)
+
+**Your Goal**: Deeply understand the problem before exploring solutions
+
+**Process**:
+1. **Present Problem Context**:
+   ```markdown
+   🔍 PHASE 1: PROBLEM DEFINITION
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   Let's ensure we fully understand the problem.
+
+   [Load and present task context or description]
+
+   ## Core Problem
+   - What is the fundamental challenge or need?
+   - What happens if we solve this incorrectly?
+   - Are there non-obvious requirements to consider?
+
+   ## Constraints
+   - **Technical**: Technology, architecture, integration limits?
+   - **Business**: User experience, performance, compliance requirements?
+   - **Resource**: Time, complexity, skill constraints?
+
+   ## Success Criteria
+   - How will we know we've solved this well?
+   - What are the must-have vs nice-to-have outcomes?
+   - What edge cases must we handle?
+
+   ---
+   Please share your thoughts. We'll refine together.
+   ```
+
+2. **Active Listening**: Capture user's responses about problem, constraints, and success criteria
+
+3. **Synthesize Understanding**:
+   ```markdown
+   ## Problem Understanding (Refined)
+
+   **Core Problem**: [Synthesized statement from discussion]
+
+   **Requirements**:
+   - Must have: [Critical requirements]
+   - Should have: [Important requirements]
+   - Nice to have: [Enhancements]
+
+   **Constraints**:
+   - Technical: [Technology/architecture/integration constraints]
+   - Business: [UX/performance/compliance needs]
+   - Resource: [Time/complexity/skill limits]
+
+   **Success Criteria**:
+   ✓ [Measurable criterion 1]
+   ✓ [Measurable criterion 2]
+   ✓ [Measurable criterion 3]
+
+   **Known Unknowns**: [What needs research]
+   **Key Assumptions**: [What we're assuming]
+
+   ---
+   **Validation**: Does this capture the problem accurately? (yes/refine)
+   ```
+
+4. **Validation Gate**: User must confirm problem understanding before Phase 2
+   - If "yes" → Proceed to Phase 2
+   - If "refine" → Iterate until alignment achieved
+
+#### Phase 2: Multi-Perspective Analysis (8-12 minutes)
+
+**Your Goal**: Generate 3 distinct perspectives, identify convergences and tensions
+
+**Process**:
+1. **Generate Architect Perspective**:
+   - Read `.claude/agents/workflow/architect.md` for technical analysis approach
+   - Analyze technical approach, component design, integration patterns
+   - Assess implementation complexity and risks
+
+   **Output**:
+   ```markdown
+   🎨 PHASE 2: MULTI-PERSPECTIVE ANALYSIS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   ## ARCHITECT Perspective
+
+   **Technical Approach**:
+   [How to solve this technically - specific components and architecture]
+
+   **Components Needed**:
+   - Component 1: [Purpose and responsibility]
+   - Component 2: [Purpose and responsibility]
+
+   **Integration Points**:
+   [How this connects to existing system]
+
+   **Trade-offs**:
+   ✓ Pros: [Advantages of this approach]
+   ⚠️ Cons: [Limitations to consider]
+
+   **Risk Assessment**: [Low/Medium/High with explanation]
+   ```
+
+2. **Generate Product Perspective**:
+   - Read `.claude/agents/workflow/product.md` for user needs analysis approach
+   - Analyze user needs, UX flow, acceptance criteria
+   - Identify edge cases from user journey
+
+   **Output**:
+   ```markdown
+   ## PRODUCT Perspective
+
+   **User Needs Addressed**:
+   [What user problems this solves]
+
+   **UX Flow**:
+   [How users interact with this feature]
+
+   **Acceptance Criteria**:
+   - [Criterion 1 - testable]
+   - [Criterion 2 - testable]
+
+   **Edge Cases**:
+   - [Edge case 1 and handling approach]
+   - [Edge case 2 and handling approach]
+
+   **Trade-offs**:
+   ✓ Pros: [User benefits]
+   ⚠️ Cons: [User experience limitations]
+   ```
+
+3. **Generate Tech Stack Perspective**:
+   - Read `CLAUDE.md` for tech stack details
+   - Read `memory-bank/systemPatterns.md` for established patterns
+   - Analyze stack-specific patterns, framework integration, performance
+
+   **Output**:
+   ```markdown
+   ## TECH STACK Perspective
+
+   **Stack-Specific Patterns**:
+   [Recommended patterns for current tech stack]
+
+   **Framework Integration**:
+   [How to leverage framework capabilities effectively]
+
+   **Performance Characteristics**:
+   [Expected performance profile and optimization opportunities]
+
+   **Trade-offs**:
+   ✓ Pros: [Stack advantages for this problem]
+   ⚠️ Cons: [Stack limitations to work around]
+   ```
+
+4. **Cross-Perspective Analysis**:
+   ```markdown
+   ## Cross-Perspective Analysis
+
+   **Convergent Insights** (where perspectives agree):
+   - [Agreement 1 - strong signal this is right approach]
+   - [Agreement 2]
+
+   **Productive Tensions** (where perspectives disagree):
+   - [Tension 1]: Architect suggests X, Product needs Y
+   - [Tension 2]: Performance vs simplicity trade-off
+
+   **Critical Questions**:
+   - [Question raised by multiple perspectives needing resolution]
+
+   ---
+   **Validation**: Do these perspectives address your concerns? (yes/refine)
+   ```
+
+5. **Validation Gate**: User must confirm perspectives are comprehensive
+   - If "yes" → Proceed to Phase 3
+   - If "refine" → Iterate perspectives until satisfactory
+
+#### Phase 3: Synthesis (5-8 minutes)
+
+**Your Goal**: Integrate insights, resolve tensions, produce actionable specification
+
+**Process**:
+1. **Integrate Perspectives**: Synthesize insights across all 3 perspectives
+
+2. **Resolve Tensions**: Propose how to address identified conflicts
+
+3. **Generate Specification**:
+   ```markdown
+   🧩 PHASE 3: SYNTHESIS
+   ━━━━━━━━━━━━━━━━━━━
+
+   ## Recommended Approach
+
+   **Solution Name**: [Descriptive name for the approach]
+
+   **Rationale**:
+   [Why this approach addresses the problem best, integrating insights from all perspectives]
+
+   **How It Resolves Tensions**:
+   - [Tension 1]: Resolved by [solution aspect]
+   - [Tension 2]: Resolved by [solution aspect]
+
+   ---
+
+   ## Implementation Specification
+
+   ### Component Breakdown
+   1. **Component A**: [Purpose and responsibilities]
+   2. **Component B**: [Purpose and responsibilities]
+   3. **Component C**: [Purpose and responsibilities]
+
+   ### Implementation Phases
+   **Phase 1**: [What to build first]
+   **Phase 2**: [What to build second]
+   **Phase 3**: [What to build third]
+
+   ### Data Flow
+   ```
+   [Entry Point] → [Processing] → [State Change] → [Output]
+   ```
+
+   ### Testing Strategy
+   - **Unit Tests**: [Component-level tests]
+   - **Integration Tests**: [Cross-component tests]
+   - **Edge Case Tests**: [Specific edge case validation]
+   ```
+
+4. **Extract Patterns**: Identify reusable patterns (must be applicable in 3+ scenarios)
+   ```markdown
+   ## Patterns Extracted
+
+   ### Pattern: [Pattern Name]
+
+   **Context**: When [situation where pattern applies]
+
+   **Problem**: [What problem it solves]
+
+   **Solution**: [How the pattern works]
+
+   **Benefits**: [What you gain]
+
+   **Trade-offs**: [What you accept]
+
+   **Reusability**: [Where else this could apply - must be 3+ scenarios]
+   ```
+
+5. **Document Decision Rationale**:
+   ```markdown
+   ## Decision Record
+
+   **Decision**: Use [selected approach]
+
+   **Alternatives Considered**:
+   1. [Alternative A]: Rejected because [reason]
+   2. [Alternative B]: Rejected because [reason]
+
+   **Key Trade-offs Accepted**:
+   - [Trade-off 1 and why it's acceptable]
+   - [Trade-off 2 and why it's acceptable]
+
+   **Assumptions to Validate**:
+   - [Assumption 1 to test during implementation]
+   - [Assumption 2 to test during implementation]
+
+   ---
+   **Validation**: Is this specification actionable for implementation? (yes/refine)
+   ```
+
+6. **Validation Gate**: User must confirm specification is actionable
+   - If "yes" → Proceed to memory bank updates
+   - If "refine" → Iterate synthesis until actionable
+
+#### Memory Bank Updates
+
+After all 3 phases complete and user validates, coordinate memory bank updates:
+
+1. **Update activeContext.md**:
+   ```markdown
+   ### [YYYY-MM-DD HH:MM] - Creative Session Complete: [Task/Topic]
+
+   **Session Type**: Multi-perspective creative exploration
+   **Duration**: [X] minutes
+   **Perspectives**: Architect, Product, Tech Stack
+
+   **Problem Explored**: [One-line problem statement]
+
+   **Solution Designed**: [Selected approach name]
+
+   **Key Decisions**:
+   1. [Decision 1] - [Rationale]
+   2. [Decision 2] - [Rationale]
+
+   **Patterns Created**: [N] new patterns added to systemPatterns.md
+   - [Pattern 1 name]
+   - [Pattern 2 name]
+
+   **Next Action**: [/cf:plan TASK-ID or /cf:code TASK-ID]
+   ```
+
+2. **Update systemPatterns.md** (if patterns extracted):
+   ```markdown
+   ### [Pattern Name]
+
+   **Category**: [Architectural/Design/Code/Testing/etc]
+   **Added**: [YYYY-MM-DD]
+   **Source**: Creative session for [task/topic]
+   **Status**: Active (in development)
+
+   **Context**: When to use this pattern
+   - [Situation 1]
+   - [Situation 2]
+
+   **Problem**: What problem this solves
+   [Description]
+
+   **Solution**: How the pattern works
+   [Pattern implementation details]
+
+   **Benefits**:
+   - ✅ [Benefit 1]
+   - ✅ [Benefit 2]
+
+   **Trade-offs**:
+   - ⚠️ [Trade-off 1]
+
+   **Examples in Codebase**: Will be added in [TASK-ID] implementation
+
+   **Related Patterns**: [Connection to existing patterns]
+   ```
+
+3. **Update tasks.md** (if task exists):
+   ```markdown
+   **Creative Session**: ✅ Complete [YYYY-MM-DD]
+   - Multi-perspective exploration conducted
+   - Implementation approach validated
+   - Patterns extracted: [pattern names]
+   - Ready for: /cf:plan [task-id] or /cf:code [task-id]
+
+   **Implementation Notes**:
+   - [Note 1 from synthesis]
+   - [Note 2 from synthesis]
+
+   **Edge Cases to Handle**:
+   - [Edge case 1]
+   - [Edge case 2]
+
+   **Patterns to Apply**: [Pattern names from systemPatterns.md]
+   ```
+
+#### Session Completion Summary
+
+After memory bank updates, present completion summary:
+
+```markdown
+✅ CREATIVE SESSION COMPLETE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**Topic**: [Task/Problem name]
+**Duration**: [X] minutes
+
+## Outcomes
+
+✅ **Problem Understood**: [One-line summary]
+
+✅ **Perspectives Explored**: 3 (Architect, Product, Tech Stack)
+- Convergent insights: [N]
+- Productive tensions: [N] (all resolved)
+
+✅ **Solution Designed**: [Approach name]
+- **Rationale**: [Top 3 reasons for selection]
+- **Components**: [N] components identified
+- **Testing**: Strategy defined
+
+✅ **Patterns Documented**: [N] new patterns added to systemPatterns.md
+- [Pattern 1 name]
+- [Pattern 2 name]
+
+✅ **Implementation Ready**: Specification is actionable
+
+## Memory Bank Updates
+
+✓ activeContext.md - Creative session documented
+✓ systemPatterns.md - [N] patterns added
+✓ tasks.md - Task notes updated with approach
+
+## Next Steps
+
+**Recommended**: /cf:plan [task-id] → Create detailed implementation plan
+**Alternative**: /cf:code [task-id] → Implement directly if simple enough
+
+Review specification in:
+- memory-bank/activeContext.md (session summary)
+- memory-bank/systemPatterns.md (new patterns)
+- memory-bank/tasks.md (task notes)
+```
+
+#### Creative Session Best Practices
+
+**Do**:
+✅ Generate truly distinct perspectives (avoid convergence too early)
+✅ Identify productive tensions (disagreements reveal trade-offs)
+✅ Extract patterns only if reusable 3+ times (avoid one-off solutions)
+✅ Validate at each phase gate (user must confirm before proceeding)
+✅ Document decision rationale (why approach chosen, what rejected)
+✅ Keep patterns concrete (specific implementation details, not vague principles)
+
+**Don't**:
+❌ Rush through phases (18-28 min investment prevents hours of rework)
+❌ Generate perspectives that all agree (false consensus misses trade-offs)
+❌ End without actionable specification (must be ready for /cf:plan or /cf:code)
+❌ Extract patterns that are too specific (must apply to 3+ scenarios)
+❌ Skip validation gates (user participation is critical for alignment)
+❌ Forget to update memory bank (session insights must persist)
+
 ## Facilitation Techniques
 
 ### Question Types
@@ -285,7 +710,11 @@ Ready to proceed, or would you like to refine further?
 - `/cf:create-specialist` or `/cf:ask [specific agent]`
 
 ### When to Recommend `/cf:creative`
-**Note**: This command is mentioned in the workflow but may need to be defined. If undefined, recommend `/cf:facilitate` or involve multiple agents for complex analysis.
+- High complexity (Level 3-4) with ambiguity or multiple valid approaches
+- Novel problems without established patterns
+- Significant trade-offs requiring systematic evaluation
+- User explicitly needs exploration before committing to approach
+- Problem benefits from distinct Architect + Product + Tech Stack perspectives
 
 ## Example Facilitation Session
 
@@ -407,9 +836,11 @@ Ready to proceed with implementation?
 - `/cf:plan --interactive` - Planning refinement
 - `/cf:checkpoint --interactive` - Checkpoint refinement
 - `/cf:facilitate [topic]` - General facilitation
+- `/cf:creative [task-id|description]` - Multi-perspective creative exploration
 - Any command with `--interactive` flag
 
 ---
 
-**Version**: 1.0
-**Last Updated**: 2025-10-05
+**Version**: 1.1
+**Last Updated**: 2025-10-28
+**Changes**: Added Mode 4 - Creative Session for multi-perspective problem exploration
