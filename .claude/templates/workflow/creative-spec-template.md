@@ -1,16 +1,23 @@
-# Specification: [Task Name]
+# Creative Session Specification: [Task Name]
 
 **Task ID**: TASK-[ID]
 **Complexity**: Level [3-4]
-**Created**: [YYYY-MM-DD]
+**Session Date**: [YYYY-MM-DD]
 **Status**: Implementation Ready
+**Facilitator**: facilitator (Mode 4: Creative Session)
 
 ---
 
 ## Problem Definition
 
+### Context
+[Background information and current situation leading to this exploration]
+
 ### Core Problem
-[From Phase 1: Synthesized problem statement]
+[From Phase 1: Synthesized problem statement - what fundamental challenge needs solving]
+
+### Why This Matters
+[User impact and business value - why we're investing time in multi-perspective analysis]
 
 ### Requirements
 **Must Have**:
@@ -88,27 +95,41 @@
 
 ---
 
-### Cross-Perspective Analysis
+### Cross-Perspective Synthesis
 
 **Convergent Insights** (where perspectives agree):
-- [Agreement 1]
-- [Agreement 2]
+- 🤝 [Agreement 1]: [All perspectives align on this]
+- 🤝 [Agreement 2]: [Strong consensus]
 
 **Productive Tensions** (where perspectives disagree):
-- [Tension 1]: [How perspectives differ]
-- [Tension 2]: [Trade-off revealed]
+- ⚡ [Tension 1]: [How perspectives differ and what trade-off this reveals]
+- ⚡ [Tension 2]: [Conflict between approaches]
+
+**Resolution Strategy**:
+[How to reconcile conflicts or which perspective takes priority and why]
+
+**Exploration Dimensions**:
+- **Feasibility**: [Technical viability assessment]
+- **Risk-Benefit**: [Trade-off analysis across approaches]
+- **Alternative Angles**: [What if we approached this differently?]
 
 ---
 
-## Recommended Approach
+## Synthesis & Recommended Approach
 
 **Solution Name**: [Descriptive name for the approach]
 
 **Rationale**: [Why this approach addresses the problem best, integrating insights from all perspectives]
+1. [Reason 1 with supporting evidence from perspectives]
+2. [Reason 2 with supporting evidence from perspectives]
+3. [Reason 3 with supporting evidence from perspectives]
 
 **How It Resolves Tensions**:
 - [Tension 1]: Resolved by [solution aspect]
 - [Tension 2]: Resolved by [solution aspect]
+
+**Why This Over Alternatives**:
+[Brief comparison with other approaches considered and why this is best]
 
 ---
 
@@ -160,5 +181,41 @@
 
 ---
 
-**Specification Version**: 1.0
-**Next Action**: /cf:plan TASK-[ID] for detailed sub-task breakdown
+## Next Steps
+
+### Immediate Actions
+1. **[Action 1]**: [Description and timeline]
+2. **[Action 2]**: [Description and timeline]
+
+### Recommended Command Sequence
+```bash
+# If more detailed planning needed
+/cf:plan TASK-[ID] --interactive
+
+# If ready to implement
+/cf:code TASK-[ID]
+
+# For review after implementation
+/cf:review TASK-[ID]
+```
+
+### Open Questions
+- ❓ [Question 1]: [Why this needs answering before implementation]
+- ❓ [Question 2]: [Stakeholders to consult]
+
+---
+
+## Session Metadata
+
+**Facilitator**: facilitator (Mode 4: Creative Session)
+**Perspectives Explored**: Architect, Product, Tech Stack
+**Session Duration**: [Time spent]
+**Interactive Rounds**: [Number of question/answer cycles]
+**Pattern**: Creative Session Pattern (systemPatterns.md)
+
+---
+
+**Template Version**: 1.1 (Command Orchestration Pattern)
+**Template Purpose**: Multi-perspective creative session synthesis output
+**Used By**: /cf:creative command for Level 3-4 complexity exploration
+**Last Updated**: 2025-11-03 (TASK-003-5 - enhanced for orchestration pattern)

@@ -494,7 +494,7 @@ Continue with creative session anyway? [yes/no]
 ### Agent Orchestration
 
 **Primary Agent**: facilitator (`.claude/agents/workflow/facilitator.md`)
-**Mode**: Mode 4 - Creative Session
+**Mode**: Mode 3 - Creative Session
 
 **Facilitator reads**:
 - `.claude/agents/workflow/architect.md` for technical analysis approach

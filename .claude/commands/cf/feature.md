@@ -1,6 +1,6 @@
 ---
 description: "Analyze task complexity and route to appropriate workflow (entry point for new work)"
-allowed-tools: ['Read', 'Edit', 'Task']
+allowed-tools: ['Read', 'Edit', 'Task', 'Write']
 argument-hint: "[description]"
 ---
 
@@ -20,11 +20,16 @@ argument-hint: "[description]"
 
 ## Purpose
 
+**Command Orchestration Pattern**: Coordinate Assessor and Product agents to analyze task complexity, generate specifications, and route to appropriate workflow.
+
 Entry point for new work that:
 1. Analyzes task complexity using Assessor agent
-2. Creates task entry in tasks.md
-3. Updates activeContext.md with task context
-4. Routes to appropriate next command based on complexity
+2. Validates requirements using Product agent
+3. Creates structured task entry using template
+4. Updates memory bank systematically
+5. Routes to appropriate next command based on complexity
+
+**Pattern**: Command Orchestration Pattern (systemPatterns.md:409-582)
 
 ---
 
@@ -36,7 +41,7 @@ Entry point for new work that:
 
 ## Process
 
-### Step 1: Verify Memory Bank Exists
+### Step 1: Verify Prerequisites
 
 Check if `memory-bank/` directory exists:
 
@@ -53,41 +58,147 @@ Run: /cf:init
 
 ### Step 2: Load Context
 
-Read required memory bank files:
-- `tasks.md` - To generate next task ID
-- `activeContext.md` - For current project state
-- `systemPatterns.md` - For technical context (if exists)
-- `CLAUDE.md` - For tech stack reference (if exists)
+**ORCHESTRATION PATTERN**: Load memory bank context for agent invocations
+
+**Read memory bank files** (parallel when possible):
+- `tasks.md` - To generate next task ID and understand existing work
+- `activeContext.md` - Current project state and focus
+- `systemPatterns.md` - Technical patterns (if exists)
+- `productContext.md` - Product features and requirements (if exists)
+- `CLAUDE.md` - Tech stack reference (if exists)
+
+**Extract context**:
+- Next available task ID (highest TASK-NNN + 1)
+- Current project focus
+- Existing patterns that might apply
+- Tech stack for scope estimation
 
 ---
 
-### Step 3: Engage Assessor Agent
+### Step 3: Invoke Assessor Agent (Complexity Analysis)
 
-**Invoke Assessor agent** with task description.
+**ORCHESTRATION PATTERN**: Invoke assessor agent for complexity analysis
 
-Assessor will:
-1. Analyze task description for complexity indicators
-2. Estimate scope (may scan codebase if needed)
-3. Evaluate risk factors
-4. Calculate effort estimate
-5. Assign complexity level (1-4)
-6. Generate assessment output
-
-**Assessor Output Format**:
 ```markdown
-🎯 COMPLEXITY ASSESSMENT
-─────────────────────────
-Task: [description]
-Level: [1-4] ([category])
-Keywords: [complexity indicators identified]
-Scope: ~[N] files ([component types if scanned])
-Risk: [Low/Medium/High] ([risk factors])
-Effort: [time estimate]
+## Invoke Assessor Agent
+Task(
+  subagent_type="assessor",
+  description="Task Complexity Assessment",
+  prompt=`
+    Analyze task complexity and provide routing recommendation.
+
+    **Task Description**: [user's description]
+
+    **Context**:
+    - Project: [from projectbrief.md if available]
+    - Tech Stack: [from CLAUDE.md]
+    - Existing Patterns: [from systemPatterns.md]
+
+    **Analysis Required**:
+    1. Keyword analysis (fix, add, implement, migrate, etc.)
+    2. Scope estimation (approximate files affected)
+    3. Risk assessment (Low/Medium/High)
+    4. Effort estimate
+    5. Complexity level assignment (1-4)
+
+    **Complexity Levels**:
+    - Level 1 (Quick Fix): 1-2 files, <30 min, low risk
+    - Level 2 (Intermediate): 3-5 files, 1-4 hours, medium risk
+    - Level 3 (Complex Feature): 5-15 files, 1-2 days, medium-high risk
+    - Level 4 (System Change): 15+ files, 2+ days, high risk
+
+    **Output Format**:
+    - Task: [description]
+    - Level: [1-4] ([category name])
+    - Keywords: [complexity indicators found]
+    - Scope: ~[N] files ([component types])
+    - Risk: [Low/Medium/High] ([risk factors])
+    - Effort: [time estimate]
+    - Routing: [Recommended next command]
+
+    Assessor: Analyze task and provide complexity assessment.
+    Do NOT create task entries or update memory bank (command handles this).
+  `
+)
 ```
 
+**Assessor will**:
+1. Analyze task description keywords
+2. Estimate scope (may scan codebase if Level 2+)
+3. Assess risk factors
+4. Calculate effort estimate
+5. Assign complexity level (1-4)
+6. Recommend routing (→ /cf:code or → /cf:plan)
+
 ---
 
-### Step 4: Generate Task ID
+### Step 4: Invoke Product Agent (Requirements Validation)
+
+**ORCHESTRATION PATTERN**: Invoke product agent for acceptance criteria
+
+```markdown
+## Invoke Product Agent
+Task(
+  subagent_type="product",
+  description="Requirements Analysis",
+  prompt=`
+    Generate acceptance criteria for task.
+
+    **Task Description**: [user's description]
+    **Complexity Level**: [from assessor]
+
+    **Context**:
+    - Product Features: [from productContext.md]
+    - User Needs: [from productContext.md]
+    - Success Criteria: [from existing features]
+
+    **Analysis Required**:
+    1. User value proposition (why this matters)
+    2. Acceptance criteria (3-5 specific criteria)
+    3. Edge cases to consider
+    4. Non-functional requirements (if applicable)
+
+    **Output Format**:
+    - User Value: [Why this task matters to users/project]
+    - Acceptance Criteria:
+      - [ ] [Criterion 1]
+      - [ ] [Criterion 2]
+      - [ ] [Criterion 3]
+    - Edge Cases: [Cases to handle]
+    - Non-Functional: [Performance, accessibility, security considerations]
+
+    Product: Analyze requirements and provide acceptance criteria.
+    Do NOT create task entries or update memory bank (command handles this).
+  `
+)
+```
+
+**Product will**:
+1. Analyze user value
+2. Generate acceptance criteria (3-5 items)
+3. Identify edge cases
+4. Note non-functional requirements
+
+---
+
+### Step 5: Collect Agent Outputs
+
+**Assessor returns**:
+- Complexity level (1-4)
+- Scope estimate
+- Risk assessment
+- Effort estimate
+- Routing recommendation
+
+**Product returns**:
+- User value statement
+- Acceptance criteria list
+- Edge cases
+- Non-functional requirements
+
+---
+
+### Step 6: Generate Task ID
 
 Extract task IDs from tasks.md and generate next sequential ID:
 
@@ -96,64 +207,132 @@ Extract task IDs from tasks.md and generate next sequential ID:
 **Examples**: TASK-001, TASK-015, TASK-142
 
 **Logic**:
-- Find highest existing task ID
-- Increment by 1
+- Find highest existing task ID (e.g., TASK-012)
+- Increment by 1 (→ TASK-013)
 - Zero-pad to 3 digits
 
 ---
 
-### Step 5: Update tasks.md
+### Step 7: Synthesize Using Template
 
-Add new task entry to "Pending Tasks" or "Active Tasks" section:
+**ORCHESTRATION PATTERN**: Command synthesizes agent outputs using template
+
+**Read template**:
+```
+.claude/templates/workflow/feature-task-template.md
+```
+
+**Apply synthesis logic**:
+
+**Task Header**:
+- Task ID: TASK-[NNN]
+- Task Name: [Extracted from description]
+- Complexity: Level [1-4] (from assessor)
+- Status: Pending (or Active for Level 1)
+- Priority: P1 (default)
+- Created: [YYYY-MM-DD]
+
+**Description**:
+- [User's original description]
+
+**User Value** (from product):
+- [Why this matters from product agent]
+
+**Acceptance Criteria** (from product):
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
+- [ ] [Criterion 3]
+- [ ] All tests passing
+- [ ] Code reviewed
+
+**Complexity Details** (from assessor):
+- Scope: ~[N] files ([types])
+- Risk: [Low/Medium/High] ([factors])
+- Effort: [estimate]
+
+**Edge Cases** (from product):
+- [Edge case 1]
+- [Edge case 2]
+
+**Non-Functional Requirements** (from product):
+- [Requirement 1 if any]
+
+**Prerequisites**: None (or [list if known])
+
+**Tests**: Not started
+
+**Sub-tasks**: [For Level 2+: Note that /cf:plan will break down]
+
+**Blockers**: None
+
+**Notes**: Created by /cf:feature - [routing recommendation]
+
+---
+
+### Step 8: Update Memory Bank
+
+**ORCHESTRATION PATTERN**: Update memory bank files systematically
+
+**Update tasks.md**:
+
+Add to "Pending Tasks" or "Active Tasks" section:
 
 ```markdown
 ### ⏳ TASK-[ID]: [Task Name] (Level [1-4])
 
-**Status**: Pending
-**Priority**: P1  # Default, user can change later
+**Status**: [Pending or Active]
+**Priority**: P1
 **Complexity**: Level [1-4]
-**Assigned**: [Assessor recommendation or TBD]
 **Created**: [YYYY-MM-DD]
-**Target**: [TBD or estimated based on effort]
-**Effort Estimate**: [From Assessor]
+**Effort Estimate**: [From assessor]
 
 **Description**:
 [User's task description]
 
+**User Value**:
+[From product agent - why this matters]
+
 **Acceptance Criteria**:
-- [ ] [Auto-generated criterion based on description]
+[From product agent - 3-5 criteria with checkboxes]
 - [ ] All tests passing
 - [ ] Code reviewed
+
+**Complexity Details**:
+- Scope: [From assessor]
+- Risk: [From assessor]
+- Effort: [From assessor]
+
+**Edge Cases**:
+[From product agent]
+
+**Non-Functional Requirements**:
+[From product agent if any]
 
 **Prerequisites**: None
 
 **Tests**: Not started
 
-**Sub-tasks**: [If Level 2+, note that /cf:plan will break down]
+**Sub-tasks**: [For Level 2+: Will be created by /cf:plan]
 
 **Blockers**: None
 
-**Notes**: Created by /cf:feature - awaiting planning/implementation
+**Notes**: Created by /cf:feature - [routing recommendation from assessor]
 ```
 
-**For Level 1 tasks**: Status can be "Active" since they can proceed directly to implementation.
+**Update activeContext.md**:
 
----
-
-### Step 6: Update activeContext.md
-
-Add entry to "Recent Changes" section:
-
+Add to **Recent Changes**:
 ```markdown
 ### [YYYY-MM-DD HH:MM] - Task Created: [Task Name]
-**Agent**: Assessor
+**Agent**: Assessor + Product
 **Task ID**: TASK-[ID]
 **Complexity**: Level [1-4]
-**Impact**: New task added to backlog
-**Next Action**: [Routing recommendation]
+**Routing**: [Next command recommendation]
+**User Value**: [Brief value statement]
+**Next Action**: [/cf:code or /cf:plan command]
 ```
 
-**If no current focus** (project just started):
+**If no current focus** (first task or higher priority):
 Update "Current Focus" section:
 ```markdown
 ### Primary Focus: [Task Name]
@@ -164,71 +343,140 @@ Update "Current Focus" section:
 **Progress**: Not started
 
 **What we're doing**:
-[Brief description]
+[Task description]
 
 **Why it matters**:
-[Connection to project goals]
+[User value from product agent]
 
 **Expected completion**:
-[Based on effort estimate]
+[Based on effort estimate from assessor]
 ```
 
 ---
 
-### Step 7: Output Assessment & Routing
+### Step 9: Output Assessment & Routing
+
+**Present synthesis to user**:
 
 **For Level 1 (Quick Fix)**:
 ```markdown
-🎯 COMPLEXITY ASSESSMENT
-─────────────────────────
-Task: [description]
-Level: 1 (Quick Fix)
-Keywords: [indicators]
-Scope: ~[N] files ([types])
-Risk: Low ([factors])
-Effort: [< 30 minutes]
+🎯 TASK CREATED: TASK-[ID]
 
-✓ Created TASK-[ID] in tasks.md
-✓ Updated activeContext.md
+## Task: [Task Name]
 
-→ RECOMMENDATION: Task is straightforward and ready for implementation.
+**Complexity**: Level 1 (Quick Fix)
+**Effort**: [<30 minutes estimate]
 
-   Proceed with: /cf:code TASK-[ID]
+---
 
-   This will:
-   1. testEngineer writes tests (RED phase)
-   2. Implementation agent writes code (GREEN phase)
-   3. Tests verified, task marked complete
+### 📋 ASSESSMENT (Assessor)
+
+**Scope**: ~[N] files ([types])
+**Risk**: Low ([factors])
+**Keywords**: [indicators found]
+
+---
+
+### 🎯 USER VALUE (Product)
+
+**Why This Matters**: [Value statement]
+
+**Acceptance Criteria**:
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
+- [ ] All tests passing
+- [ ] Code reviewed
+
+**Edge Cases**: [Cases to handle]
+
+---
+
+### 📊 MEMORY BANK
+
+✓ tasks.md updated (TASK-[ID] created)
+✓ activeContext.md updated (task logged)
+
+---
+
+### ⏭️ NEXT STEP
+
+→ **RECOMMENDATION**: Task is straightforward and ready for implementation.
+
+**Proceed with**:
+```bash
+/cf:code TASK-[ID]
+```
+
+This will:
+1. testEngineer writes tests (RED phase)
+2. Implementation agent writes code (GREEN phase)
+3. Tests verified, task marked complete
 ```
 
 **For Level 2-4 (Requires Planning)**:
 ```markdown
-🎯 COMPLEXITY ASSESSMENT
-─────────────────────────
-Task: [description]
-Level: [2-4] ([Intermediate Feature/Complex System])
-Keywords: [indicators]
-Scope: ~[N] files ([types])
-Risk: [Medium/High] ([factors])
-Effort: [estimate]
+🎯 TASK CREATED: TASK-[ID]
 
-✓ Created TASK-[ID] in tasks.md
-✓ Updated activeContext.md
+## Task: [Task Name]
 
-→ RECOMMENDATION: This task requires planning.
+**Complexity**: Level [2-4] ([Intermediate Feature/Complex System])
+**Effort**: [estimate]
 
-   Please use: /cf:plan TASK-[ID]
+---
 
-   Planning will:
-   1. Architect analyzes technical approach
-   2. Product validates user requirements
-   3. Task broken into sub-tasks
-   4. Implementation approach documented
+### 📋 ASSESSMENT (Assessor)
 
-   Consider --interactive flag for collaborative planning:
-   /cf:plan TASK-[ID] --interactive
+**Scope**: ~[N] files ([types])
+**Risk**: [Medium/High] ([factors])
+**Keywords**: [indicators found]
 
-   This engages Facilitator for iterative refinement.
+---
+
+### 🎯 USER VALUE (Product)
+
+**Why This Matters**: [Value statement]
+
+**Acceptance Criteria**:
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
+- [ ] [Criterion 3]
+- [ ] All tests passing
+- [ ] Code reviewed
+
+**Edge Cases**: [Cases to handle]
+
+**Non-Functional**: [Requirements if any]
+
+---
+
+### 📊 MEMORY BANK
+
+✓ tasks.md updated (TASK-[ID] created)
+✓ activeContext.md updated (task logged)
+
+---
+
+### ⏭️ NEXT STEP
+
+→ **RECOMMENDATION**: This task requires planning before implementation.
+
+**Proceed with**:
+```bash
+/cf:plan TASK-[ID]
+```
+
+Planning will:
+1. Architect analyzes technical approach
+2. Product validates requirements
+3. Task broken into sub-tasks
+4. Implementation approach documented
+
+**For complex tasks** (Level 3-4), consider interactive mode:
+```bash
+/cf:plan TASK-[ID] --interactive
+```
+
+This engages Facilitator for iterative refinement and validation.
 ```
 
 ---
@@ -241,99 +489,160 @@ Effort: [estimate]
 User: /cf:feature fix typo in header component
 
 Claude:
-[Assessor analyzes...]
+📋 LOADING CONTEXT
+- Reading tasks.md (highest task: TASK-003)
+- Next ID: TASK-004
+- Project: CCFlow development framework
 
-🎯 COMPLEXITY ASSESSMENT
-─────────────────────────
-Task: Fix typo in header component
-Level: 1 (Quick Fix)
-Keywords: fix, typo
-Scope: ~1 file (components/Header.tsx)
-Risk: Low (isolated change, no dependencies)
-Effort: < 15 minutes
+---
 
-✓ Created TASK-004 in tasks.md
-✓ Updated activeContext.md
+🔍 INVOKING AGENTS
 
-→ RECOMMENDATION: Task is straightforward and ready for implementation.
+**Assessor**: Analyzing complexity...
+**Product**: Analyzing requirements...
 
-   Proceed with: /cf:code TASK-004
+---
+
+🎯 TASK CREATED: TASK-004
+
+## Task: Fix typo in header component
+
+**Complexity**: Level 1 (Quick Fix)
+**Effort**: <15 minutes
+
+---
+
+### 📋 ASSESSMENT (Assessor)
+
+**Scope**: ~1 file (UI component)
+**Risk**: Low (isolated change, no breaking changes)
+**Keywords**: fix, typo
+
+---
+
+### 🎯 USER VALUE (Product)
+
+**Why This Matters**: Improves UI professionalism and user trust
+
+**Acceptance Criteria**:
+- [ ] Typo corrected in header component
+- [ ] Visual regression test confirms no layout changes
+- [ ] All tests passing
+- [ ] Code reviewed
+
+**Edge Cases**: None identified
+
+---
+
+### 📊 MEMORY BANK
+
+✓ tasks.md updated (TASK-004 created)
+✓ activeContext.md updated (task logged)
+
+---
+
+### ⏭️ NEXT STEP
+
+→ **RECOMMENDATION**: Task is straightforward and ready for implementation.
+
+**Proceed with**:
+```bash
+/cf:code TASK-004
+```
 ```
 
-### Example 2: Medium Complexity (Level 2)
+### Example 2: Complex Task (Level 3)
 
 ```
-User: /cf:feature add search functionality to navbar
+User: /cf:feature implement real-time collaborative editing
 
 Claude:
-[Assessor analyzes and scans codebase...]
+📋 LOADING CONTEXT
+- Reading tasks.md (highest task: TASK-015)
+- Next ID: TASK-016
+- Tech stack: React, Node.js, WebSockets
 
-🎯 COMPLEXITY ASSESSMENT
-─────────────────────────
-Task: Add search functionality to navbar
-Level: 2 (Simple Enhancement)
-Keywords: add, search, functionality
-Scope: ~4 files (navbar component, search service, API endpoint, tests)
-Risk: Low-Medium (new feature, integrates with existing nav)
-Effort: 1-2 hours
+---
 
-✓ Created TASK-005 in tasks.md
-✓ Updated activeContext.md
+🔍 INVOKING AGENTS
 
-→ RECOMMENDATION: This task requires planning.
+**Assessor**: Analyzing complexity... (scanning codebase)
+**Product**: Analyzing requirements...
 
-   Please use: /cf:plan TASK-005
+---
 
-   Planning will break down the implementation into steps:
-   - Backend search endpoint
-   - Frontend search component
-   - Integration with navbar
-   - Search results display
+🎯 TASK CREATED: TASK-016
 
-   Consider --interactive for collaborative planning:
-   /cf:plan TASK-005 --interactive
+## Task: Implement real-time collaborative editing
+
+**Complexity**: Level 3 (Complex Feature)
+**Effort**: 1-2 days
+
+---
+
+### 📋 ASSESSMENT (Assessor)
+
+**Scope**: ~12 files (WebSocket infrastructure, state sync, UI components, middleware)
+**Risk**: Medium-High (complex state management, concurrency handling, WebSocket lifecycle)
+**Keywords**: implement, real-time, collaborative
+
+---
+
+### 🎯 USER VALUE (Product)
+
+**Why This Matters**: Enables team collaboration, core differentiator for product, significant user value
+
+**Acceptance Criteria**:
+- [ ] Multiple users can edit same document simultaneously
+- [ ] Changes propagate in real-time (<100ms latency)
+- [ ] Conflict resolution handles concurrent edits gracefully
+- [ ] User presence indicators show who's editing
+- [ ] Offline users can rejoin without data loss
+- [ ] All tests passing (unit, integration, E2E)
+- [ ] Code reviewed
+
+**Edge Cases**:
+- Concurrent edits to same line
+- Network interruptions during edit
+- User disconnects mid-edit
+- Scaling to 10+ simultaneous users
+
+**Non-Functional**:
+- Performance: <100ms latency for change propagation
+- Scalability: Support 10+ concurrent users per document
+- Reliability: No data loss on network interruption
+
+---
+
+### 📊 MEMORY BANK
+
+✓ tasks.md updated (TASK-016 created)
+✓ activeContext.md updated (task logged, current focus set)
+
+---
+
+### ⏭️ NEXT STEP
+
+→ **RECOMMENDATION**: This task requires planning before implementation.
+
+**Proceed with**:
+```bash
+/cf:plan TASK-016 --interactive
 ```
 
-### Example 3: Complex Task (Level 4)
+Interactive planning will:
+1. Facilitator guides multi-perspective exploration
+2. Architect analyzes WebSocket architecture options
+3. Product validates UX requirements
+4. Task broken into phased sub-tasks
+5. Implementation approach documented
 
+**Alternative** (if requirements are clear):
+```bash
+/cf:plan TASK-016
 ```
-User: /cf:feature migrate authentication system to OAuth 2.0
 
-Claude:
-[Assessor analyzes extensively, scans codebase...]
-
-🎯 COMPLEXITY ASSESSMENT
-─────────────────────────
-Task: Migrate authentication system to OAuth 2.0
-Level: 4 (Complex System)
-Keywords: migrate, authentication, system, OAuth
-Scope: ~25 files (auth services, middleware, database, frontend components, config)
-Risk: High (breaking changes, security implications, data migration)
-Effort: 12-16 hours (multi-day)
-
-✓ Created TASK-006 in tasks.md
-✓ Updated activeContext.md
-
-→ RECOMMENDATION: This is a complex system change requiring careful planning.
-
-   Please use: /cf:plan TASK-006 --interactive
-
-   ⚠️ IMPORTANT: Given the complexity and risk:
-
-   1. Interactive planning HIGHLY recommended (--interactive flag)
-   2. Facilitator will guide through:
-      - OAuth provider selection
-      - Migration strategy (parallel vs sequential)
-      - Data migration approach
-      - Rollback plan
-      - Testing strategy
-
-   3. Consider breaking into phases:
-      - Phase 1: OAuth integration (new feature)
-      - Phase 2: Migration path (gradual transition)
-      - Phase 3: Legacy auth removal
-
-   Start with: /cf:plan TASK-006 --interactive
+Standard planning without interactive refinement.
 ```
 
 ---
@@ -347,173 +656,63 @@ Effort: 12-16 hours (multi-day)
 
 Memory bank not found at: memory-bank/
 
-To initialize, run: /cf:init
-
-Example: /cf:init MyProject
+Run: /cf:init
 ```
 
-### Missing Task Description
+### Empty Task Description
 
 ```
-❌ Error: Task description required
+❌ Missing Task Description
 
 Usage: /cf:feature [description]
 
-Example: /cf:feature add user authentication
-
-The description should clearly state what needs to be built or fixed.
-```
-
-### Tasks.md Missing or Corrupted
-
-```
-⚠️ Warning: tasks.md not found or corrupted
-
-Expected: memory-bank/tasks.md
-
-Creating new task entry with ID TASK-001.
-
-Recommendation: Verify tasks.md exists and is properly formatted.
-```
-
-### Codebase Scan Failure (Level 2+ tasks)
-
-```
-⚠️ Codebase scan failed
-
-Could not analyze project structure for scope estimation.
-
-Proceeding with keyword-based assessment only.
-
-Assessment may be less accurate. Consider manual scope verification.
-
-[Continues with assessment based on keywords only]
-```
-
----
-
-## Assessor Decision Logic
-
-The Assessor agent uses this logic:
-
-### Keyword Analysis (Primary)
-
-**Level 1 Indicators**:
-- fix, bug, typo, update, adjust, tweak, correct
-- Single file change implied
-- Minor updates
-
-**Level 2 Indicators**:
-- add, create, simple, small feature
-- New component or endpoint
-- Enhancement to existing feature
-
-**Level 3 Indicators**:
-- feature, implement, integrate
-- Multi-component change
-- Moderate complexity implied
-
-**Level 4 Indicators**:
-- architecture, migrate, system, refactor, infrastructure
-- Large-scale change
-- High impact or risk
-
-### Scope Analysis (If Level 2+)
-
-**Codebase Scan**:
-```bash
-# Count potential files affected
-Glob: Search for relevant files by pattern
-Grep: Search for related code/imports
-
-# Adjust complexity based on findings
-If file_count > 10: Consider upgrading to Level 4
-If file_count < 3: Consider downgrading to Level 1
-```
-
-### Risk Assessment
-
-**Low Risk**:
-- Isolated change
-- No breaking changes
-- Well-understood domain
-
-**Medium Risk**:
-- Cross-module changes
-- Some breaking changes possible
-- Moderate dependencies
-
-**High Risk**:
-- System-wide impact
-- Breaking changes likely
-- Security/data implications
-- Complex dependencies
-
-### Final Complexity Assignment
-
-Assessor considers all factors and assigns level:
-- Primary: Keyword analysis
-- Secondary: Scope estimation
-- Validation: Risk assessment
-- Conservative: When in doubt, assign higher complexity
-
----
-
-## Integration with Other Commands
-
-After `/cf:feature`, typical flow:
-
-**Level 1**:
-```
-/cf:feature [task] → /cf:code TASK-[ID] → Complete
-```
-
-**Level 2-4**:
-```
-/cf:feature [task] → /cf:plan TASK-[ID] → /cf:code TASK-[ID-subtask] → ... → Complete
-```
-
-**With Interactive Planning**:
-```
-/cf:feature [task] → /cf:plan TASK-[ID] --interactive → [Refinement] → /cf:code ... → Complete
+Examples:
+/cf:feature fix authentication bug
+/cf:feature add user profile page
+/cf:feature migrate to React 18
 ```
 
 ---
 
 ## Memory Bank Updates
 
-### tasks.md Changes
+### tasks.md
+- New task entry created with synthesized details
+- Task ID auto-generated (sequential)
+- Complexity level from assessor
+- Acceptance criteria from product
+- User value documented
 
-**New Task Entry Added**:
-- Task ID generated
-- Status: Pending (or Active for Level 1)
-- Complexity level assigned
-- Effort estimated
-- Description captured
-- Acceptance criteria generated
-
-### activeContext.md Changes
-
-**Recent Changes Log**:
-- Entry added with timestamp
-- Agent: Assessor
-- Task ID reference
-- Next action noted
-
-**Current Focus** (if appropriate):
-- Updated if this is first task or higher priority
-- Includes task context and expected timeline
+### activeContext.md
+- Recent change entry added (task creation logged)
+- Current focus updated (if appropriate)
+- Routing recommendation documented
 
 ---
 
-## Notes
+## Orchestration Notes
 
-- Task IDs are sequential and never reused
-- Default priority is P1 (user can adjust in tasks.md)
-- Assessor may take 10-30 seconds for complex tasks (codebase scanning)
-- Level 1 tasks can skip planning and go directly to `/cf:code`
-- Level 2+ tasks MUST use `/cf:plan` before implementation
-- `--interactive` flag highly recommended for Level 3-4 tasks
+**Pattern Compliance**:
+- ✅ **Context Loading**: Command loads memory bank files for agent context
+- ✅ **Agent Invocation**: Command invokes assessor + product agents (parallel possible)
+- ✅ **Output Collection**: Command collects complexity assessment + acceptance criteria
+- ✅ **Template Synthesis**: Command uses feature-task-template.md for consistent structure
+- ✅ **Memory Bank Updates**: Command updates tasks.md + activeContext.md systematically
+- ✅ **User Communication**: Command presents structured routing recommendation
+
+**Command Responsibilities**:
+- Context loading from memory bank
+- Assessor invocation (complexity analysis)
+- Product invocation (requirements validation)
+- Task ID generation
+- Template-based task entry synthesis
+- Memory bank updates
+- Routing recommendation output
+
+**Agent Responsibilities**:
+- **Assessor**: Analyze complexity, estimate scope/effort, assess risk, recommend routing
+- **Product**: Define user value, generate acceptance criteria, identify edge cases
+- **NO task creation**: Agents analyze only, command synthesizes and creates entries
 
 ---
 
@@ -524,8 +723,10 @@ After `/cf:feature`, typical flow:
 - `/cf:plan` - Plan Level 2+ tasks
 - `/cf:code` - Implement Level 1 tasks or planned sub-tasks
 - `/cf:status` - Quick check on tasks
+- `/cf:checkpoint` - Save feature creation work
 
 ---
 
-**Command Version**: 1.0
-**Last Updated**: 2025-10-05
+**Command Version**: 2.0 (Command Orchestration Pattern)
+**Last Updated**: 2025-11-03 (TASK-003-8)
+**Pattern**: Command Orchestration Pattern (systemPatterns.md:409-582)

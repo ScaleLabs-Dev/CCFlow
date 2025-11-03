@@ -844,7 +844,7 @@ Next Actions:
 
 - **Command Reference**: `docs/commands/cf-creative.md`
 - **Command Specification**: `.claude/commands/cf/creative.md`
-- **Facilitator Agent**: `.claude/agents/workflow/facilitator.md` (Mode 4)
+- **Facilitator Agent**: `.claude/agents/workflow/facilitator.md` (Mode 3: Creative Session)
 - **Session Management**: `docs/workflows/session-management.md`
 
 ---
