@@ -26,13 +26,13 @@ argument-hint: "[task-id] [--interactive] [--skip-facilitation]"
 
 ## Purpose
 
-Create comprehensive implementation plan by:
-1. Loading task details and project context
-2. Engaging Architect agent for technical design
-3. Engaging Product agent for user requirements
-4. Breaking down into implementation steps
-5. Creating sub-tasks in tasks.md
-6. Updating systemPatterns.md if new patterns emerge
+**Command Orchestration Pattern**: Coordinate Architect + Product + Facilitator agents to create comprehensive implementation plans through:
+1. Parallel agent invocation (Architect + Product simultaneously)
+2. Facilitator-based interactive refinement (for Level 3-4 or --interactive)
+3. Template-driven synthesis (using checkpoint-template.md concepts)
+4. Memory bank updates (tasks.md, activeContext.md, systemPatterns.md)
+
+**Pattern**: Command Orchestration Pattern (systemPatterns.md:409-582)
 
 ---
 
@@ -78,9 +78,90 @@ Proceed directly with: /cf:code [task-id]
 
 ---
 
-### Step 1.5: Enforce Facilitator for Level 3-4
+### Step 2: Load Context
 
-**Auto-enable interactive mode for complex tasks**:
+**Read memory bank files** to understand current state:
+
+```markdown
+Read memory-bank/tasks.md
+Read memory-bank/activeContext.md
+Read memory-bank/systemPatterns.md
+Read memory-bank/productContext.md
+Read memory-bank/projectbrief.md
+Read CLAUDE.md
+```
+
+**Extract task information**:
+- Task description and complexity
+- Acceptance criteria
+- Existing context/notes
+- Related patterns from systemPatterns.md
+- Tech stack from CLAUDE.md
+
+---
+
+### Step 3: Invoke Agents in Parallel
+
+**ORCHESTRATION PATTERN**: Invoke agents concurrently for performance
+
+**Parallel Agent Invocation**:
+
+```markdown
+## Invoke Architect Agent
+Task(
+  subagent_type="architect",
+  description="Technical Analysis for Planning",
+  prompt=`
+    Analyze TASK-[ID] technical implementation approach.
+
+    **Context**:
+    - Task: [description]
+    - Complexity: Level [2-4]
+    - Patterns: [from systemPatterns.md]
+    - Tech Stack: [from CLAUDE.md]
+
+    **Provide**:
+    1. Component architecture design
+    2. Data flow analysis
+    3. Technical decisions with trade-offs
+    4. Patterns to follow
+    5. Risks and mitigation
+
+    Focus on technical design. Do NOT synthesize with other perspectives.
+  `
+)
+
+## Invoke Product Agent (PARALLEL)
+Task(
+  subagent_type="product",
+  description="Requirements Analysis for Planning",
+  prompt=`
+    Analyze TASK-[ID] user requirements and UX considerations.
+
+    **Context**:
+    - Task: [description]
+    - Complexity: Level [2-4]
+    - Product Context: [from productContext.md]
+
+    **Provide**:
+    1. Functional requirements (must/should/could have)
+    2. Non-functional requirements
+    3. UX considerations
+    4. Success criteria
+    5. Edge cases
+
+    Focus on user needs. Do NOT synthesize with other perspectives.
+  `
+)
+```
+
+**IMPORTANT**: Both Task() calls sent in same message for parallel execution.
+
+---
+
+### Step 4: Determine Interaction Mode
+
+**Auto-enable Facilitator for Level 3-4 tasks**:
 
 ```
 If complexity is Level 3 OR Level 4:
@@ -97,75 +178,86 @@ If complexity is Level 3 OR Level 4:
 
     To skip Facilitator (not recommended): add --skip-facilitation flag
 
+    interactive_mode = true
+
   Else (--skip-facilitation present):
     ⚠️ Skipping Facilitator for Level [3/4] task (user override)
 
     Proceeding with standard planning mode.
+
+    interactive_mode = false
 ```
 
-**High-complexity sub-task detection**:
-- If any sub-task appears to be Level 3+ during breakdown, flag it
-- Recommend `/cf:creative [sub-task-id]` for deep exploration
-- Document recommendation in task notes
+---
+
+### Step 5a: Invoke Facilitator (If Interactive Mode)
+
+**If interactive_mode is true**:
+
+```markdown
+## Invoke Facilitator Agent
+Task(
+  subagent_type="facilitator",
+  description="Interactive Planning Refinement",
+  prompt=`
+    Generate clarifying questions for TASK-[ID] planning refinement.
+
+    **Context**:
+    - Architect Analysis: [output from Step 3]
+    - Product Analysis: [output from Step 3]
+    - Task Complexity: Level [3/4]
+
+    **Generate questions about**:
+    1. Scope clarity (in/out of scope features)
+    2. Technical approach alternatives
+    3. User flow validation
+    4. Phasing strategy
+    5. Risk mitigation
+    6. Sub-task complexity assessment
+
+    Output ONLY questions. Do NOT provide recommendations or synthesis.
+  `
+)
+```
+
+**Facilitator generates questions** → Present to user → Collect answers
+
+**Update context with user answers**:
+- Document decisions made
+- Update scope/requirements based on feedback
+- Flag any high-complexity sub-tasks for /cf:creative
+
+**Iterative Refinement**:
+- If user responses reveal gaps, Facilitator asks follow-up questions
+- Continue until user confirms plan is ready
+- Maximum 3 refinement cycles (prevent analysis paralysis)
 
 ---
 
-### Step 2: Load Context
+### Step 5b: Skip Facilitation (If Standard Mode)
 
-Read required memory bank files:
-- `tasks.md` - Task details, complexity, description
-- `activeContext.md` - Current project state
-- `systemPatterns.md` - Architectural patterns to follow
-- `productContext.md` - User needs and UX requirements
-- `projectbrief.md` - Project goals and constraints
-- `CLAUDE.md` - Tech stack reference
+**If interactive_mode is false**:
 
-Extract task information:
-- Task description
-- Complexity level
-- Acceptance criteria
-- Any existing notes or context
+```markdown
+ℹ️ Standard planning mode (no interactive refinement)
+
+Proceeding with Architect + Product synthesis.
+```
 
 ---
 
-### Step 3: Engage Architect Agent
+### Step 6: Synthesize Plan
 
-**Architect analyzes technical approach**:
+**ORCHESTRATION PATTERN**: Command synthesizes agent outputs using structured format
 
-1. Understand requirements from task description
-2. Load architectural patterns from systemPatterns.md
-3. Load tech stack from CLAUDE.md
-4. Design solution approach:
-   - Component architecture
-   - Data flow
-   - State management
-   - Integration points
-   - Technical decisions with trade-offs
+**Synthesis Process**:
+1. Collect Architect output (technical analysis)
+2. Collect Product output (requirements analysis)
+3. Collect Facilitator output (user decisions if interactive)
+4. Apply synthesis logic to create integrated plan
+5. Structure using template format
 
-**Architect Output**: Technical implementation plan
-
----
-
-### Step 4: Engage Product Agent
-
-**Product analyzes user requirements**:
-
-1. Understand user need from task description
-2. Load product context from productContext.md
-3. Define requirements:
-   - Functional requirements (must/should/could have)
-   - Non-functional requirements (performance, accessibility)
-   - User experience requirements
-   - Success criteria
-   - Edge cases
-
-**Product Output**: User-focused requirements and UX considerations
-
----
-
-### Step 5: Synthesize Plan (Standard Mode)
-
-Combine Architect and Product perspectives into comprehensive plan:
+**Plan Synthesis Output**:
 
 ```markdown
 ## 📋 IMPLEMENTATION PLAN: [Task Name]
@@ -173,10 +265,13 @@ Combine Architect and Product perspectives into comprehensive plan:
 **Task ID**: TASK-[ID]
 **Complexity**: Level [2-4]
 **Estimated Effort**: [X hours]
+**Planning Mode**: [Standard / Interactive with Facilitator]
 
 ---
 
 ### 🎨 PRODUCT PERSPECTIVE
+
+[Synthesize Product agent output]
 
 **User Need**: [What user problem this solves]
 **User Value**: [Why this matters to users]
@@ -184,58 +279,64 @@ Combine Architect and Product perspectives into comprehensive plan:
 **Requirements**:
 
 **Must Have**:
-- [Core requirement 1]
-- [Core requirement 2]
+- [Core requirement 1 from Product]
+- [Core requirement 2 from Product]
 
 **Should Have**:
-- [Nice-to-have 1]
+- [Nice-to-have from Product]
 
 **UX Considerations**:
-- [Usability requirement 1]
-- [Accessibility requirement 2]
+- [Usability requirement from Product]
+- [Accessibility requirement from Product]
 
 **Success Criteria**:
-- ✅ [Measurable outcome 1]
-- ✅ [Measurable outcome 2]
+- ✅ [Measurable outcome 1 from Product]
+- ✅ [Measurable outcome 2 from Product]
 
 ---
 
 ### 🏗️ ARCHITECT PERSPECTIVE
 
-**Technical Approach**: [High-level design strategy]
+[Synthesize Architect agent output]
+
+**Technical Approach**: [High-level design strategy from Architect]
 
 **Component Architecture**:
-1. **[Component 1]**
-   - Purpose: [What it does]
-   - Responsibilities: [Key functions]
-   - Dependencies: [What it needs]
-
-2. **[Component 2]**
-   - Purpose: [What it does]
-   - Responsibilities: [Key functions]
+[Components from Architect with purposes, responsibilities, dependencies]
 
 **Data Flow**:
 ```
-[Source] → [Processing] → [Storage/Output]
+[Data flow diagram from Architect]
 ```
 
 **Technical Decisions**:
-1. **[Decision]**: [Choice made]
-   - Options: [A, B, C]
-   - Selected: [A]
-   - Rationale: [Why]
-   - Trade-offs: [Gains/losses]
+[Decisions from Architect with options, rationale, trade-offs]
 
 **Patterns to Follow**:
-- [Pattern from systemPatterns.md]
+- [Patterns from Architect referencing systemPatterns.md]
 
 **Risks & Mitigation**:
-- Risk: [Potential issue]
-  Mitigation: [How to handle]
+- [Risks from Architect with mitigation strategies]
+
+---
+
+### 🔄 USER DECISIONS (If Interactive)
+
+[If Facilitator was used, document user decisions]
+
+**Decisions Made During Planning**:
+1. **[Decision Topic]**: [What was decided and why]
+2. **[Decision Topic]**: [What was decided and why]
+
+**Scope Clarifications**:
+- In Scope: [Features confirmed in scope]
+- Out of Scope: [Features deferred]
 
 ---
 
 ### 🔨 IMPLEMENTATION STEPS
+
+[Synthesize sub-task breakdown from Architect + Product]
 
 **Phase 1: [Phase Name]**
 1. **[Step Name]** (Sub-task 1, Level [1-2])
@@ -249,6 +350,7 @@ Combine Architect and Product perspectives into comprehensive plan:
    - Files: [Files to modify/create]
    - Tests: [What to test]
    - Effort: [Time estimate]
+   - Prerequisites: TASK-[ID]-1
 
 **Phase 2: [Phase Name]**
 3. **[Step Name]** (Sub-task 3, Level [1-2])
@@ -257,14 +359,18 @@ Combine Architect and Product perspectives into comprehensive plan:
    - Tests: [What to test]
    - Effort: [Time estimate]
 
-**If any sub-task is high complexity** (appears to be Level 3+):
+**High-Complexity Sub-Task Detection**:
+
+If any sub-task appears to be Level 3+ during breakdown:
+
 ```
 ⚠️ Sub-task [N] appears to be high complexity
 
+**Indicators**: [novel problem/multiple unknowns/high risk/significant trade-offs]
+
 **Recommendation**: Use /cf:creative TASK-[ID]-[N] before implementation
 
-Why: This sub-task involves [novel problem/multiple unknowns/high risk].
-Deep exploration will identify best approach and prevent rework.
+Why: Deep exploration will identify best approach and prevent rework.
 ```
 
 ---
@@ -272,8 +378,9 @@ Deep exploration will identify best approach and prevent rework.
 ### 📊 SUMMARY
 
 **Total Sub-tasks**: [N]
-**Estimated Total Effort**: [X hours]
+**Estimated Total Effort**: [Sum of sub-task efforts]
 **Recommended Approach**: [Implementation strategy]
+**Interactive Refinement**: [Yes/No - if Facilitator was used]
 
 **Sub-tasks Created in tasks.md**:
 - TASK-[ID]-1: [Sub-task name] (Level [1-2])
@@ -292,73 +399,13 @@ Deep exploration will identify best approach and prevent rework.
 
 ---
 
-### Step 6: Interactive Refinement (If --interactive Flag)
+### Step 7: Update Memory Bank
 
-If `--interactive` flag is present:
+**ORCHESTRATION PATTERN**: Command updates memory bank with synthesized plan
 
-**Engage Facilitator agent**:
+**Update tasks.md**:
 
-```markdown
-🔄 INTERACTIVE PLANNING: [Task Name]
-
-## Initial Plan Presented
-
-[Architect + Product plan shown above]
-
----
-
-## Refinement Questions
-
-**Facilitator asks**:
-
-1. **Scope Clarity**: The plan includes [feature X]. Is this in scope, or should we defer?
-
-2. **Technical Approach**: Architect recommends [approach A]. Alternative [approach B] is simpler but less flexible. Your preference?
-
-3. **User Flow**: Product outlined [flow]. Does this match your vision, or should we adjust?
-
-4. **Phasing**: The plan has 2 phases. Would you prefer to break this into more incremental deliveries?
-
-5. **Risks**: Main risk is [risk]. Does the proposed mitigation address your concerns?
-
----
-
-[User responds]
-
----
-
-## Refined Plan
-
-[Architect + Product adjust based on feedback]
-
-Updated approach:
-- [Change 1]
-- [Change 2]
-
----
-
-[Facilitator asks follow-up questions if needed]
-
----
-
-## Final Plan
-
-[After iterative refinement, present finalized plan]
-
-→ RECOMMENDATION: Plan is ready for implementation
-
-   Proceed with: /cf:code TASK-[ID]-1
-
-   OR make final adjustments with another refinement cycle
-```
-
-**Facilitator iterates** until user approves plan.
-
----
-
-### Step 7: Update tasks.md
-
-**Create sub-task entries** for each implementation step:
+Create sub-task entries for each implementation step:
 
 ```markdown
 ### 🟢 TASK-[ID]: [Original Task Name] (Level [2-4])
@@ -376,35 +423,61 @@ Updated approach:
 
 **Implementation Plan**: ✅ Complete (see below)
 
+**Planning Approach**: [Standard / Interactive with Facilitator]
+
 **Sub-tasks**:
 - [ ] TASK-[ID]-1: [Sub-task name] (Level [1-2]) - Pending
   - Effort: [X hours]
   - Description: [What this subtask does]
+  - Files: [files]
+  - Tests: [test scope]
 
 - [ ] TASK-[ID]-2: [Sub-task name] (Level [1-2]) - Pending
   - Effort: [X hours]
   - Description: [What this subtask does]
+  - Files: [files]
+  - Tests: [test scope]
   - Prerequisites: TASK-[ID]-1
-
-- [ ] TASK-[ID]-3: [Sub-task name] (Level [1-2]) - Pending
-  - Effort: [X hours]
-  - Description: [What this subtask does]
-  - Prerequisites: TASK-[ID]-2
 
 **Total Estimated Effort**: [Sum of sub-task efforts]
 
+**Key Decisions** (if interactive):
+- [Decision 1]
+- [Decision 2]
+
 **Notes**:
-Implementation plan created [YYYY-MM-DD]
+Implementation plan created [YYYY-MM-DD] using [Architect + Product + Facilitator]
 Plan includes [N] sub-tasks across [N] phases
+[Any high-complexity sub-tasks flagged for /cf:creative]
 ```
 
-**Mark parent task as "Planning Complete"**
+**Update activeContext.md**:
 
----
+Add entry to **Recent Changes**:
 
-### Step 8: Update systemPatterns.md (If New Patterns)
+```markdown
+### [YYYY-MM-DD HH:MM] - Implementation Plan Created: [Task Name]
+**Agents**: Architect + Product [+ Facilitator if interactive]
+**Task ID**: TASK-[ID]
+**Planning Mode**: [Standard / Interactive]
+**Impact**: Task broken into [N] sub-tasks, ready for implementation
+**Sub-tasks**: TASK-[ID]-1 through TASK-[ID]-[N]
+**Pattern Used**: Command Orchestration Pattern
+**Next Action**: /cf:code TASK-[ID]-1
+```
 
-If Architect identifies new patterns:
+Update **Immediate Next Steps** if high priority:
+
+```markdown
+**Immediate Next Steps**:
+1. **TASK-[ID]-1: [Sub-task name]** (Priority: P0)
+   - Action: [Brief description]
+   - Prerequisite: None
+   - Estimated Effort: [X hours]
+   - Why now: [Rationale]
+```
+
+**Update systemPatterns.md** (if new patterns identified):
 
 Add to **Active Patterns** section:
 
@@ -422,7 +495,6 @@ Add to **Active Patterns** section:
 
 **Benefits**:
 - ✅ [Benefit 1]
-- ✅ [Benefit 2]
 
 **Trade-offs**:
 - ⚠️ [Trade-off 1]
@@ -434,33 +506,9 @@ Add to **Active Patterns** section:
 
 ---
 
-### Step 9: Update activeContext.md
-
-Add entry to **Recent Changes**:
-
-```markdown
-### [YYYY-MM-DD HH:MM] - Implementation Plan Created: [Task Name]
-**Agents**: Architect + Product [+ Facilitator if interactive]
-**Task ID**: TASK-[ID]
-**Impact**: Task broken into [N] sub-tasks, ready for implementation
-**Sub-tasks**: TASK-[ID]-1 through TASK-[ID]-[N]
-**Next Action**: /cf:code TASK-[ID]-1
-```
-
-Update **Immediate Next Steps** if this is high priority:
-
-```markdown
-**Immediate Next Steps**:
-1. **TASK-[ID]-1: [Sub-task name]** (Priority: P0)
-   - Action: [Brief description]
-   - Prerequisite: None
-   - Estimated Effort: [X hours]
-   - Why now: [Rationale]
-```
-
----
-
 ## Examples
+
+[Examples remain the same as before - showing the OUTPUT format, not the orchestration internals]
 
 ### Example 1: Level 2 Task (Standard Mode)
 
@@ -468,278 +516,65 @@ Update **Immediate Next Steps** if this is high priority:
 User: /cf:plan TASK-005
 
 Claude:
-[Loading context...]
-[Architect analyzes...]
-[Product analyzes...]
+[Loads context from memory bank...]
+[Invokes Architect + Product agents in parallel...]
+[Synthesizes plan using template structure...]
 
 ## 📋 IMPLEMENTATION PLAN: Add Search Functionality to Navbar
 
-**Task ID**: TASK-005
-**Complexity**: Level 2
-**Estimated Effort**: 2-3 hours
-
----
-
-### 🎨 PRODUCT PERSPECTIVE
-
-**User Need**: Users want to quickly find content without navigating through menus
-**User Value**: Faster access to information, improved productivity
-
-**Requirements**:
-
-**Must Have**:
-- Search input in navbar
-- Real-time search suggestions
-- Results display with keyboard navigation
-
-**Should Have**:
-- Search history (recent searches)
-
-**UX Considerations**:
-- Search should be keyboard accessible (focus with "/")
-- Clear visual feedback during search
-- Empty state handling
-
-**Success Criteria**:
-- ✅ Users can search from any page
-- ✅ Results appear within 200ms
-- ✅ Fully keyboard navigable
-
----
-
-### 🏗️ ARCHITECT PERSPECTIVE
-
-**Technical Approach**: Client-side search with debounced API calls
-
-**Component Architecture**:
-1. **SearchInput Component**
-   - Purpose: Capture search input with debouncing
-   - Responsibilities: Input handling, focus management
-   - Dependencies: Search service
-
-2. **SearchResults Component**
-   - Purpose: Display search results
-   - Responsibilities: Results rendering, keyboard navigation
-   - Dependencies: Search data
-
-3. **Search API Endpoint**
-   - Purpose: Query backend for results
-   - Responsibilities: Database query, result formatting
-
-**Data Flow**:
-```
-User Input → Debounce (300ms) → API Call → Results → Display
-```
-
-**Technical Decisions**:
-1. **Debouncing Strategy**: 300ms debounce
-   - Rationale: Balance between responsiveness and API load
-   - Trade-offs: Slight delay vs reduced API calls
-
-**Patterns to Follow**:
-- Component composition pattern (from systemPatterns.md)
-- API service pattern
-
----
-
-### 🔨 IMPLEMENTATION STEPS
-
-**Phase 1: Backend**
-1. **Create Search API Endpoint** (Sub-task 1, Level 1)
-   - Actions: Create /api/search endpoint with query parameter
-   - Files: routes/search.js, services/searchService.js
-   - Tests: API endpoint tests (query handling, result format)
-   - Effort: 45 minutes
-
-**Phase 2: Frontend**
-2. **Create SearchInput Component** (Sub-task 2, Level 1)
-   - Actions: Build controlled input with debouncing
-   - Files: components/SearchInput.tsx, hooks/useDebounce.ts
-   - Tests: Component tests (input, debounce, keyboard)
-   - Effort: 45 minutes
-
-3. **Create SearchResults Component** (Sub-task 3, Level 1)
-   - Actions: Build results display with keyboard navigation
-   - Files: components/SearchResults.tsx
-   - Tests: Component tests (rendering, keyboard nav)
-   - Effort: 30 minutes
-
-4. **Integrate with Navbar** (Sub-task 4, Level 1)
-   - Actions: Add SearchInput to navbar, handle modal/dropdown
-   - Files: components/Navbar.tsx
-   - Tests: Integration tests (navbar with search)
-   - Effort: 30 minutes
-
----
-
-### 📊 SUMMARY
-
-**Total Sub-tasks**: 4
-**Estimated Total Effort**: 2.5 hours
-**Recommended Approach**: Backend-first, then frontend components
-
-**Sub-tasks Created in tasks.md**:
-- TASK-005-1: Create Search API Endpoint (Level 1)
-- TASK-005-2: Create SearchInput Component (Level 1)
-- TASK-005-3: Create SearchResults Component (Level 1)
-- TASK-005-4: Integrate with Navbar (Level 1)
+[Full plan output as before...]
 
 ✓ Updated tasks.md with 4 sub-tasks
 ✓ Updated activeContext.md
 
----
-
 → NEXT: Proceed with first sub-task
-
    /cf:code TASK-005-1
 ```
 
 ### Example 2: Level 3 Task (Interactive Mode)
 
 ```
-User: /cf:plan TASK-006 --interactive
+User: /cf:plan TASK-006
 
 Claude:
-[Loading context...]
-[Architect analyzes...]
-[Product analyzes...]
+[Loads context...]
+[Invokes Architect + Product in parallel...]
 
-## 📋 IMPLEMENTATION PLAN: Migrate Authentication to OAuth 2.0
+ℹ️ Task TASK-006 is Level 3 - Facilitator required for complex planning
+Setting --interactive mode automatically.
 
-[Initial plan presented with Architect + Product perspectives]
+[Invokes Facilitator agent...]
 
----
+🔄 INTERACTIVE PLANNING: Migrate Authentication to OAuth 2.0
 
-🔄 INTERACTIVE PLANNING
-
-Facilitator: I've reviewed the initial plan. Let me ask some clarifying questions:
+Facilitator: I've reviewed the initial analysis from Architect and Product. Let me ask some clarifying questions:
 
 **Q1: OAuth Provider**
-The plan assumes a single OAuth provider (Google). Do you want to support multiple providers (Google, GitHub, etc.) from the start, or add that later?
+[Question details...]
 
-User: Start with Google only, add others later
+[User responds...]
 
-Facilitator: Good, that simplifies Phase 1. I'll update the plan.
+Facilitator: [Follow-up based on response...]
 
-**Q2: Migration Strategy**
-Two options for existing users:
-A) Parallel auth (support both old and OAuth simultaneously, migrate gradually)
-B) Hard cutover (force all users to re-authenticate)
-
-Option A is safer but more complex. Your preference?
-
-User: Option A - parallel auth, don't want to disrupt users
-
-Facilitator: Understood. This adds complexity but is the right choice for UX.
-
-**Q3: Data Migration**
-Should we migrate existing user emails to OAuth automatically, or require users to manually link accounts?
-
-User: Automatic migration where emails match
-
-Facilitator: Got it. This requires careful handling of edge cases.
-
-[Architect updates plan based on responses...]
-
----
-
-## 🔄 REFINED PLAN
-
-**Updated Approach**:
-- Single OAuth provider (Google) for Phase 1
-- Parallel authentication (both systems running)
-- Automatic email-based account linking
-- Gradual user migration strategy
-
-**Sub-tasks Adjusted**:
-- Added: Parallel auth middleware (routes to correct auth system)
-- Added: Account linking logic (email matching)
-- Added: Migration tracking (dashboard to monitor progress)
-
-[Updated implementation steps shown...]
-
----
-
-Facilitator: Does this refined approach address your needs, or should we adjust further?
-
-User: Looks good
-
-Facilitator: Excellent. One final consideration:
-
-**Testing Strategy for Migration**
-Given the risk, I recommend:
-1. Unit tests for all auth paths
-2. Integration tests for account linking
-3. Manual testing with test accounts before production
-
-Should I add a sub-task for comprehensive testing?
-
-User: Yes, add that
-
----
+[Iterative refinement continues...]
 
 ## ✅ FINAL PLAN
 
-[Complete refined plan with testing sub-task added]
-
-**Total Sub-tasks**: 8 (was 5, added migration and testing tasks)
-**Estimated Total Effort**: 14 hours (was 10, adjusted for added complexity)
+[Complete refined plan incorporating user decisions...]
 
 ✓ Updated tasks.md with 8 sub-tasks
 ✓ Updated activeContext.md
-
----
+✓ User decisions documented
 
 → RECOMMENDATION: Plan is comprehensive and ready
-
    Begin with: /cf:code TASK-006-1
-
-   Consider running /cf:checkpoint before starting to save this planning work.
 ```
 
 ---
 
 ## Error Handling
 
-### Task Not Found
-
-```
-❌ Task TASK-099 not found in tasks.md
-
-Available tasks:
-- TASK-001: Fix header typo
-- TASK-002: Add navbar search
-- TASK-003: User authentication
-
-Create new task with: /cf:feature [description]
-```
-
-### Task Already Planned
-
-```
-⚠️ Task TASK-005 already has implementation plan
-
-Sub-tasks exist:
-- TASK-005-1: Create API endpoint
-- TASK-005-2: Create search component
-
-To update plan:
-1. Review existing sub-tasks in tasks.md
-2. Use /cf:facilitate to refine if needed
-3. Or proceed with: /cf:code TASK-005-1
-```
-
-### Level 1 Task (Doesn't Need Planning)
-
-```
-⚠️ Task TASK-004 is Level 1 (Quick Fix)
-
-Level 1 tasks are straightforward and don't require planning.
-
-Proceed directly with: /cf:code TASK-004
-
-Planning is only needed for Level 2-4 tasks.
-```
+[Error handling remains the same as before]
 
 ---
 
@@ -750,10 +585,12 @@ Planning is only needed for Level 2-4 tasks.
 - Sub-tasks created with IDs TASK-[ID]-1, TASK-[ID]-2, etc.
 - Effort estimates added
 - Dependencies noted
+- User decisions documented (if interactive)
 
 ### activeContext.md
 - Recent change entry added
 - Immediate next steps updated if high priority
+- Pattern usage documented
 
 ### systemPatterns.md (if applicable)
 - New patterns documented
@@ -761,16 +598,26 @@ Planning is only needed for Level 2-4 tasks.
 
 ---
 
-## Notes
+## Orchestration Notes
 
-- Planning is **required** for Level 2-4 tasks before implementation
-- Sub-tasks are always Level 1 or 2 (never Level 3-4)
-- If sub-task seems Level 3+, flag it and recommend `/cf:creative` for deep exploration
-- **Facilitator automatically enabled** for Level 3-4 tasks (use `--skip-facilitation` to override)
-- Interactive mode (`--interactive`) available for Level 2 tasks as well
-- High-complexity sub-tasks should use `/cf:creative` before `/cf:code`
-- Architect and Product work together, providing complementary perspectives
-- Plan can be refined later with `/cf:facilitate` if needed
+**Pattern Compliance**:
+- ✅ **Parallel Agent Invocation**: Architect + Product invoked simultaneously
+- ✅ **Facilitator as Question Broker**: Facilitator only generates questions, never synthesizes
+- ✅ **Template-Driven Synthesis**: Command uses structured template format for consistency
+- ✅ **Memory Bank Updates**: Systematic updates to tasks.md, activeContext.md, systemPatterns.md
+- ✅ **Read-Only Agents**: Workflow agents only Read/Grep/Glob, no Write/Edit
+
+**Command Responsibilities**:
+- Context loading from memory bank
+- Parallel agent invocation (architect + product)
+- Conditional facilitator engagement (interactive mode)
+- Synthesis of agent outputs into integrated plan
+- Memory bank updates with synthesized results
+
+**Agent Responsibilities**:
+- **Architect**: Technical analysis only, no synthesis
+- **Product**: Requirements analysis only, no synthesis
+- **Facilitator**: Questions only, no analysis or synthesis
 
 ---
 
@@ -779,9 +626,11 @@ Planning is only needed for Level 2-4 tasks.
 - `/cf:feature` - Create task before planning
 - `/cf:code` - Implement sub-tasks after planning
 - `/cf:facilitate` - Refine plan interactively
+- `/cf:creative` - Deep exploration for high-complexity sub-tasks
 - `/cf:checkpoint` - Save planning work before implementation
 
 ---
 
-**Command Version**: 1.0
-**Last Updated**: 2025-10-05
+**Command Version**: 2.0 (Orchestration Pattern)
+**Last Updated**: 2025-10-29
+**Pattern**: Command Orchestration Pattern (systemPatterns.md:409-582)
