@@ -54,6 +54,48 @@
 
 ---
 
+## Technical Pre-Analysis
+
+*This section is populated by Architect agent for **Level 2+ features only**. Provides rapid technical assessment to identify hidden complexity before implementation.*
+
+**From Architect Agent** (when invoked for L2+ complexity):
+
+### Integration Concerns
+**Affected Components**: [List components this feature touches]
+**Integration Points**: [External/internal systems that need coordination]
+**Pattern Impact**: [Existing architectural patterns that will be affected]
+
+### Data Modeling Needs
+**Entities**: [Data structures or models required]
+**Relationships**: [How data entities connect and relate]
+**Schema Changes**: [Database schema or state structure changes needed]
+
+### Algorithmic Complexity
+**Computational Concerns**: [Performance considerations, complexity analysis (e.g., O(n²))]
+**Business Logic**: [Complex calculations, decision logic, or algorithm areas]
+
+### Technical Constraints
+**Platform Limits**: [Technical boundaries or constraints to work within]
+**Security/Compliance**: [Security requirements or compliance needs]
+**External Dependencies**: [Third-party APIs, services, libraries required]
+
+### Hidden Complexity Signals
+**🔴 HIGH Priority** (must specify before implementation):
+- [Signal 1]: [Why this complexity needs detailed specification]
+
+**🟡 MEDIUM Priority** (should specify):
+- [Signal 1]: [Why this should be specified upfront]
+
+**🟢 LOW Priority** (optional specification):
+- [Signal 1]: [Nice to have but not critical to specify]
+
+### Assumptions & Uncertainties
+[Any assumptions made due to limited context or areas requiring clarification]
+
+**Note**: If this section is empty, the feature was assessed as Level 1 (Simple) and does not require technical pre-analysis.
+
+---
+
 ## Edge Cases
 
 **From Product Agent**:
@@ -142,10 +184,18 @@
 
 **Agent Coordination**:
 - Complexity analysis: assessor agent
+- Technical pre-analysis: architect agent (Level 2+ only)
 - Requirements validation: product agent
 - Task synthesis: /cf:feature command using feature-task-template.md
 
-**Pattern Reference**: Command Orchestration Pattern (systemPatterns.md:409-582)
+**Pattern Reference**:
+- Command Orchestration Pattern (systemPatterns.md:409-582)
+- Conditional Expert Pre-Analysis Pattern (systemPatterns.md:585-716)
+
+**Technical Pre-Analysis Logic**:
+- **Level 1 features**: Technical Pre-Analysis section remains empty (simple features don't need pre-analysis)
+- **Level 2+ features**: Architect agent populates Technical Pre-Analysis section during `/cf:feature` execution
+- **Purpose**: Identify hidden complexity (integration, data, algorithm, constraints) before implementation
 
 **Implementation Notes**: [Additional context or considerations]
 
@@ -161,7 +211,8 @@
 
 ---
 
-**Template Version**: 1.0 (Command Orchestration Pattern)
-**Template Purpose**: Feature task entry synthesis from assessor + product agent outputs
+**Template Version**: 1.1 (Conditional Expert Pre-Analysis)
+**Template Purpose**: Feature task entry synthesis from assessor + architect (L2+) + product agent outputs
 **Used By**: /cf:feature command for structured task creation
 **Created**: 2025-11-03 (TASK-003-8)
+**Updated**: 2025-11-04 (TASK-004-3, TASK-004-4) - Added Technical Pre-Analysis section for Level 2+ features
