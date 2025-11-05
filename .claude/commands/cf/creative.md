@@ -1,72 +1,55 @@
 ---
-description: "Deep exploration and creative problem-solving for high-complexity challenges"
-allowed-tools: ['Read', 'Task', 'mcp__sequential-thinking__sequentialthinking']
-argument-hint: "[task-id|topic]"
+description: "Multi-perspective creative problem-solving for high-complexity challenges"
+allowed-tools: ['Read', 'Edit', 'Task', 'Write']
+argument-hint: "[task-id|description]"
 ---
 
 # Command: /cf:creative
 
 ## Usage
 
-```
-/cf:creative [task-id|topic]
+```bash
+/cf:creative [task-id|description]
 ```
 
 ## Parameters
 
-- `[task-id|topic]`: **Required** - Task ID (e.g., TASK-003-2) or topic description
+- `[task-id]`: **Optional** - Existing task ID from tasks.md (e.g., TASK-001)
+- `[description]`: **Optional** - Free-form problem description for exploration
+
+**Note**: At least one parameter required.
 
 ---
 
 ## Purpose
 
-Engage in deep, structured exploration for:
-- Novel technical challenges without established patterns
-- High-risk architectural decisions requiring careful analysis
-- Complex algorithm or data structure design
-- System integration with multiple unknowns
-- Problems requiring creative problem-solving and trade-off analysis
-- Sub-tasks identified as "high complexity" during planning
+**Command Orchestration Pattern**: Coordinate Facilitator agent (Mode 4: Creative Session) to generate multi-perspective analysis, synthesize results using creative-spec-template.md, and update memory bank.
 
-**Philosophy**: Some problems can't be solved with standard planning. They need deep thinking, multiple solution explorations, and iterative refinement through expert collaboration.
+Enable structured creative exploration for complex, ambiguous challenges (Level 3-4) requiring multi-perspective problem analysis before implementation.
+
+**When to Use**:
+- Complex problems (Level 3-4) without obvious solutions
+- Ambiguous or open-ended requirements needing exploration
+- Multiple valid architectural approaches requiring systematic evaluation
+- Novel challenges outside established patterns
+- Significant trade-offs needing structured analysis
+- High uncertainty in implementation approach
+
+**When NOT to Use**:
+- Well-defined problems with clear solutions → use `/cf:plan` directly
+- Simple tasks (Level 1-2) with established patterns → use `/cf:code`
+- Time-sensitive situations requiring immediate action
+- Problems already explored in previous sessions → reference existing patterns
+
+**Pattern**: Command Orchestration Pattern (systemPatterns.md:409-582)
 
 ---
 
 ## Prerequisites
 
-**Memory bank must be initialized**: Run `/cf:init` first if needed.
+**Memory bank must be initialized**. Run `/cf:init` first if needed.
 
-**Problem or task must exist**: Works best with:
-- Task ID from tasks.md (especially complex sub-tasks)
-- Clear problem statement to explore
-- Architectural decision requiring analysis
-
----
-
-## When to Use
-
-**Use /cf:creative when:**
-- `/cf:plan` identifies a sub-task as "high complexity, recommend /cf:creative"
-- Facing novel problem without established solution pattern
-- Multiple solution approaches exist, need systematic comparison
-- High risk of wrong approach causing major rework
-- Need to explore trade-offs deeply before committing
-- Designing new architectural pattern or system component
-- Problem involves significant unknowns or uncertainties
-
-**Don't use when:**
-- Problem has established pattern in systemPatterns.md (use standard `/cf:code`)
-- Simple enhancement with clear approach (use `/cf:plan` → `/cf:code`)
-- Time-critical bug fix (solve directly, refine later)
-- Exploring "nice to have" features (use `/cf:facilitate --mode explore`)
-
-**Decision Matrix:**
-```
-Problem is straightforward? → /cf:code
-Problem needs planning? → /cf:plan
-Plan reveals complex sub-step? → /cf:creative
-Need to explore idea? → /cf:facilitate --mode explore
-```
+**For task-id parameter**: Task must exist in tasks.md (created via `/cf:feature` or `/cf:plan`).
 
 ---
 
@@ -80,857 +63,670 @@ If NOT EXISTS:
 ⚠️ Memory bank not initialized. Run: /cf:init
 ```
 
-**Check task exists (if task-id provided)**:
+**If task-id provided, check task exists in tasks.md**:
 ```
 If NOT FOUND:
 ❌ Task [task-id] not found in tasks.md
 
-Create task first with: /cf:feature [description]
+Available tasks:
+- TASK-001: [name]
+- TASK-002: [name]
+
+Create new task with: /cf:feature [description]
 ```
 
 ---
 
 ### Step 2: Load Context
 
-**For task ID**, read:
-- `tasks.md` - Task details, complexity, any existing plan
-- `systemPatterns.md` - Existing patterns to build upon
-- `productContext.md` - User needs and requirements
-- `activeContext.md` - Current project state
-- `projectbrief.md` - Project constraints and goals
+**ORCHESTRATION PATTERN**: Load memory bank context to provide to Facilitator agent
 
-**For topic**, search memory bank:
-- Grep for related keywords
-- Load relevant sections
-- Identify related tasks or patterns
+**Read memory bank files** (parallel when possible):
+- `memory-bank/projectbrief.md` - Project scope and constraints
+- `memory-bank/activeContext.md` - Current state
+- `memory-bank/systemPatterns.md` - Existing patterns
+- `memory-bank/tasks.md` - Task details (if task-id provided)
+- `memory-bank/productContext.md` - User needs
+- `CLAUDE.md` - Tech stack reference
 
-**Context synthesis**:
-- What is the core problem?
-- What makes this complex/novel?
-- What constraints apply?
-- What success looks like?
+**Extract problem context**:
+
+**If task-id provided**:
+- Task description and complexity
+- Acceptance criteria
+- Existing context/notes
+- Related patterns
+
+**If description provided**:
+- Use description as problem statement
+- Search memory bank for related context (Grep for keywords)
+
+**Context Summary**:
+- Core problem statement
+- Why this is complex/novel
+- Constraints from projectbrief.md
+- Success criteria
+- Relevant patterns from systemPatterns.md
 
 ---
 
-### Step 3: Creative Session Introduction
+### Step 3: Invoke Facilitator Agent (Creative Session)
 
-**Always interactive** (Facilitator enforced, cannot opt-out)
+**ORCHESTRATION PATTERN**: Invoke facilitator agent for creative session
 
 ```markdown
-💡 CREATIVE SESSION: [Task/Topic Name]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## Invoke Facilitator Agent (Mode 4: Creative Session)
+Task(
+  subagent_type="facilitator",
+  description="Multi-Perspective Creative Exploration",
+  prompt=`
+    Conduct creative session for complex problem exploration.
 
-**Problem**: [Brief problem statement]
-**Complexity**: [What makes this challenging]
-**Goal**: Explore solutions systematically, select best approach
+    **Mode**: Mode 4 - Creative Session (3-phase interactive process)
 
-**Agents Engaged**:
-🔄 Facilitator - Guides exploration, asks probing questions
-🏗️ Architect - Technical approaches and trade-offs
-🎨 Product - User needs and requirements validation
-🧠 Sequential - Structured reasoning and hypothesis testing
+    **Problem Context**:
+    [Pass extracted context from Step 2]
 
-**Extended Thinking Enabled**:
-This session uses Claude's extended thinking mode for deeper analysis:
-- Phase 1 (Deep-Dive): "think" - Uncover non-obvious requirements
-- Phase 2 (Exploration): "think hard" to "ultrathink" - Systematic trade-off analysis
-- Phase 3 (Refinement): "think hard" - Component design and edge cases
-- Phase 4 (Validation): "think" - Completeness verification
+    **Task**: [task-id or description]
+    **Complexity**: Level [3-4]
+    **Constraints**: [from projectbrief.md]
+    **Tech Stack**: [from CLAUDE.md]
+    **Existing Patterns**: [relevant patterns from systemPatterns.md]
 
-**Process** (4 phases):
-1. Problem Deep-Dive - Understand thoroughly
-2. Solution Exploration - Generate & analyze approaches with deep reasoning
-3. Design Refinement - Detail selected solution
-4. Validation & Documentation - Verify and document
+    **Creative Session Phases**:
+    1. Problem Definition (5-8 min) - Clarify core problem, requirements, constraints
+    2. Multi-Perspective Analysis (8-12 min) - Architect, Product, Tech Stack perspectives
+    3. Synthesis & Recommendations (5-8 min) - Integrate insights, recommend approach
 
-Estimated time: 20-35 minutes (worth the investment for high-stakes decisions!)
+    **Output Required**:
+    - Problem definition with requirements and constraints
+    - Multi-perspective analysis (Architect, Product, Tech Stack)
+    - Cross-perspective synthesis (convergent insights, productive tensions)
+    - Recommended approach with rationale
+    - Implementation guidance with acceptance criteria
+    - Next steps and open questions
+    - Session metadata (duration, perspectives, interactive rounds)
 
-Ready to begin?
+    Facilitator: Conduct full 3-phase creative session with interactive validation gates.
+    Generate ONLY questions at each phase. Do NOT provide analysis or synthesis.
+
+    Command will synthesize final output using creative-spec-template.md.
+  `
+)
 ```
+
+**Facilitator will**:
+1. **Phase 1**: Ask questions to define problem, requirements, constraints, success criteria
+2. **Phase 2**: Ask questions to explore Architect, Product, and Tech Stack perspectives
+3. **Phase 3**: Ask questions to synthesize insights and validate recommendations
+4. Return collected user responses and session metadata
+
+**IMPORTANT**: Facilitator generates ONLY questions. Command synthesizes responses into specification.
 
 ---
 
-### Step 4: Phase 1 - Problem Deep-Dive
+### Step 4: Collect Facilitator Output
 
-**Facilitator + Product lead**, Architect contributes **with initial thinking**
+**Facilitator returns**:
+- Problem definition (from Phase 1 responses)
+- Perspective insights (from Phase 2 responses)
+- Synthesis notes (from Phase 3 responses)
+- Session metadata (duration, interactive rounds, perspectives explored)
 
-**Goal**: Deeply understand the problem, surface hidden complexities
+**Command receives**:
+- User responses to all facilitator questions
+- Problem context and requirements
+- Multi-perspective insights
+- Trade-offs and decisions discussed
 
-**Thinking Directive**: "think" (baseline exploration to uncover non-obvious requirements)
+---
 
-**Facilitator asks systematic questions**:
+### Step 5: Synthesize Using Template
+
+**ORCHESTRATION PATTERN**: Command synthesizes facilitator output using creative-spec-template.md
+
+**Read template**:
+```
+.claude/templates/workflow/creative-spec-template.md
+```
+
+**Apply synthesis logic**:
+
+**Section 1: Problem Definition**
+- Context: [From Phase 1 - background and situation]
+- Core Problem: [From Phase 1 - synthesized problem statement]
+- Why This Matters: [User impact and business value]
+- Requirements: [Must/Should/Nice to have from Phase 1]
+- Constraints: [Technical/Business/Resource from Phase 1]
+- Success Criteria: [Measurable criteria from Phase 1]
+
+**Section 2: Multi-Perspective Analysis**
+
+**ARCHITECT Perspective**:
+- [Technical Analysis from Phase 2 Architect questions/responses]
+- Component impact
+- Data flow considerations
+- Technical approaches (with pros/cons/complexity/risk)
+- Architectural patterns to consider
+- Technical risks and mitigation
+
+**PRODUCT Perspective**:
+- [User Impact from Phase 2 Product questions/responses]
+- User needs analysis
+- UX considerations
+- Feature trade-offs
+- Non-functional requirements
+- Success metrics
+
+**TECH STACK Perspective**:
+- [Stack Compatibility from Phase 2 Tech Stack questions/responses]
+- Technology options with maturity/community/learning curve
+- Dependencies and versions
+- Development environment impact
+- Deployment considerations
+
+**Section 3: Cross-Perspective Synthesis**
+
+**Convergent Insights** (where perspectives agree):
+- [Synthesize agreements from Phase 3]
+
+**Productive Tensions** (where perspectives disagree):
+- [Synthesize conflicts from Phase 3]
+
+**Resolution Strategy**:
+- [How to reconcile conflicts from Phase 3]
+
+**Exploration Dimensions**:
+- Feasibility: [Technical/Resource/Integration viability]
+- Risk-Benefit: [Trade-off analysis]
+- Alternative Angles: [What if we approached differently?]
+
+**Section 4: Synthesis & Recommended Approach**
+
+**Solution Name**: [From Phase 3]
+**Rationale**: [Why this approach, with supporting evidence from perspectives]
+**How It Resolves Tensions**: [From Phase 3]
+**Why This Over Alternatives**: [Comparison from Phase 3]
+
+**Section 5: Implementation Specification**
+
+**Component Breakdown**: [From synthesis]
+**Implementation Phases**: [From synthesis]
+**Data Flow**: [From architectural perspective]
+**Testing Strategy**: [Unit/Integration/E2E tests]
+
+**Section 6: Patterns Extracted**
+
+[Any new patterns to add to systemPatterns.md]
+
+**Section 7: Decision Record**
+
+**Decision**: [What was decided]
+**Alternatives Considered**: [What else was considered, why rejected]
+**Key Trade-offs Accepted**: [Trade-offs and rationale]
+**Assumptions to Validate**: [What to test during implementation]
+
+**Section 8: Next Steps**
+
+**Immediate Actions**: [From Phase 3]
+**Recommended Command Sequence**: [/cf:plan, /cf:code, /cf:review]
+**Open Questions**: [Remaining unknowns]
+
+**Section 9: Session Metadata**
+
+**Facilitator**: facilitator (Mode 4: Creative Session)
+**Perspectives Explored**: Architect, Product, Tech Stack
+**Session Duration**: [From facilitator]
+**Interactive Rounds**: [From facilitator]
+**Pattern**: Creative Session Pattern (systemPatterns.md)
+
+---
+
+### Step 6: Create Specification Document
+
+**ORCHESTRATION PATTERN**: Create specification document in memory-bank/specs/
+
+**For Level 3-4 tasks**, create dedicated specification document:
+
+**File path**: `memory-bank/specs/TASK-[ID]-[slug]-spec.md`
+
+**Slug generation**:
+- Extract key words from task name
+- Convert to lowercase-with-hyphens
+- Example: "Deferred Issues Workflow" → "deferred-issues-workflow"
+
+**Write specification document** using synthesized content from Step 5:
 
 ```markdown
-🔄 PHASE 1: PROBLEM DEEP-DIVE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Creative Session Specification: [Task Name]
 
-Let's ensure we fully understand the problem before exploring solutions.
+**Task ID**: TASK-[ID]
+**Complexity**: Level [3-4]
+**Session Date**: [YYYY-MM-DD]
+**Status**: Implementation Ready
+**Facilitator**: facilitator (Mode 4: Creative Session)
 
-## Understanding the Core Problem
-
-**🎨 Product Questions**:
-1. What is the core user need or technical requirement?
-2. What happens if we solve this incorrectly?
-3. Are there any non-obvious requirements we should consider?
-
-**🏗️ Architect Questions**:
-1. What makes this technically challenging?
-2. What are the critical constraints (performance, scalability, etc.)?
-3. Are there dependencies on other systems or components?
-
-## Identifying Unknowns
-
-**What do we KNOW for certain about this problem?**
-**What do we NOT KNOW but need to find out?**
-**What assumptions are we making?**
-
-## Success Criteria
-
-**How will we know we've solved this well?**
-- Functional requirements: [What must work]
-- Non-functional requirements: [Performance, security, maintainability]
-- Edge cases: [What unusual scenarios must handle]
+[Full synthesized specification from Step 5]
 
 ---
 
-Please answer what you can. We'll refine understanding together.
+**Template Version**: 1.1 (Command Orchestration Pattern)
+**Template Purpose**: Multi-perspective creative session synthesis output
+**Used By**: /cf:creative command for Level 3-4 complexity exploration
+**Last Updated**: [YYYY-MM-DD]
 ```
 
-**User provides responses**
+---
 
-**Facilitator synthesizes**:
+### Step 7: Update Memory Bank
+
+**ORCHESTRATION PATTERN**: Update memory bank files systematically
+
+**Update tasks.md** (if task-id provided):
 
 ```markdown
-## Problem Understanding (Refined)
+### 🟢 TASK-[ID]: [Task Name] (Level [3-4])
 
-**Core Problem**: [Synthesized from discussion]
+**Status**: Active → Creative Session Complete
+**Priority**: [P0/P1/P2]
+**Complexity**: Level [3-4]
+**Created**: [Original date]
+**Creative Session**: [YYYY-MM-DD]
 
-**Requirements**:
-- Must have: [Critical requirements]
-- Should have: [Important but not critical]
-- Nice to have: [Enhancements]
+**Description**:
+[Original description]
 
-**Constraints**:
-- Technical: [Technology, architecture, integration constraints]
-- Resource: [Time, complexity, skill constraints]
-- Business: [User experience, performance, compliance]
+**Creative Exploration**: ✅ Complete (see spec document)
+- **Specification**: memory-bank/specs/TASK-[ID]-[slug]-spec.md
+- **Recommended Approach**: [Solution name from synthesis]
+- **Session Duration**: [Duration]
+- **Perspectives**: Architect, Product, Tech Stack
 
-**Success Criteria**:
-✓ [Criterion 1 - measurable]
-✓ [Criterion 2 - measurable]
-✓ [Criterion 3 - measurable]
+**Next Action**:
+Use specification for detailed planning:
+/cf:plan TASK-[ID] --interactive
 
-**Known Unknowns**: [What needs research/experimentation]
-**Key Assumptions**: [What we're assuming]
+OR proceed directly to implementation:
+/cf:code TASK-[ID]
 
----
-
-Ready to explore solutions? (Type 'yes' or ask for more clarification)
+**Notes**:
+Creative session complete [YYYY-MM-DD]
+Specification document contains multi-perspective analysis and recommended approach
+[Any additional context]
 ```
 
----
+**Update activeContext.md**:
 
-### Step 5: Phase 2 - Solution Exploration
-
-**Architect leads**, Facilitator coordinates, Sequential provides structured reasoning **with extended thinking**
-
-**Goal**: Generate 3-5 solution approaches, analyze each systematically with deep reasoning
-
-**Thinking Budget Levels** (applied based on complexity):
-- **Standard creative session**: "think hard" (moderate depth, 2-4 approaches)
-- **High-risk architectural decision**: "think harder" (comprehensive depth, 4-5 approaches)
-- **Novel system design**: "ultrathink" (maximum depth, exhaustive analysis)
-
-**Architect presents approaches**:
-
+Add to **Recent Changes**:
 ```markdown
-🧠 PHASE 2: SOLUTION EXPLORATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Based on our problem understanding, here are potential approaches:
-
-## Approach A: [Name - e.g., "Token-Based State Management"]
-
-**Description**: [How this approach works]
-
-**Implementation Overview**:
-- Component 1: [What it does]
-- Component 2: [What it does]
-- Data flow: [How information moves]
-
-**Pros**:
-✓ [Advantage 1]
-✓ [Advantage 2]
-✓ [Advantage 3]
-
-**Cons**:
-⚠️ [Limitation 1]
-⚠️ [Limitation 2]
-
-**Complexity**: [Low/Medium/High]
-**Risk**: [Low/Medium/High with explanation]
-**Effort**: [Time estimate]
-
----
-
-## Approach B: [Name - e.g., "Event-Driven Architecture"]
-
-**Description**: [How this approach works]
-
-**Implementation Overview**:
-- Component 1: [What it does]
-- Component 2: [What it does]
-- Data flow: [How information moves]
-
-**Pros**:
-✓ [Advantage 1]
-✓ [Advantage 2]
-
-**Cons**:
-⚠️ [Limitation 1]
-⚠️ [Limitation 2]
-⚠️ [Limitation 3]
-
-**Complexity**: [Low/Medium/High]
-**Risk**: [Low/Medium/High with explanation]
-**Effort**: [Time estimate]
-
----
-
-## Approach C: [Name - e.g., "Hybrid: Token + Event Sync"]
-
-**Description**: [How this approach works]
-
-**Implementation Overview**:
-- Component 1: [What it does]
-- Component 2: [What it does]
-- Data flow: [How information moves]
-
-**Pros**:
-✓ [Advantage 1 - best of both]
-✓ [Advantage 2]
-
-**Cons**:
-⚠️ [Limitation 1 - added complexity]
-
-**Complexity**: [Low/Medium/High]
-**Risk**: [Low/Medium/High with explanation]
-**Effort**: [Time estimate]
-
----
-
-🔄 Facilitator: Let's analyze these systematically.
-
-Initial thoughts on these approaches? Any that clearly won't work for your context?
+### [YYYY-MM-DD HH:MM] - Creative Session Complete: [Task Name]
+**Facilitator**: facilitator (Mode 4: Creative Session)
+**Task ID**: TASK-[ID]
+**Specification**: memory-bank/specs/TASK-[ID]-[slug]-spec.md
+**Duration**: [Duration]
+**Perspectives**: Architect, Product, Tech Stack
+**Recommended Approach**: [Solution name]
+**Pattern Used**: Creative Session Pattern
+**Next Action**: /cf:plan TASK-[ID] --interactive (or /cf:code TASK-[ID])
 ```
 
-**User provides initial reactions**
+**Update systemPatterns.md** (if new patterns identified):
 
-**Sequential MCP engaged for deep structured comparison**:
-
+Add to **Active Patterns** section:
 ```markdown
-🧠 Extended Thinking Analysis: Deep Approach Comparison
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+### [New Pattern Name]
 
-**Thinking Directive**: [think hard | think harder | ultrathink]
-
-> Engaging extended thinking mode to thoroughly evaluate solution alternatives,
-> test hypotheses against requirements, and identify subtle trade-offs that
-> might not be immediately apparent.
-
-Let me reason through these approaches against your requirements:
-
-**Hypothesis 1**: Approach A (Token-Based) is simplest and meets core requirements.
-
-Testing against criteria:
-- ✓ Meets functional requirement: state persistence
-- ✓ Low complexity (easier to maintain)
-- ⚠️ May not scale well with requirement: [specific scaling need]
-- ❌ Doesn't address edge case: [specific edge case]
-
-**Hypothesis 2**: Approach B (Event-Driven) handles edge cases better but adds complexity.
-
-Testing against criteria:
-- ✓ Handles edge case: [specific edge case]
-- ✓ Scales better for requirement: [specific need]
-- ⚠️ Higher complexity (learning curve, debugging)
-- ❌ May be over-engineering for current scope
-
-**Hypothesis 3**: Approach C (Hybrid) balances trade-offs.
-
-Testing against criteria:
-- ✓ Core simplicity of A with edge case handling of B
-- ✓ Gradual complexity (start simple, add events where needed)
-- ⚠️ Risk of "worst of both worlds" if not careful
-- ✓ Most flexible for future evolution
-
-**Deep Trade-off Analysis** (extended thinking):
-[Systematic exploration of second-order effects, maintenance implications,
-team capability requirements, migration complexity, future extensibility,
-performance characteristics under edge conditions]
-
-**Preliminary Recommendation**: Approach [X] because:
-1. [Reason 1 based on requirements]
-2. [Reason 2 based on constraints]
-3. [Reason 3 based on risk tolerance]
-4. [Reason 4 from deep analysis - non-obvious factor]
-
-**Alternative**: Approach [Y] if [condition changes]
-
-**Critical Assumptions Identified**:
-- [Assumption 1 that recommendation depends on]
-- [Assumption 2 to validate during implementation]
-
-**Risk Mitigation Strategies**:
-- [Strategy 1 for primary risk]
-- [Strategy 2 for secondary risk]
-```
-
-**Facilitator asks refining questions**:
-
-```markdown
-🔄 Facilitator: Narrowing the Field
-
-Based on Sequential's analysis and your requirements:
-
-1. **Approach A** is simplest but may have [specific limitation]. Is [limitation] acceptable for your use case, or is it a deal-breaker?
-
-2. **Approach C** (hybrid) offers flexibility but adds some complexity. Is the added complexity justified by [specific benefit]?
-
-3. **Risk Tolerance**: You mentioned [time/quality constraint]. Does that push us toward simpler (A) or more robust (B/C)?
-
-4. **Future Evolution**: Do you foresee [potential future requirement]? If yes, that favors [approach that handles it].
-
-Your thoughts?
-```
-
-**Iterative refinement** until approach selected or hybrid defined
-
----
-
-### Step 6: Phase 3 - Design Refinement
-
-**Architect + Facilitator**, informed by selected approach **with detailed thinking**
-
-**Goal**: Detail the selected solution with implementation specifics
-
-**Thinking Directive**: "think hard" (systematic component design, edge case identification)
-
-```markdown
-🏗️ PHASE 3: DESIGN REFINEMENT
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-**Selected Approach**: [Chosen solution name]
-
-## Detailed Design
-
-### Component Architecture
-
-**Component 1: [Name]**
-- **Purpose**: [What it does]
-- **Responsibilities**:
-  - [Responsibility 1]
-  - [Responsibility 2]
-- **Interface**: [Public API or contract]
-- **Dependencies**: [What it needs]
-- **File location**: [Suggested path]
-
-**Component 2: [Name]**
-- **Purpose**: [What it does]
-- **Responsibilities**:
-  - [Responsibility 1]
-  - [Responsibility 2]
-- **Interface**: [Public API or contract]
-- **Dependencies**: [What it needs]
-- **File location**: [Suggested path]
-
-### Data Flow
-
-```
-[Step 1: Entry point]
-  ↓
-[Step 2: Processing]
-  ↓
-[Step 3: State change]
-  ↓
-[Step 4: Side effects]
-  ↓
-[Step 5: Output/response]
-```
-
-### State Management
-
-**State Structure**:
-```
-{
-  field1: [type] - [purpose],
-  field2: [type] - [purpose]
-}
-```
-
-**State Transitions**:
-- [Event 1] → [New state]
-- [Event 2] → [New state]
-
-### Edge Cases Handled
-
-1. **[Edge case 1]**: [How design handles it]
-2. **[Edge case 2]**: [How design handles it]
-3. **[Edge case 3]**: [How design handles it]
-
-### Error Handling Strategy
-
-- **Recoverable errors**: [Approach - retry, fallback, etc.]
-- **Non-recoverable errors**: [Approach - fail gracefully, alert, etc.]
-- **Error reporting**: [Where errors go]
-
-### Testing Strategy
-
-**Unit Tests**:
-- Test [component 1]: [Key test cases]
-- Test [component 2]: [Key test cases]
-
-**Integration Tests**:
-- Test [integration point 1]: [Scenario]
-- Test [integration point 2]: [Scenario]
-
-**Edge Case Tests**:
-- Test [edge case 1]: [How to test]
-- Test [edge case 2]: [How to test]
-
-### Performance Considerations
-
-- **Expected load**: [Estimate]
-- **Bottleneck risk**: [Potential issue and mitigation]
-- **Optimization opportunities**: [Where to optimize if needed]
-
----
-
-🔄 Facilitator: Review Questions
-
-1. Does this design address all requirements we identified?
-2. Are there any gaps or areas needing more detail?
-3. Any concerns about implementation complexity?
-4. Does this align with existing patterns in systemPatterns.md?
-
-Let's refine anything that needs it.
-```
-
-**Iterative refinement** until design is solid
-
----
-
-### Step 7: Phase 4 - Validation & Documentation
-
-**Facilitator + Documentarian**, all agents validate **with comprehensive thinking**
-
-**Goal**: Verify completeness, document decisions, prepare for implementation
-
-**Thinking Directive**: "think" (systematic validation against requirements, gap identification)
-
-```markdown
-✅ PHASE 4: VALIDATION & DOCUMENTATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-## Validation Checklist
-
-### Requirements Coverage
-- [✓/❌] All functional requirements addressed
-- [✓/❌] All non-functional requirements considered
-- [✓/❌] All edge cases have handling strategy
-- [✓/❌] Error scenarios covered
-
-### Design Quality
-- [✓/❌] Components have single, clear responsibilities
-- [✓/❌] Interfaces are well-defined
-- [✓/❌] State management is explicit
-- [✓/❌] Testing strategy is comprehensive
-
-### Integration
-- [✓/❌] Aligns with existing systemPatterns.md patterns
-- [✓/❌] Follows project architectural conventions
-- [✓/❌] Dependencies are manageable
-- [✓/❌] No conflicts with other components
-
-### Implementation Readiness
-- [✓/❌] Design is detailed enough to implement
-- [✓/❌] Unknowns have been identified and addressed
-- [✓/❌] Risk mitigation strategies in place
-- [✓/❌] Clear testing approach defined
-
----
-
-## Patterns Identified
-
-### New Pattern: [Pattern Name]
-
-**Context**: When [situation where this applies]
-
-**Problem**: [What problem it solves]
-
-**Solution**: [How the pattern works - reference the design above]
-
-**Benefits**:
-- ✓ [Benefit 1]
-- ✓ [Benefit 2]
-
-**Trade-offs**:
-- ⚠️ [Trade-off 1]
-
-**Related Patterns**: [Existing patterns this builds on or relates to]
-
-**Example**: See TASK-[ID] implementation
-
----
-
-[Additional patterns if identified]
-
----
-
-## Decision Record
-
-**Decision**: Use [selected approach]
-
-**Context**: [Problem we were solving]
-
-**Alternatives Considered**:
-1. [Approach A]: Rejected because [reason]
-2. [Approach B]: Rejected because [reason]
-3. [Approach C]: Selected because [reason]
-
-**Consequences**:
-- **Positive**: [Benefits gained]
-- **Negative**: [Costs accepted]
-- **Risks**: [Risks and mitigations]
-
-**Revisit Trigger**: [What would cause us to reconsider - e.g., "if scale exceeds X"]
-
----
-
-🔄 Facilitator: Final Confirmation
-
-We've thoroughly explored this problem and designed a solution.
-
-Summary:
-✓ Problem understood deeply
-✓ [N] approaches explored
-✓ Best approach selected with rationale
-✓ Design detailed and validated
-✓ [N] new patterns identified
-✓ All requirements covered
-
-Are you confident in this approach and ready to implement?
-```
-
----
-
-### Step 8: Update Memory Bank
-
-**Documentarian performs updates**:
-
-#### systemPatterns.md - Add New Patterns
-
-```markdown
-### [Pattern Name] - [YYYY-MM-DD]
-
-**Category**: [Architectural/Design/Implementation]
-**Source**: Creative session for TASK-[ID]
+**Category**: [Type]
+**Added**: YYYY-MM-DD (from TASK-[ID] creative session)
 
 **Context**: [When this pattern applies]
 
 **Problem**: [What it solves]
 
-**Solution**:
-[Pattern implementation - reference design components]
+**Solution**: [How the pattern works]
 
-**Structure**:
-```[language]
-[Code structure or component diagram]
-```
+[Example code or reference]
 
 **Benefits**:
-- ✓ [Benefit 1]
-- ✓ [Benefit 2]
+- ✅ [Benefit 1]
 
 **Trade-offs**:
 - ⚠️ [Trade-off 1]
 
-**Examples in Codebase**: Will be added in TASK-[ID] implementation
+**Source**: Creative session TASK-[ID] - see memory-bank/specs/TASK-[ID]-[slug]-spec.md
 
-**Related Patterns**: [Connection to existing patterns]
-
-**Revision History**:
-- [YYYY-MM-DD]: Defined during creative session
+**Related Patterns**: [Connections to other patterns]
 ```
 
-#### tasks.md - Update Task with Refined Approach
+---
+
+### Step 8: Output Summary
+
+**Present specification summary to user**:
 
 ```markdown
-**Creative Session**: ✅ Complete ([YYYY-MM-DD])
+🎨 CREATIVE SESSION COMPLETE
 
-**Approach Selected**: [Solution name]
-
-**Implementation Notes**:
-- [Note 1 from design]
-- [Note 2 from design]
-
-**Edge Cases to Handle**:
-- [Edge case 1]
-- [Edge case 2]
-
-**Testing Requirements**:
-- [Test requirement 1]
-- [Test requirement 2]
-
-**Patterns to Apply**: [Pattern name] (see systemPatterns.md)
-
-**Decision Rationale**: [Brief summary of why this approach]
-```
-
-#### activeContext.md - Add Creative Session Entry
-
-```markdown
-### [YYYY-MM-DD HH:MM] - Creative Session: [Topic]
+## Specification: [Task Name]
 
 **Task**: TASK-[ID]
-**Agents**: Facilitator + Architect + Product + Sequential
-**Duration**: [Estimate based on session]
-
-**Problem Explored**: [One-line problem statement]
-
-**Solution Designed**: [Selected approach]
-
-**Key Decisions**:
-1. [Decision 1] - [Rationale]
-2. [Decision 2] - [Rationale]
-
-**Patterns Created**: [N] new patterns added to systemPatterns.md
-
-**Next Action**: Ready for /cf:code TASK-[ID]
-```
-
-#### projectbrief.md - Decision Log (if architectural)
-
-If decision has project-wide implications:
-
-```markdown
-| Date | Decision | Rationale | Alternatives |
-|------|----------|-----------|--------------|
-| [YYYY-MM-DD] | [Architectural decision] | [Why - from creative session] | [Approaches rejected] |
-```
+**Complexity**: Level [3-4]
+**Duration**: [Duration]
 
 ---
 
-### Step 9: Creative Session Summary
+### 🎯 PROBLEM DEFINITION
 
-**Output to user**:
+**Core Problem**: [Brief problem statement]
 
-```markdown
-💡 CREATIVE SESSION COMPLETE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**Why This Matters**: [User impact and value]
 
-**Topic**: [Task/Problem name]
-**Duration**: [Actual time]
-
-## What We Accomplished
-
-✅ **Deep Problem Analysis**: [Summary of problem understanding]
-
-✅ **Approaches Explored**: [N] solution approaches analyzed
-- [Approach A]: [Brief description]
-- [Approach B]: [Brief description]
-- [Approach C]: [Brief description]
-
-✅ **Solution Selected**: [Chosen approach]
-- **Why**: [Top 3 reasons for selection]
-- **Trade-offs accepted**: [Key trade-offs]
-
-✅ **Design Detailed**:
-- [N] components designed
-- [N] edge cases handled
-- Testing strategy defined
-- Error handling approach specified
-
-✅ **Patterns Documented**: [N] new patterns added to systemPatterns.md
-- [Pattern 1 name]
-- [Pattern 2 name]
-
-✅ **Implementation Readiness**: All unknowns addressed, design is actionable
-
-## Memory Bank Updates
-
-✓ systemPatterns.md - [N] patterns added
-✓ tasks.md - Task updated with refined approach
-✓ activeContext.md - Creative session documented
-[✓ projectbrief.md - Decision log updated]
-
-## Next Action
-
-→ **Ready to implement**: /cf:code TASK-[ID]
-
-With this thorough exploration, implementation should be straightforward following the detailed design.
-
-**Alternative**: If you want to review the design before implementing:
-- Review: memory-bank/systemPatterns.md (new patterns)
-- Review: memory-bank/tasks.md (task notes)
-- Refine further: /cf:facilitate TASK-[ID] --mode validate
+**Constraints**:
+- Technical: [Key technical constraints]
+- Business: [Key business constraints]
+- Resource: [Key resource constraints]
 
 ---
 
-**Confidence Level**: [High/Medium] - [Brief explanation]
+### 🏗️ MULTI-PERSPECTIVE ANALYSIS
+
+**ARCHITECT**: [Key technical insights]
+
+**PRODUCT**: [Key user/UX insights]
+
+**TECH STACK**: [Key technology insights]
+
+**Convergent Insights**: [Where perspectives agree]
+
+**Productive Tensions**: [Where perspectives disagree - trade-offs revealed]
+
+---
+
+### 💡 RECOMMENDED APPROACH
+
+**Solution**: [Solution name]
+
+**Rationale**:
+1. [Reason 1 with perspective support]
+2. [Reason 2 with perspective support]
+3. [Reason 3 with perspective support]
+
+**Why This Over Alternatives**: [Brief comparison]
+
+---
+
+### 📋 IMPLEMENTATION GUIDANCE
+
+**Acceptance Criteria**:
+- Must Have: [Critical requirements]
+- Should Have: [Important requirements]
+
+**Implementation Phases**:
+1. [Phase 1]: [What to build first]
+2. [Phase 2]: [What to build second]
+3. [Phase 3]: [What to build third]
+
+**Testing Strategy**: [Unit/Integration/E2E approach]
+
+---
+
+### 🎯 DECISION RECORD
+
+**Decision**: [What was decided]
+
+**Alternatives Considered**:
+1. [Alternative A]: [Why not chosen]
+2. [Alternative B]: [Why not chosen]
+
+**Key Trade-offs Accepted**: [Trade-offs and rationale]
+
+---
+
+### 📚 SPECIFICATION DOCUMENT
+
+✓ **Created**: memory-bank/specs/TASK-[ID]-[slug]-spec.md
+
+Full specification includes:
+- Detailed multi-perspective analysis
+- Cross-perspective synthesis
+- Implementation specification
+- Patterns extracted
+- Session metadata
+
+---
+
+### 📊 MEMORY BANK UPDATES
+
+✓ tasks.md updated (creative session complete, spec reference added)
+✓ activeContext.md updated (recent changes logged)
+[✓] systemPatterns.md updated (if new patterns added)
+✓ Specification document created in memory-bank/specs/
+
+---
+
+### ⏭️ NEXT STEPS
+
+**Recommended Command Sequence**:
+
+**Option 1: Detailed Planning**
+```bash
+/cf:plan TASK-[ID] --interactive
+```
+Use specification for detailed sub-task breakdown
+
+**Option 2: Direct Implementation**
+```bash
+/cf:code TASK-[ID]
+```
+Proceed with implementation using specification as guide
+
+**Option 3: Review Specification**
+```bash
+Read memory-bank/specs/TASK-[ID]-[slug]-spec.md
+```
+Review full specification before deciding next steps
+
+**Open Questions** (requiring answers before proceeding):
+- [Question 1]
+- [Question 2]
+
+---
+
+**Pattern**: Creative Session Pattern (systemPatterns.md)
+**Session Metadata**: See specification document for full details
 ```
 
 ---
 
 ## Examples
 
-### Example 1: OAuth Token Refresh Mechanism (Complex Sub-Task)
+### Example 1: Creative Session for Complex Task
 
 ```
-User: /cf:creative TASK-042-3
+User: /cf:creative TASK-012
 
 Claude:
-[Loads TASK-042-3 from tasks.md: "OAuth token refresh mechanism"]
+📋 LOADING CONTEXT
+- Task: TASK-012 - Design real-time collaboration system
+- Complexity: Level 3
+- Problem: Multiple users editing shared documents simultaneously
 
-💡 CREATIVE SESSION: OAuth Token Refresh Mechanism
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
-**Problem**: Design secure, reliable token refresh mechanism
-**Complexity**: High - Security implications, race conditions, edge cases
-**Goal**: Explore solutions systematically, select best approach
+🎨 CREATIVE SESSION: Starting
 
-[Agents engaged message]
+Invoking facilitator (Mode 4: Creative Session)...
 
-Ready to begin?
+---
 
-User: Yes
+**FACILITATOR** (Phase 1 - Problem Definition):
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Let me help clarify the problem through some questions:
 
-🔄 PHASE 1: PROBLEM DEEP-DIVE
+1. **Scope**: What types of documents need collaboration support?
+   - Text documents only
+   - Spreadsheets
+   - Code files
+   - All of the above
 
-**🎨 Product Questions**:
-1. What is the user experience we want? Silent refresh or prompt?
-2. What happens if refresh fails - force re-login immediately or retry?
+2. **Scale**: How many simultaneous users per document?
+   - 2-5 users (small team)
+   - 5-20 users (medium team)
+   - 20+ users (large scale)
 
-**🏗️ Architect Questions**:
-1. Access token lifetime? Refresh token lifetime?
-2. How do we handle concurrent requests during refresh?
-3. Storage security for refresh tokens?
+3. **Conflict Resolution**: When two users edit the same content, what should happen?
+   - Last write wins
+   - Operational transformation (merge edits)
+   - CRDTs (conflict-free replicated data types)
+   - Block concurrent edits (locking)
 
-User: Silent refresh preferred. If refresh fails, retry once then force re-login. Access token 15min, refresh 7 days. Must handle concurrent requests gracefully. Refresh tokens in httpOnly cookie.
+[User provides answers...]
 
-[Facilitator synthesizes understanding...]
-[Ready for solution exploration...]
+---
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**FACILITATOR** (Phase 2 - Multi-Perspective Analysis):
 
-🧠 PHASE 2: SOLUTION EXPLORATION
+Now let's explore from different angles:
 
-**Approach A: Request Interceptor with Queue**
-- Intercept 401 responses
-- Queue pending requests during refresh
-- Single refresh attempt for concurrent requests
-- Pros: Clean separation, handles concurrency well
-- Cons: Complex state management, testing complexity
-- Complexity: Medium-High
+**Architect Perspective Questions**:
+- What's your current tech stack for real-time communication?
+- Have you worked with WebSockets, Server-Sent Events, or polling before?
+- How do you handle state management currently?
 
-**Approach B: Proactive Refresh with Timer**
-- Refresh before expiry (e.g., at 12min for 15min token)
-- Background timer triggers refresh
-- No 401 handling needed
-- Pros: Simpler, better UX (no delay on request)
-- Cons: Timer management, may refresh unnecessarily
-- Complexity: Medium
+**Product Perspective Questions**:
+- What's the expected latency users will tolerate?
+- Should users see cursors/selections of other users?
+- How should conflicts be communicated to users?
 
-**Approach C: Hybrid - Proactive + Interceptor Fallback**
-- Primary: Timer-based proactive refresh
-- Fallback: Interceptor handles edge cases (page wake, clock skew)
-- Pros: Best UX, handles all cases
-- Cons: Most complex
-- Complexity: High
+**Tech Stack Perspective Questions**:
+- What's your deployment environment (serverless, traditional servers)?
+- Any existing real-time infrastructure to leverage?
+- What's your comfort level with operational transformation libraries?
 
-[Sequential analysis...]
-[User provides thoughts...]
-[Facilitator refines...]
+[User provides answers...]
 
-Selected: Approach C (Hybrid)
-Rationale: Best UX (proactive) with safety net (interceptor) justifies added complexity
+---
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**FACILITATOR** (Phase 3 - Synthesis):
 
-🏗️ PHASE 3: DESIGN REFINEMENT
+Based on your responses, let me validate the emerging recommendation:
 
-**Component 1: TokenManager**
-- Manages access/refresh tokens
-- Exposes: getValidToken(), forceRefresh()
-- Handles: Storage, expiry tracking, refresh coordination
+- Approach: WebSocket-based with Operational Transformation
+- Rationale: Your Node.js stack + need for <100ms latency
+- Trade-off: More complex than last-write-wins, but better UX
 
-**Component 2: RefreshTimer**
-- Schedules proactive refresh
-- Calculates refresh timing (80% of token lifetime)
-- Handles: Page visibility, sleep/wake events
+Does this align with your thinking? Any concerns?
 
-**Component 3: RequestInterceptor**
-- Catches 401 errors
-- Queues requests during refresh
-- Replays after fresh token obtained
+[User validates or provides adjustments...]
 
-[Detailed data flow...]
-[Edge cases: concurrent refresh, network failure, clock skew...]
-[Error handling: exponential backoff, max retries...]
-[Testing strategy...]
+---
 
-[User validates design...]
+🎨 SYNTHESIS COMPLETE
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Creating specification document...
 
-✅ PHASE 4: VALIDATION & DOCUMENTATION
+✓ Specification created: memory-bank/specs/TASK-012-realtime-collaboration-spec.md
 
-[Validation checklist all ✓]
+---
 
-**New Pattern**: Token Refresh with Proactive Timer + Interceptor Fallback
+🎨 CREATIVE SESSION COMPLETE
 
-**Decision**: Use hybrid approach (proactive + fallback)
-- Rejected: Request interceptor only (worse UX)
-- Rejected: Timer only (edge case failures)
+## Specification: Design real-time collaboration system
 
-[Pattern documented in systemPatterns.md]
-[Task updated with approach]
-[Active context updated]
+**Task**: TASK-012
+**Complexity**: Level 3
+**Duration**: 23 minutes
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+### 🎯 PROBLEM DEFINITION
 
-💡 CREATIVE SESSION COMPLETE
+**Core Problem**: Enable multiple users to edit shared documents simultaneously with <100ms latency
 
-**Topic**: OAuth Token Refresh Mechanism
-**Duration**: ~25 minutes
+**Why This Matters**: Core differentiator for collaborative product, significant UX impact
 
-**Approaches Explored**: 3
-**Solution Selected**: Hybrid (Proactive Timer + Interceptor Fallback)
-**Patterns Documented**: 1 (Token Refresh pattern)
-**Implementation Readiness**: ✅ High confidence
+**Constraints**:
+- Technical: WebSocket support required, state consistency critical
+- Business: <100ms latency for professional UX
+- Resource: 2-week implementation timeline
 
-→ **Next**: /cf:code TASK-042-3
+### 🏗️ MULTI-PERSPECTIVE ANALYSIS
 
-The design is detailed and tested against edge cases. Implementation should be straightforward.
+**ARCHITECT**: WebSocket architecture with operational transformation middleware, state synchronization layer, conflict resolution engine
+
+**PRODUCT**: Real-time cursor/selection visibility, smooth merge experience, clear conflict communication when they occur
+
+**TECH STACK**: Node.js + ShareDB (OT library), Redis for pub/sub, existing WebSocket infrastructure
+
+**Convergent Insights**: All perspectives agree WebSockets are necessary, operational transformation provides best UX
+
+**Productive Tensions**: Architect prefers CRDT for simplicity, Product needs OT for richer collaboration features
+
+### 💡 RECOMMENDED APPROACH
+
+**Solution**: WebSocket-Based Operational Transformation with ShareDB
+
+**Rationale**:
+1. ShareDB provides battle-tested OT implementation (Architect: reduces implementation risk)
+2. OT enables rich collaboration UX features Product needs (Product: cursor sharing, merge visualization)
+3. Integrates with existing Node.js stack (Tech Stack: minimal new infrastructure)
+
+**Why This Over Alternatives**:
+- vs CRDT: Better support for rich text editing and UX features Product requires
+- vs Last-write-wins: Unacceptable UX for collaborative editing
+- vs Locking: Defeats purpose of real-time collaboration
+
+### 📋 IMPLEMENTATION GUIDANCE
+
+**Acceptance Criteria**:
+- Must Have: <100ms latency, no data loss on conflicts, cursor visibility
+- Should Have: Selection highlighting, presence indicators
+
+**Implementation Phases**:
+1. WebSocket infrastructure + ShareDB integration
+2. Document model with OT support
+3. UI with real-time updates and collaboration indicators
+
+**Testing Strategy**: Unit (OT operations), Integration (WebSocket flow), E2E (multi-user scenarios)
+
+### 🎯 DECISION RECORD
+
+**Decision**: Use ShareDB for operational transformation
+
+**Alternatives Considered**:
+1. CRDT (Automerge): Rejected - less mature for rich text, more complex state model
+2. Locking model: Rejected - poor UX for collaboration
+3. Custom OT: Rejected - high risk, ShareDB is proven
+
+**Key Trade-offs Accepted**:
+- ShareDB adds dependency but significantly reduces implementation risk
+- OT more complex than last-write-wins but provides acceptable UX
+
+### 📚 SPECIFICATION DOCUMENT
+
+✓ Created: memory-bank/specs/TASK-012-realtime-collaboration-spec.md
+
+### 📊 MEMORY BANK UPDATES
+
+✓ tasks.md updated
+✓ activeContext.md updated
+✓ Specification document created
+
+### ⏭️ NEXT STEPS
+
+**Recommended**: Proceed with detailed planning
+```bash
+/cf:plan TASK-012 --interactive
+```
+
+Use specification to break down into implementable sub-tasks
+
+**Open Questions**:
+- How to handle offline users rejoining? (Address in planning)
+- Scaling: How many documents can one WebSocket server handle? (Performance testing in Phase 2)
 ```
 
 ---
 
 ## Error Handling
-
-### Task Not Found
-
-```
-❌ Task TASK-099-3 not found in tasks.md
-
-Checked: tasks.md
-
-Ensure task exists before creative session.
-
-Create task with: /cf:feature [description]
-```
 
 ### Memory Bank Not Initialized
 
@@ -940,121 +736,109 @@ Create task with: /cf:feature [description]
 Run: /cf:init
 ```
 
-### Topic Too Vague
+### Task Not Found (if task-id provided)
 
 ```
-⚠️ Topic Needs Clarity
+❌ Task TASK-099 not found in tasks.md
 
-Topic provided: "improve performance"
+Available tasks:
+- TASK-001: [name]
+- TASK-002: [name]
 
-This is too broad for deep exploration. Please be more specific:
-- Which component or feature?
-- What performance issue specifically?
-- What's the current behavior vs desired?
-
-Example: "improve dashboard load time (currently 3s, target <1s)"
-
-Or create a task first with /cf:feature for complexity assessment.
+Create new task with: /cf:feature [description]
 ```
 
-### No Complexity Justification
+### No Parameter Provided
 
 ```
-ℹ️ Consider Simpler Approach
+❌ Missing Parameter
 
-Topic: [Simple topic that doesn't need /cf:creative]
+Usage: /cf:creative [task-id|description]
 
-This seems straightforward enough for standard planning.
-
-Suggested workflow:
-1. /cf:plan [topic] - Create plan with Architect + Product
-2. /cf:code [task] - Implement directly
-
-/cf:creative is for high-complexity, novel problems without established patterns.
-
-Continue with creative session anyway? (not recommended)
+Examples:
+/cf:creative TASK-005
+/cf:creative "Design microservices architecture for payment processing"
 ```
 
----
-
-## Integration with Other Commands
-
-**Typical workflows**:
+### Task Complexity Too Low (Level 1-2)
 
 ```
-# Complex task discovered during planning
-/cf:plan TASK-050 (Level 3)
-→ Creates 6 sub-tasks
-→ "Sub-task 4 (distributed cache sync) is high complexity"
-→ "Recommend /cf:creative TASK-050-4 before implementation"
+⚠️ Task Complexity May Not Require Creative Session
 
-/cf:creative TASK-050-4
-→ Deep exploration
-→ Solution designed and documented
+Task TASK-007 is Level 1 (Quick Fix)
 
-/cf:code TASK-050-4
-→ Implementation follows refined design
+Creative sessions are designed for Level 3-4 complexity with:
+- Ambiguous requirements
+- Multiple valid approaches
+- Significant trade-offs
 
-# Novel architectural challenge
-User identifies: "Need real-time collaboration, no established pattern"
+For Level 1-2 tasks, consider:
+/cf:plan TASK-007 (standard planning)
+/cf:code TASK-007 (direct implementation)
 
-/cf:feature "add real-time collaboration to editor"
-→ Assessor: Level 4 (Complex System)
-
-/cf:plan realtime-collab
-→ Creates plan
-→ Entire feature is novel, recommend /cf:creative upfront
-
-/cf:creative realtime-collab
-→ Comprehensive exploration of real-time approaches
-→ WebSocket vs CRDT vs OT comparison
-→ Design selected and validated
-
-/cf:code [sub-tasks from refined plan]
-
-# Validating complex design before implementation
-/cf:plan TASK-080 --interactive
-→ Plan created and refined with Facilitator
-
-/cf:creative TASK-080 (optional validation)
-→ Deep analysis confirms approach
-→ Identifies edge cases plan didn't cover
-→ Refined design ready for implementation
-
-/cf:code TASK-080
-→ Confident implementation
+Proceed with creative session anyway? (y/n)
 ```
 
 ---
 
-## Notes
+## Memory Bank Updates
 
-- **Always interactive**: Cannot opt-out of Facilitator, deep thinking requires human input
-- **Time investment**: 20-35 minutes average (longer with ultrathink), but prevents hours/days of rework
-- **Use sparingly**: For genuinely complex problems, not routine tasks
-- **Complements /cf:plan**: Plan breaks down work, creative explores complex pieces
-- **Complements /cf:facilitate**: Facilitate refines existing content, creative explores new solutions
-- **Extended thinking integration**: Uses Claude's thinking modes for deeper analysis
-  - **"think"**: Default for problem understanding and validation phases
-  - **"think hard"**: Default for solution comparison and design refinement
-  - **"think harder"**: High-risk architectural decisions with 4-5 solution approaches
-  - **"ultrathink"**: Novel system designs requiring exhaustive analysis and edge case exploration
-- **MCP Sequential**: Used for structured reasoning when comparing approaches with extended thinking
-- **Patterns emerge**: Creative sessions often produce reusable patterns for systemPatterns.md
-- **Decision documentation**: Records why specific approach chosen (prevents future confusion)
-- **Can revisit**: If implementation reveals issues, run creative session again with new insights
-- **Thinking budget adapts**: Complexity assessment determines which thinking level to use in Phase 2
+### tasks.md
+- Creative session status updated
+- Specification document reference added
+- Recommended approach documented
+- Next action suggested
+
+### activeContext.md
+- Recent change entry added
+- Specification created
+- Pattern used documented
+
+### systemPatterns.md (if applicable)
+- New patterns documented
+- Source reference (creative session task ID)
+
+### memory-bank/specs/
+- Specification document created
+- Full multi-perspective analysis preserved
+
+---
+
+## Orchestration Notes
+
+**Pattern Compliance**:
+- ✅ **Facilitator Invocation**: Command invokes facilitator (Mode 4) for creative session
+- ✅ **Question-Only Facilitator**: Facilitator generates questions, command synthesizes responses
+- ✅ **Template-Driven Synthesis**: Command uses creative-spec-template.md for consistent output
+- ✅ **Memory Bank Updates**: Systematic updates to tasks.md, activeContext.md, systemPatterns.md, specs/
+- ✅ **Specification Document**: Creates dedicated spec document for Level 3-4 complexity
+
+**Command Responsibilities**:
+- Context loading from memory bank
+- Facilitator invocation (Mode 4: Creative Session)
+- Response collection from interactive session
+- Synthesis using creative-spec-template.md
+- Specification document creation
+- Memory bank updates
+
+**Facilitator Responsibilities**:
+- Generate questions for 3-phase creative session (Problem Definition, Multi-Perspective, Synthesis)
+- Validate responses at phase transitions
+- Collect user responses and session metadata
+- Return structured output to command
+- NO analysis, NO synthesis (command handles this)
 
 ---
 
 ## Related Commands
 
-- `/cf:plan` - Standard planning, identifies when creative needed
-- `/cf:facilitate` - Interactive refinement of existing plans
-- `/cf:code` - Implementation after creative design is complete
-- `/cf:checkpoint` - Save creative session outputs
+- `/cf:feature` - Create task before creative exploration
+- `/cf:plan` - Plan task after creative session (using specification)
+- `/cf:code` - Implement after creative session (using specification)
+- `/cf:checkpoint` - Save creative session work
 
 ---
 
-**Command Version**: 1.0
-**Last Updated**: 2025-10-05
+**Command Version**: 2.0 (Command Orchestration Pattern)
+**Last Updated**: 2025-11-03 (TASK-003-6)
+**Pattern**: Command Orchestration Pattern (systemPatterns.md:409-582)

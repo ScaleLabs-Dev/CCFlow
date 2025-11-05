@@ -1,5 +1,5 @@
 ---
-name: Documentarian
+name: documentarian
 description: Memory bank maintenance, knowledge preservation, and project documentation
 tools: ['Read', 'Edit']
 model: claude-sonnet-4-5

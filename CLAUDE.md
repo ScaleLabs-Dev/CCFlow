@@ -60,14 +60,88 @@ System optimization - `/cf:refine-agent`, `/cf:refine-command`
 
 Assessor agent automatically routes based on task complexity:
 
-| Level | Criteria | Route |
-|-------|----------|-------|
-| **L1** | 1-2 files, clear scope, known pattern | → `/cf:code` |
-| **L2** | 3-5 files, established patterns | → `/cf:plan` → `/cf:code` |
-| **L3** | 5-15 files, some ambiguity, cross-cutting | → `/cf:plan --interactive` → `/cf:code` |
-| **L4** | 15+ files, high uncertainty, architectural | → `/cf:plan` → `/cf:creative` → sub-tasks |
+| Level | Criteria | Architect Pre-Analysis | Route |
+|-------|----------|----------------------|-------|
+| **L1** | 1-2 files, clear scope, known pattern | Skipped (efficiency) | → `/cf:code` |
+| **L2** | 3-5 files, established patterns | **✅ Invoked** (6-8 min) | → `/cf:plan` → `/cf:code` |
+| **L3** | 5-15 files, some ambiguity, cross-cutting | **✅ Invoked** (7-8 min) | → `/cf:plan --interactive` OR `/cf:creative` |
+| **L4** | 15+ files, high uncertainty, architectural | **✅ Invoked** (8 min) | → `/cf:creative` → `/cf:plan` → sub-tasks |
 
 **Note**: Complexity determined by scope and clarity, NOT temporal estimates.
+
+**New in v2.0**: Conditional Architect pre-analysis (TASK-004) - Level 2+ features include technical analysis to catch hidden complexity (integration, data, algorithm, constraints) before implementation. Level 1 features skip pre-analysis for efficiency.
+
+---
+
+## Feature Specification with Conditional Orchestration
+
+**New in v2.0** (TASK-004): `/cf:feature` uses conditional multi-agent orchestration to ensure specification completeness before implementation.
+
+### How It Works
+
+```mermaid
+graph TD
+    F[/cf:feature] --> ASS[Assessor<br/>Complexity Evaluation]
+    ASS --> CHECK{Level?}
+
+    CHECK -->|L1<br/>Simple| PROD1[Product Agent<br/>User Requirements]
+    CHECK -->|L2+<br/>Complex| ARCH[Architect Agent<br/>Technical Pre-Analysis]
+
+    ARCH --> PROD2[Product Agent<br/>User Requirements]
+
+    PROD1 --> SYNTH[Command Synthesis]
+    PROD2 --> SYNTH
+
+    SYNTH --> SPEC[Complete Specification]
+
+    style ASS fill:#fff3e0
+    style ARCH fill:#e3f2fd
+    style PROD1 fill:#f3e5f5
+    style PROD2 fill:#f3e5f5
+    style SYNTH fill:#e8f5e9
+```
+
+### Conditional Expert Pre-Analysis (Level 2+)
+
+**Architect Pre-Analysis** (6-8 minutes, rapid assessment):
+- **Integration Concerns**: Which components affected? (reads systemPatterns.md)
+- **Data Modeling**: Entities, relationships, schema changes required
+- **Algorithmic Complexity**: Performance implications, computational concerns
+- **Technical Constraints**: Platform limits, security, dependencies
+- **Hidden Complexity Signals**: 🔴 HIGH / 🟡 MEDIUM / 🟢 LOW priority specification needs
+
+**Product Requirements** (2-3 minutes, always invoked):
+- **User Need Analysis**: WHO, WHY, WHAT, WHEN, HOW (user perspective)
+- **Acceptance Criteria**: Measurable user-facing requirements
+- **Edge Cases**: User scenarios and error conditions
+- **NFRs**: Performance, accessibility, security from user perspective
+
+**Command Synthesis** (orchestration layer):
+- **IF Level 2+**: Synthesizes Product + Architect → complete specification
+  - Acceptance criteria combine user requirements + technical concerns
+  - Edge cases combine user scenarios + technical risks
+  - NFRs combine UX requirements + technical constraints
+- **IF Level 1**: Uses Product requirements directly (no synthesis)
+
+### Domain Separation
+
+**Key Architecture Pattern** (systemPatterns.md:719-938):
+- **Product Agent**: Pure user focus (WHO/WHY/WHAT users need)
+- **Architect Agent**: Pure technical focus (integration/data/algorithm/constraints)
+- **Command**: Performs cross-domain synthesis at orchestration layer
+- **No cross-agent dependencies**: Agents analyze independently
+
+### Specification Completeness
+
+**Problem Solved**: Features often reveal hidden complexity during implementation, forcing "stop and spec" pauses for:
+- Integration complexity when connecting to existing components
+- Data structure questions when implementing storage
+- Algorithmic complexity when implementing business logic
+- Edge cases surfacing mid-coding
+
+**Solution**: Conditional expert pre-analysis catches these concerns upfront for Level 2+ features, while preserving efficiency for simple Level 1 features.
+
+**See**: `docs/commands/cf-feature.md`, `docs/testing/task-004-validation.md` (5 test scenarios)
 
 ---
 
@@ -78,7 +152,7 @@ CCFlow agents follow a **two-tier architecture** separating framework-level agen
 ### Framework-Level Agents (Not Customizable)
 
 **System Agents** (`.claude/agents/system/`):
-- agentBuilder, commandBuilder, project-discovery
+- agent-builder, command-builder, project-discovery
 - Meta-development and framework optimization
 
 **Workflow Agents** (`.claude/agents/workflow/`):
@@ -89,7 +163,7 @@ CCFlow agents follow a **two-tier architecture** separating framework-level agen
 ### Project-Level Agents (Customizable)
 
 **Generic Implementation Agents** (`.claude/agents/`):
-- testEngineer, codeImplementer, uiDeveloper
+- test-engineer, code-implementer, ui-developer
 - **Must customize**: Fill TODO sections for tech stack, coding standards, testing approach
 
 **Team-Specific Agents** (`.claude/agents/[team-type]/`):
@@ -111,7 +185,7 @@ CCFlow agents follow a **two-tier architecture** separating framework-level agen
 - **Context Passing**: Via command context or memory bank files
 
 ### 2. TDD Enforcement (GREEN Gate)
-1. **RED**: testEngineer writes failing tests FIRST
+1. **RED**: test-engineer writes failing tests FIRST
 2. **GREEN**: Implementation agent makes tests pass (minimum code)
 3. **REFACTOR**: Improve code while keeping tests green
 4. **3-Strike Rule**: After 3 failures → STOP, report blocker
@@ -125,11 +199,12 @@ CCFlow agents follow a **two-tier architecture** separating framework-level agen
 - **No temporal references**: Specs focus on scope/complexity, never time estimates
 
 ### 4. Quality Gates
-1. Complexity assessment (routing)
-2. Planning validation (technical + user)
-3. TDD enforcement (GREEN gate)
-4. Quality review (standards)
-5. Memory consistency (documentation)
+1. Complexity assessment (routing + conditional expert analysis)
+2. Specification completeness (technical pre-analysis for L2+)
+3. Planning validation (technical + user)
+4. TDD enforcement (GREEN gate)
+5. Quality review (standards)
+6. Memory consistency (documentation)
 
 ### 5. Memory Bank Structure
 Six files maintain persistent context:
@@ -204,6 +279,13 @@ graph LR
 - `docs/troubleshooting/` - Common issues and solutions
 - `docs/planning/` - Design decisions and planning documents
 
+**Templates belong in `.claude/templates/` folder**:
+- `.claude/templates/workflow/` - Reusable templates for commands and workflow agents
+  - Used by commands/agents to generate consistent output (specs, reports, summaries)
+  - Examples: creative-spec-template.md, checkpoint-template.md, review-template.md
+- Commands and agents reference templates using Read tool
+- Templates use markdown format with placeholder sections
+
 **Rules**:
 - **Never**: Create README files scattered throughout `.claude/` structure
 - **Always**: Centralize documentation in `docs/` with clear organization
@@ -211,6 +293,7 @@ graph LR
 
 ---
 
-**Version**: 2.0 (Specification-Driven)
+**Version**: 2.1 (Conditional Multi-Agent Orchestration)
 **Architecture**: Commands orchestrate → Agents analyze → Agents execute
 **Core Principles**: Specs before code | TDD non-negotiable | Quality gates enforced
+**Latest Enhancement** (TASK-004): Feature specification completeness with conditional Architect pre-analysis for L2+ features

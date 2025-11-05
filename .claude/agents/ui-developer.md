@@ -1,5 +1,5 @@
 ---
-name: uiDeveloper
+name: ui-developer
 description: Universal UI/frontend development agent (generic fallback)
 tools: ['Read', 'Write', 'Edit', 'Bash', 'Glob', 'Grep']
 model: claude-sonnet-4-5

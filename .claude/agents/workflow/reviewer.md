@@ -1,5 +1,5 @@
 ---
-name: Reviewer
+name: reviewer
 description: Code quality assessment, progress evaluation, and improvement recommendations
 tools: ['Read', 'Grep', 'Glob', 'Bash']
 model: claude-sonnet-4-5

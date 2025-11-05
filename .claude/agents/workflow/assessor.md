@@ -1,5 +1,5 @@
 ---
-name: Assessor
+name: assessor
 description: Evaluates task complexity and recommends workflow routing
 tools: ['Read', 'Glob', 'Grep', 'Edit']
 model: claude-sonnet-4-5

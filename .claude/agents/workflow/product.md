@@ -1,5 +1,5 @@
 ---
-name: Product
+name: product
 description: User experience, requirements definition, and feature prioritization
 tools: ['Read', 'Edit']
 model: claude-sonnet-4-5

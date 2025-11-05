@@ -1,5 +1,5 @@
 ---
-name: testEngineer
+name: test-engineer
 description: Universal testing agent for TDD coordination (generic fallback)
 tools: ['Read', 'Write', 'Edit', 'Bash', 'Glob', 'Grep']
 model: claude-sonnet-4-5

@@ -226,61 +226,94 @@ Then retry: /cf:configure-team
 - No template match found and user chose custom
 
 1. **Engage Facilitator Agent**:
-   - Load Facilitator agent
-   - Activate Action Recommendation Pattern
+   - Load Facilitator agent in Refinement mode
    - Initialize custom team creation context
+   - Goal: Guide user through thinking about team needs
 
-2. **Facilitator Question Flow**:
+2. **Facilitator Guided Discovery** (Human-in-the-Loop):
 
-   **Round 1: Tech Stack Discovery**
+   **Round 1: Tech Stack Understanding**
    ```
-   Let's configure your custom implementation team.
+   Let's think through your custom implementation team needs.
 
    **Current State**: Generic fallback agents active
-   **Goal**: Create stack-specific core agents and specialists
+   **Goal**: Understand your tech stack to design appropriate agents
 
    **Questions**:
-   1. What is your tech stack? (frameworks, languages, key libraries)
+   1. What is your tech stack?
+      - Frameworks, languages, key libraries
    2. What are your main implementation domains?
-      Examples: backend API, frontend UI, database, mobile, testing, deployment
-   3. Are there specialized areas needing dedicated agents?
-      Examples: authentication, caching, performance, security, data processing
+      - Examples: backend API, frontend UI, database, mobile, testing, deployment
+   3. Are there specialized areas that come up frequently?
+      - Examples: authentication, caching, performance, security, data processing
 
-   Please describe your tech stack and implementation needs.
+   Please describe your tech stack and development patterns.
    ```
 
-   **Round 2: Core Agent Definition**
-   - Based on user response, Facilitator identifies core agents needed
-   - For each proposed core agent:
+   **User responds → Facilitator synthesizes understanding**
+
+   **Round 2: Agent Identification**
+   - Facilitator presents analysis of user's tech stack
+   - Facilitator proposes core agent structure:
      ```
-     **Proposed Core Agent**: [agentName]
-     **Scope**: [domain and technologies]
-     **Responsibilities**: [what it handles]
+     Based on your tech stack, here's what I'm seeing:
 
-     Is this correct? Any adjustments?
+     **Core Implementation Areas**:
+     1. [Domain 1]: [Technologies] → Potential core agent: [agentName]
+     2. [Domain 2]: [Technologies] → Potential core agent: [agentName]
+     3. [Testing]: [Frameworks] → Potential core agent: [testAgent]
+
+     **Specialized Areas**:
+     - [Specialist area]: [Why it warrants dedicated agent]
+     - [Specialist area]: [Why it warrants dedicated agent]
+
+     Does this match how you think about your codebase?
+     What would you adjust?
      ```
-   - User confirms or refines
-   - Repeat until all core agents defined
+   - User refines or confirms
+   - Facilitator iterates until understanding validated
 
-   **Round 3: Specialist Identification**
-   - For each core agent, Facilitator asks:
+   **Round 3: Delegation Strategy**
+   - For each core agent, Facilitator explores specialization:
      ```
-     **Core Agent**: [agentName]
+     **Core Agent**: [agentName] ([domain])
 
-     Should this agent have specialized sub-agents for specific technologies?
-     Examples for backend: database ORM, authentication, caching, API validation
+     Looking at your patterns, should this agent delegate to specialists for:
+     - [Technology 1]: Comes up frequently in [domain]?
+     - [Technology 2]: Complex enough to warrant focus?
 
-     What specialists (if any) should [agentName] delegate to?
+     Or should it handle these directly?
      ```
-   - User lists specialists or chooses none
-   - Facilitator confirms delegation triggers (keywords)
+   - User decides delegation strategy
+   - Facilitator confirms trigger keywords for routing
 
-3. **Generate Core Agents**:
+   **Final Validation Gate**:
+   ```
+   **Team Structure Validated**
+
+   **Core Agents** (3):
+   - [agentName]: [scope and responsibilities]
+   - [agentName]: [scope and responsibilities]
+   - [testAgent]: [testing scope and frameworks]
+
+   **Specialists** (2):
+   - [specialistName]: [expertise] (from [coreAgent])
+   - [specialistName]: [expertise] (from [coreAgent])
+
+   **Routing Strategy**:
+   - Keywords [list] → [agentName]
+   - Keywords [list] → [agentName]
+
+   Does this structure make sense for your development workflow?
+   [User confirms or iterates]
+   ```
+
+3. **Generate Core Agents** (Based on Validated Understanding):
    - For each core agent identified:
      - Create directory: `.claude/agents/custom/core/`
      - Copy template: `.claude/templates/blank-agents/core-agent.template.md`
      - Destination: `.claude/agents/custom/core/[agentName].md`
-     - Facilitator helps populate:
+     - Populate from validated understanding:
        - YAML frontmatter (name, role, triggers, dependencies)
        - Role description
        - Responsibilities
@@ -289,12 +322,12 @@ Then retry: /cf:configure-team
        - TDD integration specifics
    - Validate YAML frontmatter
 
-4. **Generate Specialists**:
+4. **Generate Specialists** (Based on Validated Understanding):
    - For each specialist identified:
      - Create directory: `.claude/agents/custom/specialists/`
      - Copy template: `.claude/templates/blank-agents/specialist.template.md`
      - Destination: `.claude/agents/custom/specialists/[specialistName].md`
-     - Facilitator helps populate:
+     - Populate from validated understanding:
        - YAML frontmatter (name, expertise, triggers)
        - Expertise description
        - Scope (what it handles, what it doesn't)
@@ -302,10 +335,10 @@ Then retry: /cf:configure-team
        - Output format
    - Validate YAML frontmatter
 
-5. **Generate Routing Configuration**:
+5. **Generate Routing Configuration** (Based on Validated Understanding):
    - Copy template: `.claude/templates/blank-agents/routing.template.md`
    - Destination: `.claude/agents/routing.md`
-   - Facilitator helps populate:
+   - Populate from validated understanding:
      - Keyword → Core Agent mappings
      - Keyword → Specialist mappings (via core agent)
      - Delegation rules
@@ -496,47 +529,83 @@ Use /cf:code [task] to test your new team
 ```
 🤝 Engaging Facilitator for custom team creation...
 
-Let's configure your custom implementation team.
+Let's think through your custom implementation team needs.
 
 **Current State**: Generic fallback agents active
-**Goal**: Create stack-specific core agents and specialists
+**Goal**: Understand your tech stack to design appropriate agents
 
 **Questions**:
-1. What is your tech stack? (frameworks, languages, key libraries)
+1. What is your tech stack?
+   - Frameworks, languages, key libraries
 2. What are your main implementation domains?
-3. Are there specialized areas needing dedicated agents?
+   - Examples: backend API, frontend UI, database, mobile, testing, deployment
+3. Are there specialized areas that come up frequently?
+   - Examples: authentication, caching, performance, security, data processing
 
-Please describe your tech stack and implementation needs.
+Please describe your tech stack and development patterns.
 
-> User: "Rails backend with GraphQL API, Vue.js frontend, RSpec testing"
+> User: "Rails backend with GraphQL API, Vue.js frontend, RSpec testing.
+        GraphQL schema work and database optimization come up a lot."
 
-Great! Based on that, I'm identifying these implementation domains:
+Thank you! Let me synthesize what I'm hearing...
 
-**Proposed Core Agents**:
-1. **railsBackend**: Rails MVC, ActiveRecord, GraphQL schema
-2. **vueFrontend**: Vue components, Vuex store, Apollo client
-3. **rspecTester**: RSpec unit/integration tests, FactoryBot
+Based on your tech stack, here's what I'm seeing:
 
-Does this match your needs? Any adjustments?
+**Core Implementation Areas**:
+1. Backend: Rails MVC + GraphQL → Potential core agent: railsBackend
+2. Frontend: Vue.js + Apollo → Potential core agent: vueFrontend
+3. Testing: RSpec + integration → Potential core agent: rspecTester
 
-> User: "Yes, but add graphqlSchemaDesigner as specialist"
+**Specialized Areas**:
+- GraphQL schema: Complex enough and frequent → Warrant specialist
+- Database optimization: Performance-critical → Warrant specialist
 
-Perfect! Let's define specialists:
+Does this match how you think about your codebase? What would you adjust?
 
-**For railsBackend**, should we have specialists for:
-- Database (ActiveRecord models, migrations)
-- GraphQL (schema, resolvers, types)
-- Authentication/Authorization
+> User: "Yes, that's exactly right"
 
-Which would you like as specialists?
+Perfect! Let me explore the delegation strategy:
 
-> User: "GraphQL and database"
+**Core Agent**: railsBackend (Rails + GraphQL)
 
-**Specialists Identified**:
-- graphqlSchemaDesigner (from railsBackend): Schema design, resolver patterns
-- activeRecordOptimizer (from railsBackend): Query optimization, associations
+Looking at your patterns, should this agent delegate to specialists for:
+- GraphQL schema: You mentioned this comes up frequently?
+- Database optimization: You mentioned this is important?
 
-✅ Generating custom team...
+Or should it handle these directly?
+
+> User: "Yes, both should be specialists"
+
+Got it! And for keywords - what terms trigger GraphQL work?
+Examples: "graphql", "schema", "resolver", "query", "mutation"
+
+> User: "Those work, plus 'subscription' and 'type'"
+
+Excellent! Now let me validate the complete structure:
+
+**Team Structure Validated**
+
+**Core Agents** (3):
+- railsBackend: Rails MVC, ActiveRecord, API endpoints, GraphQL coordination
+- vueFrontend: Vue components, Vuex store, Apollo client integration
+- rspecTester: RSpec unit/integration tests, FactoryBot fixtures
+
+**Specialists** (2):
+- graphqlSchemaDesigner: Schema design, resolvers, types (from railsBackend)
+  - Triggers: graphql, schema, resolver, query, mutation, subscription, type
+- activeRecordOptimizer: Query optimization, associations, N+1 prevention (from railsBackend)
+  - Triggers: database, query, performance, optimization, n+1, index
+
+**Routing Strategy**:
+- Keywords ["rails", "mvc", "api", "backend"] → railsBackend
+- Keywords ["vue", "component", "frontend", "ui"] → vueFrontend
+- Keywords ["test", "spec", "rspec"] → rspecTester
+
+Does this structure make sense for your development workflow?
+
+> User: "Perfect!"
+
+✅ Validated! Generating custom team...
 ✅ Creating core agents (3)...
 ✅ Creating specialists (2)...
 ✅ Configuring routing...
@@ -544,13 +613,23 @@ Which would you like as specialists?
 
 ✅ Custom Team Configured!
 
+**Core Agents** (.claude/agents/custom/core/):
+- railsBackend
+- vueFrontend
+- rspecTester
+
+**Specialists** (.claude/agents/custom/specialists/):
+- graphqlSchemaDesigner
+- activeRecordOptimizer
+
 **Next Steps**:
 1. Review agents in `.claude/agents/custom/`
 2. Test with: /cf:code "Add GraphQL query for users"
 3. Refine definitions based on results
+4. Create checkpoint: /cf:checkpoint "Custom team configured"
 
 **Recommended Action**: Test your new team
-Try: /cf:code "Add a simple GraphQL query"
+Try: /cf:code "Add a GraphQL query for user profiles"
 ```
 
 ### Example 5: Overwriting Existing Team
