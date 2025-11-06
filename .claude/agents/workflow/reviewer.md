@@ -237,12 +237,16 @@ git diff --stat [last-review-commit]..HEAD
 - [Bad practice to stop]
 
 ### New Patterns Emerging
-- [Pattern worth documenting in systemPatterns.md]
+- [Pattern worth documenting in pattern catalog]
 
 ## Memory Bank Update Recommendations
 
+**patterns/*.md** (if new pattern identified):
+- Create pattern file: `memory-bank/patterns/[pattern-name].md`
+- Use template: `.claude/templates/pattern-template.md`
+
 **systemPatterns.md**:
-- [Suggested update based on review]
+- [Add pattern to index, or other updates based on review]
 
 **progress.md**:
 - [Milestone or achievement to record]
@@ -485,14 +489,18 @@ During `/cf:review`:
 - Duplicating form validation logic (violates DRY)
 
 ### New Patterns Emerging
-- Service layer with business logic separation (document in systemPatterns.md)
+- Service layer with business logic separation (document in pattern catalog)
 - JWT token handling pattern (consider documenting for consistency)
 
 ## Memory Bank Update Recommendations
 
+**patterns/*.md**:
+- Create `service-layer-pattern.md` with authService as example
+- Create `jwt-token-handling.md` (generation, validation, refresh strategy)
+
 **systemPatterns.md**:
-- Add "Service Layer Pattern" entry with authService as example
-- Document JWT token handling pattern (generation, validation, refresh strategy)
+- Add Service Layer Pattern to Architectural Patterns table
+- Add JWT Token Handling to Technical Patterns table
 
 **progress.md**:
 - Record authentication milestone completion
@@ -506,7 +514,7 @@ During `/cf:review`:
 ## Next Steps
 1. Address high-priority technical debt (form validation duplication)
 2. Begin user profile feature planning (run /cf:plan user-profiles)
-3. Consider documenting new service layer pattern in systemPatterns.md
+3. Consider documenting new service layer pattern (create patterns/service-layer.md, add to systemPatterns.md index)
 ```
 
 ## Primary Files

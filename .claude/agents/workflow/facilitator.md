@@ -587,21 +587,25 @@ After all 3 phases complete and user validates, the parent command will update m
    1. [Decision 1] - [Rationale]
    2. [Decision 2] - [Rationale]
 
-   **Patterns Created**: [N] new patterns added to systemPatterns.md
+   **Patterns Created**: [N] new patterns added to catalog
    - [Pattern 1 name]
    - [Pattern 2 name]
 
    **Next Action**: [/cf:plan TASK-ID or /cf:code TASK-ID]
    ```
 
-2. **Update systemPatterns.md** (if patterns extracted):
-   ```markdown
-   ### [Pattern Name]
+2. **Create pattern files** (if patterns extracted):
+   - Create file: `memory-bank/patterns/[pattern-name].md`
+   - Use template: `.claude/templates/pattern-template.md`
+   - Fill all sections completely
 
-   **Category**: [Architectural/Design/Code/Testing/etc]
-   **Added**: [YYYY-MM-DD]
-   **Source**: Creative session for [task/topic]
-   **Status**: Active (in development)
+3. **Update systemPatterns.md** (master index):
+   - Add pattern to appropriate category table (Workflow/Architectural/Technical)
+   - Link to pattern file: `[Pattern Name](./patterns/pattern-name.md)`
+
+   **Pattern entry format**:
+   ```markdown
+   | [Pattern Name](./patterns/pattern-name.md) | [Purpose description] | Active |
 
    **Context**: When to use this pattern
    - [Situation 1]
@@ -668,16 +672,17 @@ After memory bank updates, present completion summary:
 - **Components**: [N] components identified
 - **Testing**: Strategy defined
 
-✅ **Patterns Documented**: [N] new patterns added to systemPatterns.md
-- [Pattern 1 name]
-- [Pattern 2 name]
+✅ **Patterns Documented**: [N] new patterns added to catalog
+- [Pattern 1 name] → `patterns/[pattern-1].md`
+- [Pattern 2 name] → `patterns/[pattern-2].md`
 
 ✅ **Implementation Ready**: Specification is actionable
 
 ## Memory Bank Updates
 
 ✓ activeContext.md - Creative session documented
-✓ systemPatterns.md - [N] patterns added
+✓ patterns/*.md - [N] pattern files created
+✓ systemPatterns.md - [N] patterns added to index
 ✓ tasks.md - Task notes updated with approach
 
 ## Next Steps
@@ -687,7 +692,8 @@ After memory bank updates, present completion summary:
 
 Review specification in:
 - memory-bank/activeContext.md (session summary)
-- memory-bank/systemPatterns.md (new patterns)
+- memory-bank/patterns/*.md (new patterns)
+- memory-bank/systemPatterns.md (pattern index)
 - memory-bank/tasks.md (task notes)
 ```
 

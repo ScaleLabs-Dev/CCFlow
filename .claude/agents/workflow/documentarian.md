@@ -101,11 +101,16 @@ Read all memory bank files to understand:
 - Update feature status
 - Refine requirements based on learnings
 
-**systemPatterns.md**:
-- Document new patterns that emerged
+**systemPatterns.md** (master index):
+- Add new patterns to catalog tables (link to patterns/*.md files)
 - Update coding conventions if evolved
 - Add ADR entries for architectural decisions
-- Update critical paths if changed
+- Update architecture overview if changed
+
+**patterns/*.md** (pattern catalog):
+- Create new pattern files for patterns that emerged (3+ uses)
+- Use template from `.claude/templates/pattern-template.md`
+- Fill all sections completely (no TODOs)
 
 **activeContext.md**:
 - Update current focus
@@ -276,11 +281,16 @@ When new patterns emerge:
 - `/cf:review` invoked
 - `/cf:checkpoint` invoked
 
-### systemPatterns.md
-- New patterns emerge
-- Architectural decisions made
+### systemPatterns.md (master index)
+- New patterns added to catalog
+- Update category tables with pattern links
+- Architectural decisions documented
 - Coding conventions established
-- ADRs created
+
+### patterns/*.md (pattern files)
+- New pattern files created (when patterns used 3+ times)
+- Pattern template filled completely
+- Cross-references added
 
 ### productContext.md
 - Major features added
