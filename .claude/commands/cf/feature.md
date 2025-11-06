@@ -745,9 +745,10 @@ Add to **Recent Changes**:
 **Next Action**: [/cf:code or /cf:plan command]
 ```
 
-**If no current focus** (first task or higher priority):
-Update "Current Focus" section:
+**Replace "Current Focus" section** (overwrite working memory):
 ```markdown
+## Current Focus
+
 ### Primary Focus: [Task Name]
 
 **Task**: TASK-[ID]
