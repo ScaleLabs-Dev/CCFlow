@@ -192,7 +192,8 @@ Commands interact with memory bank files:
 |------|---------|------------|---------|
 | `projectbrief.md` | All | init | Immutable project scope |
 | `productContext.md` | plan, feature | plan, checkpoint | Features and requirements |
-| `systemPatterns.md` | code, review | code, checkpoint | Architecture decisions |
+| `systemPatterns.md` | code, review | code, checkpoint | Pattern catalog index |
+| `patterns/*.md` | code, review | code, checkpoint | Pattern documentation |
 | `activeContext.md` | context, code | checkpoint | Current work focus |
 | `progress.md` | status, context | checkpoint, review | Completed milestones |
 | `tasks.md` | status, feature | feature, plan | Task tracking |

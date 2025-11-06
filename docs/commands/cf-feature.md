@@ -140,7 +140,7 @@ Routing: Recommend /cf:plan for breakdown
 **Purpose**: Identify hidden technical complexity before requirements gathering
 
 **Analysis Scope** (rapid, not comprehensive):
-1. **Integration Concerns**: Which components are affected? (reads systemPatterns.md)
+1. **Integration Concerns**: Which components are affected? (reads systemPatterns.md and patterns/*.md)
 2. **Data Modeling Needs**: Entities, relationships, schema changes required
 3. **Algorithmic Complexity**: Computational concerns, performance implications
 4. **Technical Constraints**: Platform limits, security requirements, dependencies
@@ -362,7 +362,7 @@ Routing: Recommend /cf:plan for breakdown
 Integration Concerns:
   - Affected: Auth, User Profile, File Storage
   - Integration: Auth middleware, S3 service, User model
-  - Pattern: "Secure File Upload Pattern" (systemPatterns.md:450)
+  - Pattern: "Secure File Upload Pattern" (see patterns/secure-file-upload.md)
 
 Data Modeling:
   - New Entity: UserAvatar (id, user_id, s3_key, uploaded_at)
@@ -697,7 +697,7 @@ Step 6: Memory bank updates (command)
 
 ### Conditional Synthesis Pattern
 
-**Pattern Reference**: systemPatterns.md:719-938 (Conditional Multi-Agent Orchestration)
+**Pattern Reference**: [Conditional Multi-Agent Orchestration](../../memory-bank/patterns/conditional-multi-agent-orchestration.md)
 
 **Key Principles**:
 - **Domain Separation**: Agents stay within their expertise (Architect = technical, Product = user)
