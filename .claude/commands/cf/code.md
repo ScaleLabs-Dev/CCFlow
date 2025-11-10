@@ -359,6 +359,17 @@ go test ./...              # Go
 
 If tests are NOT passing, **SKIP this step** and return to Step 5.
 
+**Clear Completed Work from activeContext**:
+
+Edit activeContext.md:
+- Replace "## Current Focus" section with:
+  ```markdown
+  ## Current Focus
+
+  (No active work - start new feature with /cf:feature)
+  ```
+- Trim "## Recent Changes" to last 5 entries (keep most recent 5 `### YYYY-MM-DD` sections, remove older entries)
+
 **Update tasks.md**:
 
 ```markdown

@@ -101,8 +101,8 @@ If git is available, show:
 
 **Read ALL memory bank files**:
 
-1. **projectbrief.md**: Scope, objectives, constraints
-2. **productContext.md**: Features, requirements, user context
+1. **projectbrief.md**: Immutable scope, objectives, constraints (NEVER roadmap)
+2. **productContext.md**: Features & Priorities (roadmap), Feature Details, user requirements
 3. **systemPatterns.md**: Architecture, patterns, conventions
 4. **activeContext.md**: Current state (same as default mode)
 5. **progress.md**: Completed work, milestones, technical debt
@@ -360,8 +360,8 @@ Recommended next action: [Specific command or work to start]
 **Context Fully Loaded** ✓
 
 **Files Read**:
-✓ projectbrief.md
-✓ productContext.md
+✓ projectbrief.md (immutable scope only)
+✓ productContext.md (roadmap + requirements)
 ✓ systemPatterns.md
 ✓ activeContext.md
 ✓ progress.md
@@ -697,8 +697,8 @@ to consumers with integrated payment processing and order management.
 **Context Fully Loaded** ✓
 
 **Files Read**:
-✓ projectbrief.md
-✓ productContext.md
+✓ projectbrief.md (immutable scope only)
+✓ productContext.md (roadmap + requirements)
 ✓ systemPatterns.md
 ✓ activeContext.md
 ✓ progress.md

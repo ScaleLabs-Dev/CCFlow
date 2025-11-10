@@ -8,31 +8,44 @@
 
 ## Changes by Memory Bank File
 
-### projectbrief.md
+### projectbrief.md (Immutable - Minimal Updates)
 
 **Status**: [No changes / Updated]
 
+**⚠️ REMINDER**: Only Decision Log updates allowed. NEVER modify Features & Priorities or Success Metrics.
+
 **Changes Made**:
-- [Change 1 description]
-- [Change 2 description]
+- Decision Log: [Decision added to append-only log]
+- [Scope change ONLY if project-redefining - extremely rare]
 
-**Rationale**: [Why these changes were needed]
+**Rationale**: [Why this decision was significant enough to log]
 
-**Impact**: [How this affects project scope or priorities]
+**Impact**: [How this decision affects project direction]
 
 ---
 
-### productContext.md
+### productContext.md (Living Roadmap - Primary Updates)
 
 **Status**: [No changes / Updated]
 
-**Changes Made**:
-- [Change 1 description]
-- [Change 2 description]
+**Features & Priorities Table** (Roadmap):
+- [Feature status updated: Status → Complete]
+- [New feature added: Feature Name (P1, Level 2, Planned)]
+- [Priority changed: Feature X (P2 → P1)]
 
-**Rationale**: [Why these changes were needed]
+**Success Metrics**:
+- [Metric updated: Feature completion 40% → 55%]
+- [Goal achieved: [Metric description]]
 
-**Impact**: [How this affects features or user experience]
+**Feature Details**:
+- [Feature specification added by /cf:feature]
+
+**Other Changes**:
+- [UX requirements, user flows, NFRs]
+
+**Rationale**: [Why these roadmap/feature changes were needed]
+
+**Impact**: [How this affects product direction and priorities]
 
 ---
 

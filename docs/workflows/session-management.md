@@ -62,9 +62,10 @@ Load active project context:
 ```
 
 **What it loads**:
-- Current active task
-- Recent progress
-- Pending work
+- Current active task (from activeContext.md)
+- Recent progress (from progress.md)
+- Pending work (from tasks.md)
+- Features and roadmap (from productContext.md)
 - Next recommended actions
 
 **Example Output**:
@@ -111,10 +112,13 @@ Shows task list without loading full project context (faster).
 ```
 
 **What it does**:
+- Updates productContext.md with roadmap changes (Features & Priorities table)
 - Updates progress.md with completion status
 - Updates activeContext.md with current focus
 - Validates memory bank consistency
 - Creates restore point
+
+**Note**: Checkpoint updates the **living roadmap** in productContext.md, NOT projectbrief.md (which is immutable scope only).
 
 **When to checkpoint**:
 - ✅ After completing a task
@@ -130,6 +134,7 @@ User: /cf:checkpoint
 Claude:
 Creating checkpoint...
 
+✓ Updated productContext.md (roadmap status: TASK-032 in progress)
 ✓ Updated progress.md (65% complete)
 ✓ Updated activeContext.md (TASK-032: webhook #3 complete)
 ✓ Validated memory bank consistency
@@ -331,8 +336,8 @@ cd /path/to/projectB
 📊 MEMORY BANK STATUS
 
 **Files**:
-✓ projectbrief.md (immutable)
-✓ productContext.md (updated 2 days ago)
+✓ projectbrief.md (immutable scope - never contains roadmap)
+✓ productContext.md (living roadmap - updated 2 days ago)
 ✓ systemPatterns.md (updated 1 week ago)
 ✓ activeContext.md (updated 5 min ago)
 ✓ progress.md (updated 5 min ago)
@@ -350,6 +355,100 @@ cd /path/to/projectB
 - Update context: /cf:context
 - Create checkpoint: /cf:checkpoint
 ```
+
+---
+
+## Working Memory Pattern
+
+### activeContext.md as Working Memory
+
+**Philosophy**: activeContext.md is **working memory**, not a history log. It tracks ONLY what's actively being worked on right now.
+
+**Key Principles**:
+- **Current Focus**: Contains ONE active task/feature at a time
+- **Recent Changes**: Last 5 entries maximum (chronological)
+- **Automatic Cleanup**: Commands manage lifecycle automatically
+- **Historical Record**: progress.md is the permanent archive
+
+---
+
+### Automatic Lifecycle Management
+
+**Commands automatically manage activeContext.md**:
+
+#### `/cf:feature` - Overwrites Current Focus
+```markdown
+## Current Focus
+
+### Primary Focus: [New Task Name]
+
+**Task**: TASK-[ID]
+**Started**: [YYYY-MM-DD]
+...
+```
+
+When you run `/cf:feature`, it:
+1. **Replaces** entire "Current Focus" section with new task
+2. **Adds** entry to "Recent Changes" (task created)
+3. Previous work is cleared (assumed complete or abandoned)
+
+---
+
+#### `/cf:code` - Clears on Completion
+When task completes (tests pass), `/cf:code`:
+1. **Clears** "Current Focus" → "(No active work - start new feature with /cf:feature)"
+2. **Trims** "Recent Changes" to last 5 entries
+3. **Updates** tasks.md with completion status
+
+**Result**: Clean workspace ready for next task
+
+---
+
+#### `/cf:checkpoint` - Archives to progress.md
+For explicit historical record:
+```bash
+/cf:checkpoint --message "Milestone: Auth system complete"
+```
+
+Creates entry in progress.md with:
+- Current work snapshot
+- Timestamp and context
+- Permanent historical record
+
+---
+
+### Target Size: 200-300 Lines
+
+**activeContext.md should stay compact**:
+- Current Focus: ~30-50 lines
+- Recent Changes: ~100-150 lines (5 entries × ~20-30 lines)
+- Rest: metadata and sections
+
+**If growing beyond 300 lines**:
+- Commands automatically trim Recent Changes
+- Manual review if over 400 lines
+- Check for missing cleanup logic
+
+---
+
+### User Workflow
+
+**Standard Flow**:
+```bash
+# Start new feature
+/cf:feature "Add payment processing"
+# → Current Focus replaced with payment processing
+
+# Work on task
+/cf:code TASK-NNN
+# → Tests pass, Current Focus cleared
+
+# Start next feature
+/cf:feature "Add email notifications"
+# → Current Focus replaced with notifications
+```
+
+**No Manual Cleanup Required**: Commands handle it automatically
 
 ---
 

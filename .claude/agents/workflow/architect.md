@@ -75,18 +75,29 @@ Break down into logical steps:
 4. Testing strategy
 5. Documentation needs
 
-### Step 6: Update systemPatterns.md
-If new patterns emerge:
-```markdown
-## Active Patterns
+### Step 6: Document New Patterns
 
-### [Pattern Name]
-- **Context**: When/where this pattern applies
-- **Solution**: How the pattern works
-- **Example**: Code reference or snippet
-- **Trade-offs**: What you gain/lose
-- **Related**: Similar patterns or alternatives
-```
+If new patterns emerge during planning:
+
+**Pattern Catalog Workflow**:
+1. **Create pattern file**: `memory-bank/patterns/[pattern-name].md`
+   - Copy template from `.claude/templates/pattern-template.md`
+   - Fill all sections (Context, Problem, Solution, Benefits, Trade-offs, etc.)
+2. **Update master index**: Add entry to `memory-bank/systemPatterns.md`
+   - Add to appropriate category table (Workflow/Architectural/Technical)
+   - Include pattern name, purpose, and status
+
+**Pattern Template Sections**:
+- Context: When/where this applies
+- Problem: What it solves
+- Solution: How the pattern works (with examples)
+- Benefits: What you gain
+- Trade-offs: What you give up
+- Examples in Codebase: File references
+- Reusability: 3+ scenarios
+- Related Patterns: Cross-references
+
+**See**: `memory-bank/patterns/README.md` for pattern addition workflow
 
 ## Output Format
 
@@ -320,7 +331,7 @@ During `/cf:plan`, you work alongside the Product agent:
 ### Patterns to Follow
 - Middleware pattern for auth validation (existing pattern in codebase)
 - React Context for global state (existing pattern)
-- Service layer for business logic (new pattern - document in systemPatterns.md)
+- Service layer for business logic (new pattern - create patterns/service-layer.md, add to systemPatterns.md index)
 
 ### Documentation Needs
 - API endpoint documentation for /login, /register

@@ -227,7 +227,7 @@ Pattern Extracted: "Real-Time Collaboration Pattern"
 
 ✅ CREATIVE SESSION COMPLETE
 Duration: 23 minutes
-Patterns: 1 added to systemPatterns.md
+Patterns: 1 added to pattern catalog
 Next: /cf:plan TASK-005
 ```
 
@@ -296,17 +296,15 @@ Next: Create task via /cf:feature, then /cf:plan for implementation
 **Next Action**: /cf:plan TASK-ID or /cf:code TASK-ID
 ```
 
-**systemPatterns.md** (if patterns extracted):
-```markdown
-### [Pattern Name]
-**Category**: [Type]
-**Added**: [Date]
-**Source**: Creative session for [task]
-**Context**: When to use...
-**Problem**: What it solves...
-**Solution**: How it works...
-**Reusability**: 3+ scenarios identified
-```
+**Pattern Catalog** (if patterns extracted):
+
+1. **Create pattern file**: `memory-bank/patterns/[pattern-name].md`
+   - Copy template from `.claude/templates/pattern-template.md`
+   - Fill all sections (Context, Problem, Solution, Benefits, Trade-offs, etc.)
+
+2. **Update master index**: `memory-bank/systemPatterns.md`
+   - Add to appropriate category table (Workflow/Architectural/Technical)
+   - Link: `[Pattern Name](./patterns/pattern-name.md) | Purpose | Active`
 
 **tasks.md** (if task exists):
 ```markdown
@@ -465,7 +463,7 @@ Continue with creative session anyway? [yes/no]
 
 ### Pattern Quality
 
-**Good patterns** (extracted to systemPatterns.md):
+**Good patterns** (extracted to pattern catalog):
 - Reusable in 3+ scenarios
 - Clear context and problem statement
 - Concrete solution with benefits and trade-offs
@@ -474,7 +472,7 @@ Continue with creative session anyway? [yes/no]
 **Skip extraction** when:
 - Pattern is too project-specific
 - Only 1-2 potential use cases
-- Already exists in systemPatterns.md
+- Already exists in pattern catalog
 - Too abstract to be actionable
 
 ---
