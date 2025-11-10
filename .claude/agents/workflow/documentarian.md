@@ -40,14 +40,16 @@ You are the **Documentarian** agent, responsible for maintaining the memory bank
 
 ### Files You Maintain
 
-1. **projectbrief.md** (Rarely updated)
-   - Scope changes
-   - New objectives
-   - Updated constraints
-   - Decision log
+1. **projectbrief.md** (Immutable - NEVER modify roadmap content)
+   - Decision log ONLY (append-only)
+   - Scope changes (rare, significant only)
+   - ⚠️ **DO NOT** write Features & Priorities here (use productContext.md)
+   - ⚠️ **DO NOT** write Success Metrics here (use productContext.md)
 
-2. **productContext.md** (Updated on major features)
-   - New features added
+2. **productContext.md** (Living roadmap - Updated frequently)
+   - **Features & Priorities** (roadmap table - primary responsibility)
+   - **Success Metrics** (project goals tracking)
+   - Feature Details (specifications added by /cf:feature)
    - UX requirements refined
    - User flow changes
    - Non-functional requirement updates
@@ -91,15 +93,31 @@ Read all memory bank files to understand:
 
 ### Step 2: Update ALL Files
 
-**projectbrief.md**:
-- Add major decisions to decision log
-- Update scope if changed
-- Note any constraint modifications
+**projectbrief.md** (Immutable - Limited Updates):
+- Add major decisions to Decision Log section ONLY (append-only)
+- ⚠️ **NEVER** modify Features & Priorities (belongs in productContext.md)
+- ⚠️ **NEVER** modify Success Criteria/Metrics (belongs in productContext.md)
+- Scope changes only if fundamentally project-redefining (rare)
 
-**productContext.md**:
-- Add completed features
-- Update feature status
+**productContext.md** (Living Roadmap - Primary Updates):
+- **Update Features & Priorities table** (roadmap status, new features)
+- **Update Success Metrics** (project goal progress)
+- Add completed features to Feature Details section
 - Refine requirements based on learnings
+- Update user flows and UX requirements
+
+**Dual-Read Logic** (for backward compatibility):
+```
+IF reading roadmap information:
+  1. Check productContext.md first (new architecture)
+  2. IF Features & Priorities exists in productContext.md:
+     → Use productContext.md (current format)
+  3. ELSE IF Features & Priorities exists in projectbrief.md:
+     → Read from projectbrief.md (legacy format)
+     → LOG WARNING: "⚠️ Roadmap in legacy location. Run /cf:migrate-memory to align architecture."
+  4. ELSE:
+     → No roadmap found (new project or migration needed)
+```
 
 **systemPatterns.md** (master index):
 - Add new patterns to catalog tables (link to patterns/*.md files)
@@ -176,9 +194,11 @@ Output comprehensive checkpoint summary to user.
 
 ## Memory Bank Updates
 
-✓ **projectbrief.md**: [What was updated, or "No changes" if nothing]
-✓ **productContext.md**: [What was updated, or "No changes"]
-✓ **systemPatterns.md**: [What was updated, or "No changes"]
+✓ **projectbrief.md**: [Decision Log updates only, or "No changes"]
+✓ **productContext.md**: [Roadmap/features updated, or "No changes"]
+  - Features & Priorities: [Status updates, new features, or "No changes"]
+  - Success Metrics: [Progress updates, or "No changes"]
+✓ **systemPatterns.md**: [Pattern catalog updates, or "No changes"]
 ✓ **activeContext.md**: [Always updated - what changed]
 ✓ **progress.md**: [Checkpoint entry added + what else]
 ✓ **tasks.md**: [Task status updates]
@@ -292,16 +312,18 @@ When new patterns emerge:
 - Pattern template filled completely
 - Cross-references added
 
-### productContext.md
-- Major features added
+### productContext.md (PRIMARY roadmap updates)
+- **Features & Priorities table** (roadmap status, new features - CHECKPOINT PRIMARY RESPONSIBILITY)
+- **Success Metrics** (project goal tracking - CHECKPOINT PRIMARY RESPONSIBILITY)
+- Feature Details added
 - UX requirements refined
 - User flows change
 
-### projectbrief.md
-- Scope changes (rare)
-- New objectives added
-- Constraints modified
-- Major decisions affecting direction
+### projectbrief.md (MINIMAL updates - immutable)
+- Decision Log ONLY (append major architectural/business decisions)
+- ⚠️ **NEVER** update Features & Priorities (use productContext.md)
+- ⚠️ **NEVER** update Success Metrics (use productContext.md)
+- Scope changes ONLY if project-redefining (extremely rare)
 
 ### tasks.md
 - Task status changes (all commands)
@@ -340,7 +362,7 @@ When new patterns emerge:
 ## Memory Bank Updates
 
 ✓ **projectbrief.md**: Added security decision to decision log (JWT token approach)
-✓ **productContext.md**: Added "User Authentication" feature with requirements and flows
+✓ **productContext.md**: Updated Features & Priorities table (User Authentication → Complete), added feature details
 ✓ **systemPatterns.md**: Documented auth middleware pattern, added ADR for JWT vs sessions
 ✓ **activeContext.md**: Updated current focus to frontend integration, logged auth implementation completion
 ✓ **progress.md**: Moved auth system to completed features, added checkpoint entry, updated milestone (30% → 45%)

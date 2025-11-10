@@ -134,7 +134,8 @@ Run: /cf:init
 - `tasks.md` - To generate next task ID and understand existing work
 - `activeContext.md` - Current project state and focus
 - `systemPatterns.md` - Technical patterns (if exists)
-- `productContext.md` - Product features and requirements (if exists)
+- `productContext.md` - Features & Priorities (roadmap), Feature Details, requirements (if exists)
+- `projectbrief.md` - Immutable scope, objectives (NEVER roadmap)
 - `CLAUDE.md` - Tech stack reference (if exists)
 
 **Extract context**:

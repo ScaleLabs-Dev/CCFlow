@@ -86,8 +86,8 @@ Proceed directly with: /cf:code [task-id]
 Read memory-bank/tasks.md
 Read memory-bank/activeContext.md
 Read memory-bank/systemPatterns.md
-Read memory-bank/productContext.md
-Read memory-bank/projectbrief.md
+Read memory-bank/productContext.md (Features & Priorities, Feature Details, requirements)
+Read memory-bank/projectbrief.md (immutable scope, objectives, constraints only)
 Read CLAUDE.md
 ```
 

@@ -208,12 +208,14 @@ CCFlow agents follow a **two-tier architecture** separating framework-level agen
 
 ### 5. Memory Bank Structure
 Six files maintain persistent context:
-- `projectbrief.md` - Project scope (immutable)
-- `productContext.md` - Features and user needs
+- `projectbrief.md` - Immutable scope (objectives, constraints, Decision Log only)
+- `productContext.md` - Living roadmap (Features & Priorities, Feature Details, requirements)
 - `systemPatterns.md` - Architecture decisions
 - `activeContext.md` - Current work focus
 - `progress.md` - Completed milestones
 - `tasks.md` - Task tracking
+
+**Architecture** (TASK-154): productContext.md contains the roadmap, NOT projectbrief.md
 
 ---
 
@@ -224,8 +226,8 @@ Persistent context maintained across sessions:
 ```mermaid
 graph TD
     MB[memory-bank/]
-    MB --> PB[projectbrief.md<br/>Project scope - immutable]
-    MB --> PC[productContext.md<br/>Features and user needs]
+    MB --> PB[projectbrief.md<br/>Immutable scope - NEVER roadmap]
+    MB --> PC[productContext.md<br/>Living roadmap + requirements]
     MB --> SP[systemPatterns.md<br/>Architecture decisions]
     MB --> AC[activeContext.md<br/>Current work focus]
     MB --> PR[progress.md<br/>Completed milestones]
@@ -240,7 +242,17 @@ graph TD
     style TK fill:#fce4ec
 ```
 
+**File Responsibilities**:
+- projectbrief.md = "What we're building" (immutable scope, never changes)
+- productContext.md = "Features + roadmap" (living, updated by commands)
+
+**Pattern Catalog** (v2.0 - TASK-005):
+- `patterns/` - Individual pattern files (9 active patterns)
+- `systemPatterns.md` - Master index with categorized navigation
+
 **Update Strategy**: Commands auto-update during execution, `/cf:checkpoint` creates formal savepoints, Documentarian ensures cross-file consistency
+
+**See**: `docs/workflows/pattern-management.md` for pattern addition workflow
 
 ---
 

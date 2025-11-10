@@ -62,9 +62,10 @@ Load active project context:
 ```
 
 **What it loads**:
-- Current active task
-- Recent progress
-- Pending work
+- Current active task (from activeContext.md)
+- Recent progress (from progress.md)
+- Pending work (from tasks.md)
+- Features and roadmap (from productContext.md)
 - Next recommended actions
 
 **Example Output**:
@@ -111,10 +112,13 @@ Shows task list without loading full project context (faster).
 ```
 
 **What it does**:
+- Updates productContext.md with roadmap changes (Features & Priorities table)
 - Updates progress.md with completion status
 - Updates activeContext.md with current focus
 - Validates memory bank consistency
 - Creates restore point
+
+**Note**: Checkpoint updates the **living roadmap** in productContext.md, NOT projectbrief.md (which is immutable scope only).
 
 **When to checkpoint**:
 - ✅ After completing a task
@@ -130,6 +134,7 @@ User: /cf:checkpoint
 Claude:
 Creating checkpoint...
 
+✓ Updated productContext.md (roadmap status: TASK-032 in progress)
 ✓ Updated progress.md (65% complete)
 ✓ Updated activeContext.md (TASK-032: webhook #3 complete)
 ✓ Validated memory bank consistency
@@ -331,8 +336,8 @@ cd /path/to/projectB
 📊 MEMORY BANK STATUS
 
 **Files**:
-✓ projectbrief.md (immutable)
-✓ productContext.md (updated 2 days ago)
+✓ projectbrief.md (immutable scope - never contains roadmap)
+✓ productContext.md (living roadmap - updated 2 days ago)
 ✓ systemPatterns.md (updated 1 week ago)
 ✓ activeContext.md (updated 5 min ago)
 ✓ progress.md (updated 5 min ago)
