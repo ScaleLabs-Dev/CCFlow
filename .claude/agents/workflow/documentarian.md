@@ -74,11 +74,12 @@ You are the **Documentarian** agent, responsible for maintaining the memory bank
    - Decision history
    - Milestone progress
 
-6. **tasks.md** (Updated by all commands)
-   - Task status changes
-   - Subtask completion
-   - Blocker documentation
-   - Archive completed tasks
+6. **tasks.md** (Milestone-Centric - Ephemeral)
+   - **Current milestone subtasks ONLY** (empty when no active work)
+   - Subtask completion checkboxes [x]
+   - Progress counters for parent tasks
+   - **Lifecycle**: empty → populate (via /cf:plan) → empty (via /cf:checkpoint)
+   - **Summary written to progress.md** before clearing
 
 ## Checkpoint Process
 
@@ -144,11 +145,11 @@ IF reading roadmap information:
 - Record checkpoint in decision history
 - Update milestone progress
 
-**tasks.md**:
-- Update task statuses
-- Mark completed tasks
-- Archive finished tasks
-- Update subtask completion
+**tasks.md** (Milestone-Centric Architecture):
+- Update subtask checkboxes to [x] when complete
+- Update progress counters (e.g., "9/11 complete (82%)")
+- **When milestone complete**: Generate summary (see Milestone Summary Generation)
+- **Clear to empty structure** after summary written to progress.md
 
 ### Step 3: Create Checkpoint Entry
 
@@ -178,6 +179,77 @@ Add to progress.md:
 ### Step 4: Provide Summary
 
 Output comprehensive checkpoint summary to user.
+
+## Milestone Summary Generation
+
+### When Milestones Complete
+
+During `/cf:checkpoint`, if ALL subtasks of an Active milestone are complete (all checkboxes [x]):
+
+**Detection** (from checkpoint.md Step 2.5):
+```
+1. Find feature with Status = "Active" in productContext.md
+2. Find Active feature's parent task in tasks.md
+3. Check ALL subtasks completion status
+   IF all checkboxes [x]: EXECUTE milestone summary
+```
+
+**Generate Milestone Summary**:
+
+Extract from tasks.md parent task:
+- **Task ID and Name**: e.g., TASK-156: Milestone-Centric Task Management
+- **Completion Date**: Date when all subtasks marked [x]
+- **Outcome**: One-sentence summary of what was accomplished
+- **Key Changes**: Bullet list of primary changes (3-5 items)
+- **Patterns**: Link to systemPatterns.md if architectural pattern emerged
+- **Sub-tasks**: Count and time (e.g., "11 sub-tasks, 4h actual vs 4.5h estimate")
+
+**Format for progress.md**:
+```markdown
+### ✅ TASK-XXX: [Feature Name] - YYYY-MM-DD
+
+**Outcome**: [One-sentence summary of accomplishment]
+
+**Key Changes**:
+- [Primary change 1]
+- [Primary change 2]
+- [Primary change 3]
+
+**Patterns**: [Link to systemPatterns.md pattern if applicable, or "None"]
+
+**Sub-tasks**: [N sub-tasks complete (Xh Ymin actual vs Zh estimate)]
+```
+
+**Example**:
+```markdown
+### ✅ TASK-156: Milestone-Centric Task Management Architecture - 2025-11-11
+
+**Outcome**: Implemented milestone-centric task management where tasks.md contains ONLY current feature subtasks with empty → populate → summarize → empty lifecycle.
+
+**Key Changes**:
+- Added Status column to productContext.md Features & Priorities (Planned/Active/Complete tracking)
+- Migrated 2,622 lines from tasks.md to progress.md (zero data loss)
+- Updated 4 commands (/cf:feature, /cf:plan, /cf:code, /cf:checkpoint) for milestone lifecycle enforcement
+- Atomic 5-step milestone completion operation in checkpoint command
+
+**Patterns**: See Milestone-Centric Task Management Pattern (systemPatterns.md)
+
+**Sub-tasks**: 11 sub-tasks complete (4h 30min actual vs 4h estimate)
+```
+
+**Integration with Checkpoint Atomic Operation**:
+
+This summary generation is STEP 1 of the 5-step atomic operation in checkpoint.md. You (Documentarian) are responsible for:
+- Extracting task information from tasks.md
+- Formatting milestone summary
+- Writing to progress.md (append-only)
+
+The checkpoint command coordinates the full atomic operation:
+1. **Call Documentarian**: Generate and write milestone summary to progress.md
+2. Clear tasks.md to empty structure
+3. Update productContext.md Status to "Complete"
+4. Update activeContext.md
+5. Verify success
 
 ## Output Format
 
@@ -325,10 +397,11 @@ When new patterns emerge:
 - ⚠️ **NEVER** update Success Metrics (use productContext.md)
 - Scope changes ONLY if project-redefining (extremely rare)
 
-### tasks.md
-- Task status changes (all commands)
-- Subtasks completed
-- Blockers identified
+### tasks.md (Milestone-Centric - Ephemeral)
+- Subtask checkbox updates (all commands)
+- Progress counter updates
+- **Milestone completion**: Generate summary for progress.md
+- **Lifecycle**: Cleared to empty after checkpoint if all [x]
 
 ## Best Practices
 
@@ -401,5 +474,5 @@ When engaged with Facilitator:
 
 ---
 
-**Version**: 1.0
-**Last Updated**: 2025-10-05
+**Version**: 1.1 (Milestone-Centric Task Management)
+**Last Updated**: 2025-11-11

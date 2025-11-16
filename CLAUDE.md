@@ -298,9 +298,40 @@ graph LR
 - Commands and agents reference templates using Read tool
 - Templates use markdown format with placeholder sections
 
+**Documentation vs Specification Separation**:
+
+Commands and agents are **executable specifications** loaded on every invocation (hot-path). Documentation belongs in `docs/` to avoid token waste and bloat.
+
+**Command files** (.claude/commands/):
+- **Contains**: Step-by-step orchestration logic, validation rules, error handling
+- **Size**: Target <500 lines, Maximum 1000 lines
+- **Structure**: Usage, Purpose, Prerequisites, Process, Examples (minimal), Error Handling, Memory Bank Updates
+- **Excludes**: Pattern explanations, implementation rationale, extensive examples, historical notes
+
+**Agent files** (.claude/agents/):
+- **Contains**: Role, Context, Process, Tools, Output Format, Delegation rules
+- **Size**: Target <300 lines, Maximum 500 lines
+- **Excludes**: Extended examples, pattern background, educational content
+
+**Documentation files** (docs/):
+- **Contains**: Detailed examples, pattern explanations, use cases, troubleshooting, rationale
+- **Location**: docs/commands/, docs/agents/, docs/workflows/, docs/architecture/
+- **When**: Any content exceeding command/agent size targets
+
+**Pattern files** (memory-bank/patterns/):
+- **Contains**: Context, Problem, Solution, Benefits, Trade-offs, Examples in Codebase
+- **Usage**: Cross-referenced from commands/agents, not embedded
+
+**Enforcement**:
+- Check line count when updating commands/agents
+- If exceeding target: Extract documentation to docs/, leave execution logic only
+- Orchestration Notes: Maximum 50 lines (brief cross-references to docs/ and patterns/)
+
 **Rules**:
+- **Never**: Embed pattern explanations or extensive notes in command/agent files
 - **Never**: Create README files scattered throughout `.claude/` structure
 - **Always**: Centralize documentation in `docs/` with clear organization
+- **Always**: Cross-reference docs/ and patterns/ instead of duplicating content
 - **Diagramming**: Use Mermaid for all diagrams
 
 ---

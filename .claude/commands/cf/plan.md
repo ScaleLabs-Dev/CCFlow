@@ -54,6 +54,48 @@ If NOT EXISTS:
 ⚠️ Memory bank not initialized. Run: /cf:init
 ```
 
+**Check Active Milestone (Milestone-Centric Architecture)**:
+
+**Read productContext.md** Features & Priorities table for Status column:
+
+```
+Find feature with Status = "Active"
+
+IF no Active feature found:
+  ⚠️ NO ACTIVE MILESTONE
+
+  No feature is currently marked as Active in productContext.md.
+
+  **Milestone-Centric Architecture**: You must start a feature first.
+
+  Create new feature: /cf:feature [description]
+
+  STOP execution
+
+ELSE:
+  active_feature = [Feature name with Status = "Active"]
+  active_task_pattern = Extract TASK-XXX from Notes column (if present)
+  requested_task = [task-id parameter]
+
+  IF requested_task does NOT match active_task_pattern:
+    ⚠️ TASK MISMATCH WITH ACTIVE MILESTONE
+
+    Active Milestone: [active_feature] ([active_task_pattern or "task not created yet"])
+    Requested Task: [requested_task]
+
+    **Milestone-Centric Architecture**: Can only plan the Active milestone.
+
+    **Options**:
+    1. Plan the Active milestone: /cf:plan [active_task_pattern]
+    2. Complete current milestone first: /cf:checkpoint
+    3. Manually update productContext.md if task ID mismatch is intentional
+
+    STOP execution
+
+  ELSE:
+    PROCEED (requested task matches active milestone)
+```
+
 **Check task exists in tasks.md**:
 ```
 If NOT FOUND:
@@ -601,6 +643,7 @@ Facilitator: [Follow-up based on response...]
 ## Orchestration Notes
 
 **Pattern Compliance**:
+- ✅ **Milestone Validation**: Command validates requested task matches Active milestone in productContext.md
 - ✅ **Parallel Agent Invocation**: Architect + Product invoked simultaneously
 - ✅ **Facilitator as Question Broker**: Facilitator only generates questions, never synthesizes
 - ✅ **Template-Driven Synthesis**: Command uses structured template format for consistency
@@ -608,11 +651,12 @@ Facilitator: [Follow-up based on response...]
 - ✅ **Read-Only Agents**: Workflow agents only Read/Grep/Glob, no Write/Edit
 
 **Command Responsibilities**:
+- Milestone validation (verify task matches Active feature in productContext.md)
 - Context loading from memory bank
 - Parallel agent invocation (architect + product)
 - Conditional facilitator engagement (interactive mode)
-- Synthesis of agent outputs into integrated plan
-- Memory bank updates with synthesized results
+- Synthesis of agent outputs
+- Memory bank updates (current milestone only)
 
 **Agent Responsibilities**:
 - **Architect**: Technical analysis only, no synthesis
@@ -631,6 +675,5 @@ Facilitator: [Follow-up based on response...]
 
 ---
 
-**Command Version**: 2.0 (Orchestration Pattern)
-**Last Updated**: 2025-10-29
-**Pattern**: Command Orchestration Pattern (systemPatterns.md:409-582)
+**Command Version**: 2.1 (Milestone-Centric)
+**Last Updated**: 2025-11-11 (TASK-156-8)

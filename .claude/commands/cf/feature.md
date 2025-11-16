@@ -49,6 +49,17 @@ Entry point for new work that:
 1. Verify Prerequisites
    └─> Check memory-bank/ exists → STOP if missing
 
+1.5. Check Active Milestone (Milestone-Centric Architecture)
+   └─> Read productContext.md Features & Priorities table
+   └─> Check Status column for existing "Active" feature
+   ┌─ IF Active feature exists:
+   │  └─> WARN user: Only one milestone can be Active
+   │  └─> Options: (1) Complete current via /cf:checkpoint (2) Defer current
+   │  └─> STOP execution
+   │
+   └─ ELSE (no Active feature):
+      └─> PROCEED to create new feature
+
 2. Load Context
    └─> Read memory bank files (tasks.md, activeContext.md, systemPatterns.md, etc.)
    └─> Extract: task ID, patterns, tech stack
@@ -97,6 +108,7 @@ Entry point for new work that:
       └─> Leave Technical Pre-Analysis section empty (add note: "Level 1 - no pre-analysis needed")
 
 9. Update Memory Bank
+   └─> Update productContext.md (mark feature Status = "Active")
    └─> Append to tasks.md
    └─> Update activeContext.md
 
@@ -105,9 +117,11 @@ Entry point for new work that:
 ```
 
 **Key Conditional Points**:
+- **Step 1.5**: Active milestone check - STOP if existing Active feature (single milestone rule)
 - **Step 4**: Architect invoked ONLY if `complexity_level >= 2`
 - **Step 5**: Product receives Architect context ONLY if Level 2+
 - **Step 8**: Template Technical Pre-Analysis populated ONLY if Level 2+
+- **Step 9**: productContext.md Status updated to "Active" for new feature
 
 ---
 
@@ -123,6 +137,58 @@ Run: /cf:init
 ```
 
 **Stop execution.**
+
+---
+
+### Step 1.5: Check Active Milestone (Milestone-Centric Architecture)
+
+**Query productContext.md for existing Active milestone**:
+
+**Read productContext.md** and check Features & Priorities table for Status column:
+
+```markdown
+| Feature | Priority | Complexity | Status | Notes |
+|---------|----------|------------|--------|-------|
+| Example Feature A | P1 | Level 2 | Complete | ... |
+| Example Feature B | P0 | Level 3 | Active | ... |   ← EXISTING ACTIVE
+| Example Feature C | P1 | Level 2 | Planned | ... |
+```
+
+**Single Active Milestone Rule**: Only ONE feature can have Status = "Active" at a time.
+
+**Validation Logic**:
+
+```
+IF any feature has Status = "Active":
+  active_feature = [Feature name]
+  active_task_id = [Extract TASK-XXX from Notes column if present]
+
+  WARN user:
+  ⚠️ ACTIVE MILESTONE EXISTS
+
+  Feature "[active_feature]" is currently Active.
+
+  **Milestone-Centric Architecture**: Only ONE feature can be active at a time.
+
+  **Options**:
+  1. Complete current milestone first:
+     - Run: /cf:checkpoint (if all subtasks complete)
+     - This will summarize current work and clear tasks.md
+
+  2. Defer current milestone:
+     - Manually update productContext.md Status to "Deferred"
+     - Add note explaining deferral reason
+     - Tasks will be preserved in tasks.md for later resumption
+
+  **Recommendation**: Complete current milestone before starting new feature.
+
+  STOP execution (do not create new feature)
+
+ELSE:
+  PROCEED (no active milestone, safe to create new feature)
+```
+
+**Note**: This enforces the single-active-milestone rule from milestone-centric architecture (TASK-156).
 
 ---
 
@@ -654,6 +720,36 @@ Command synthesizes outputs from multiple agents:
 
 **ORCHESTRATION PATTERN**: Update memory bank files systematically
 
+**Update productContext.md (Milestone-Centric Architecture)**:
+
+Mark new feature as Active in Features & Priorities table:
+
+1. **Locate feature row** in productContext.md table:
+   - Search for feature description or TASK-XXX reference
+   - If creating new feature not yet in table, add new row
+
+2. **Update Status column** to "Active":
+   ```markdown
+   | Feature | Priority | Complexity | Status | Notes |
+   |---------|----------|------------|--------|-------|
+   | ... | ... | ... | ... | ... |
+   | [New Feature Name] | P1 | Level [X] | Active | [Description/TASK-XXX] |
+   ```
+
+3. **Verify single Active rule**:
+   - After update, only ONE feature should have Status = "Active"
+   - All others should be "Planned", "Complete", or "Deferred"
+
+**Example**:
+```markdown
+Before:
+| Milestone-Centric Task Management | P0 | Level 4 | Active | Implement bounded tasks.md lifecycle (TASK-156) |
+
+After (TASK-156 complete, TASK-157 created):
+| Milestone-Centric Task Management | P0 | Level 4 | Complete | Implement bounded tasks.md lifecycle (TASK-156) |
+| New Feature Name | P1 | Level 2 | Active | [Description] (TASK-157) |
+```
+
 **Update tasks.md**:
 
 Add to "Pending Tasks" or "Active Tasks" section:
@@ -1043,6 +1139,11 @@ Examples:
 
 ## Memory Bank Updates
 
+### productContext.md
+- Feature Status updated to "Active" in Features & Priorities table
+- Single active milestone rule enforced (only one feature can be Active)
+- Milestone lifecycle tracking (Planned → Active → Complete)
+
 ### tasks.md
 - New task entry created with synthesized details
 - Task ID auto-generated (sequential)
@@ -1062,23 +1163,26 @@ Examples:
 ## Orchestration Notes
 
 **Pattern Compliance**:
+- ✅ **Milestone Validation**: Command checks productContext.md for existing Active milestone (single milestone rule)
 - ✅ **Context Loading**: Command loads memory bank files for agent context
 - ✅ **Agent Invocation**: Command invokes assessor + [conditional architect] + product agents
 - ✅ **Conditional Logic**: L1 skips Architect, L2+ invokes Architect for pre-analysis
 - ✅ **Output Collection**: Command collects complexity + [technical analysis] + requirements
 - ✅ **Template Synthesis**: Command uses feature-task-template.md for consistent structure
-- ✅ **Memory Bank Updates**: Command updates tasks.md + activeContext.md systematically
+- ✅ **Memory Bank Updates**: Command updates productContext.md Status + tasks.md + activeContext.md
 - ✅ **User Communication**: Command presents structured routing recommendation
 
 **Command Responsibilities**:
+- Milestone validation (single Active milestone rule via productContext.md)
+- Status tracking (mark new feature Active in productContext.md)
 - Context loading from memory bank
 - Assessor invocation (complexity analysis)
-- **[NEW] Conditional Architect invocation** (Level 2+ only - technical pre-analysis)
-- Product invocation (requirements validation with Architect context if L2+)
+- Conditional Architect invocation (Level 2+ technical pre-analysis)
+- Product invocation (requirements validation)
 - Task ID generation
-- Template-based task entry synthesis (conditional Architect section for L2+)
+- Template-based synthesis
 - Memory bank updates
-- Routing recommendation output
+- Routing recommendation
 
 **Agent Responsibilities**:
 - **Assessor**: Analyze complexity, estimate scope/effort, assess risk, recommend routing
@@ -1087,14 +1191,6 @@ Examples:
   - [Level 2+] Generate technically-informed questions based on Architect's findings
   - [Level 2+] Validate requirements address Architect's hidden complexity signals
 - **NO task creation**: Agents analyze only, command synthesizes and creates entries
-
-**Conditional Expert Pre-Analysis Pattern**:
-- **Pattern**: systemPatterns.md:585-716
-- **Trigger**: Complexity Level >= 2
-- **Purpose**: Catch hidden complexity (integration, data, algorithm, constraints) before implementation
-- **Integration**: Architect output feeds into Product analysis → technically-informed requirements
-- **Benefits**: Reduces mid-implementation "stop and spec" pauses, improves specification completeness
-- **Trade-off**: 30-60 second overhead for L2+ features (acceptable for quality improvement)
 
 ---
 
@@ -1109,8 +1205,9 @@ Examples:
 
 ---
 
-**Command Version**: 2.1 (Command Orchestration + Conditional Expert Pre-Analysis)
-**Last Updated**: 2025-11-04 (TASK-004-1)
+**Command Version**: 2.2 (Milestone-Centric Task Management)
+**Last Updated**: 2025-11-11 (TASK-156-7)
 **Patterns**:
 - Command Orchestration Pattern (systemPatterns.md:409-582)
 - Conditional Expert Pre-Analysis Pattern (systemPatterns.md:585-716)
+- Milestone-Centric Task Management (TASK-156, Working Memory Pattern extended)
