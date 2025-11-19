@@ -94,6 +94,97 @@ Run: /cf:init
 
 ---
 
+### Step 2.5: Milestone Completion Detection & Atomic Operation
+
+**Check for Active Milestone (Milestone-Centric Architecture)**:
+
+Read `productContext.md` and `tasks.md`:
+
+```
+1. Find feature with Status = "Active" in productContext.md
+   IF no Active feature: SKIP (no milestone to complete)
+
+2. Find Active feature's parent task in tasks.md (e.g., TASK-156)
+   IF not found: SKIP (feature exists but no task entry yet)
+
+3. Check ALL subtasks completion status:
+   Count total subtasks: - [ ] or - [x]
+   Count complete subtasks: - [x]
+
+   IF all_subtasks_complete (all checkboxes [x]):
+     EXECUTE Atomic Milestone Completion (see below)
+   ELSE:
+     SKIP (milestone in progress, normal checkpoint)
+```
+
+**Atomic Milestone Completion (5-step operation)**:
+
+When ALL subtasks [x], execute atomically:
+
+```
+STEP 1: Write Milestone Summary to progress.md
+  - Extract parent task info from tasks.md (name, dates, sub-tasks, outcomes)
+  - Format as milestone summary
+  - Append to progress.md
+
+STEP 2: Clear tasks.md
+  - Backup current tasks.md (optional safety)
+  - Write minimal empty structure:
+    # Tasks
+    **Last Updated**: YYYY-MM-DD
+    ---
+    ## Status Legend
+    [legend]
+    ---
+    ## Active Tasks
+    (No active milestone - ready for next feature)
+    ---
+    ## Notes
+    [minimal notes]
+
+STEP 3: Mark Feature Complete in productContext.md
+  - Find Active feature row
+  - Update Status: "Active" → "Complete"
+
+STEP 4: Update activeContext.md
+  - Replace "Current Focus" → (No active work)
+  - Add milestone completion to Recent Changes
+
+STEP 5: Verify Success
+  - Confirm progress.md has new summary
+  - Confirm tasks.md is cleared
+  - Confirm productContext.md Status = "Complete"
+  - Confirm activeContext.md updated
+
+IF ANY step fails:
+  ⚠️ ROLLBACK WARNING
+  Milestone completion partially failed at Step [N].
+  Manual verification and cleanup may be needed.
+  Check: progress.md, tasks.md, productContext.md, activeContext.md
+```
+
+**Output if milestone completed**:
+
+```
+✅ MILESTONE COMPLETE
+
+Feature: [Feature Name]
+Task: TASK-[ID]
+Sub-tasks: [N]/[N] complete (100%)
+
+Atomic Operations Executed:
+1. ✅ Milestone summary written to progress.md
+2. ✅ tasks.md cleared (ready for next feature)
+3. ✅ productContext.md Status updated to "Complete"
+4. ✅ activeContext.md updated
+
+→ Ready for next milestone: /cf:feature [description]
+```
+
+**Continue to Step 3 for normal checkpoint**
+
+---
+
 ### Step 3: Engage Documentarian Agent
 
 **Invoke Documentarian agent** from `.claude/agents/workflow/documentarian.md`.
@@ -704,5 +795,5 @@ For best checkpoint quality, consider using git for version control.
 
 ---
 
-**Command Version**: 1.0
-**Last Updated**: 2025-10-05
+**Command Version**: 1.1 (Milestone-Centric Task Management)
+**Last Updated**: 2025-11-11

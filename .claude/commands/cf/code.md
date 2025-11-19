@@ -52,7 +52,14 @@ Execute task implementation with:
 
 ## Process
 
-### Step 1: Load Context
+### Step 1: Validate Milestone & Load Context
+
+**Check Active Milestone**:
+
+Read `productContext.md` for Status = "Active" feature:
+- IF no Active feature: STOP (create with /cf:feature first)
+- IF requested task parent ≠ Active task: STOP (can only implement Active milestone tasks)
+- ELSE: PROCEED
 
 Read required memory bank files:
 - `tasks.md` - Task details, acceptance criteria, sub-tasks
@@ -359,6 +366,29 @@ go test ./...              # Go
 
 If tests are NOT passing, **SKIP this step** and return to Step 5.
 
+**Update tasks.md (Milestone-Centric Architecture)**:
+
+**If task is a sub-task** (e.g., TASK-156-7):
+```
+1. Find parent task section in tasks.md (e.g., TASK-156)
+2. Locate sub-task checkbox line:
+   - [ ] TASK-156-7: [name] - Pending
+3. Update to completed:
+   - [x] TASK-156-7: [name] - Complete YYYY-MM-DD
+4. Update parent task progress counters (e.g., "7/11 sub-tasks complete (64%)")
+5. Check if ALL sub-tasks complete:
+   - IF all [x]: Parent milestone ready for /cf:checkpoint
+   - ELSE: Continue with remaining sub-tasks
+```
+
+**If task is standalone** (e.g., TASK-004):
+```
+Update task entry:
+**Status**: Complete
+**Completed**: YYYY-MM-DD
+**Tests**: ✅ [X]/[X] passing (100% GREEN)
+```
+
 **Clear Completed Work from activeContext**:
 
 Edit activeContext.md:
@@ -370,7 +400,7 @@ Edit activeContext.md:
   ```
 - Trim "## Recent Changes" to last 5 entries (keep most recent 5 `### YYYY-MM-DD` sections, remove older entries)
 
-**Update tasks.md**:
+**Update tasks.md (Detailed)**:
 
 ```markdown
 ### ✅ TASK-[ID]: [Task Name] (Level [1-4])
@@ -923,7 +953,9 @@ Proceeding with codeImplementer...
 
 ## Notes
 
+- **Milestone validation**: Tasks must belong to Active milestone in productContext.md
 - **GREEN GATE is absolute** - no task complete without all tests passing
+- **Subtask checkboxes**: Automatically updated in tasks.md when subtask completes
 - TDD is enforced by default, use `--impl-only` sparingly
 - **Agent routing**: Reads `routing.md` (if exists) for stack-specific agent selection
 - **Fallback chain**: Stack-specific → Generic → Error
@@ -947,6 +979,5 @@ Proceeding with codeImplementer...
 
 ---
 
-**Command Version**: 1.0
-**Last Updated**: 2025-10-05
-**Based On**: Command_and_role_spec.md v0.4
+**Command Version**: 1.1 (Milestone-Centric)
+**Last Updated**: 2025-11-11 (TASK-156-9)
